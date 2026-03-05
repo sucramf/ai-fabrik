@@ -1,0 +1,325 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Utility Bill Tracker & Alerts - Save on Your Bills</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for the feature cost table */
+    ::-webkit-scrollbar {
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #4f46e5;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-30">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="text-indigo-600 font-bold text-2xl select-none">BillGuard</a>
+      <nav class="hidden md:flex space-x-8 text-gray-700 font-medium">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tracker" class="hover:text-indigo-600 transition">Tracker</a>
+        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button
+        id="mobile-menu-button"
+        class="md:hidden text-gray-700 focus:outline-none focus:ring focus:ring-indigo-300 rounded"
+        aria-label="Open menu"
+      >
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          viewBox="0 0 24 24">
+          <path d="M3 12h18M3 6h18M3 18h18"></path>
+        </svg>
+      </button>
+    </div>
+    <nav id="mobile-menu" class="md:hidden bg-white px-6 py-4 space-y-2 hidden shadow-inner">
+      <a href="#features" class="block text-gray-700 font-semibold hover:text-indigo-600 transition">Features</a>
+      <a href="#tracker" class="block text-gray-700 font-semibold hover:text-indigo-600 transition">Tracker</a>
+      <a href="#contact" class="block text-gray-700 font-semibold hover:text-indigo-600 transition">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-indigo-700 text-white">
+    <div class="container mx-auto px-6 py-20 flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-20">
+      <div class="max-w-xl space-y-6 text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">
+          Track & Optimize Your Utility Bills <br /> Like a Pro
+        </h1>
+        <p class="text-indigo-200 text-lg">
+          BillGuard helps small businesses monitor utility expenses, spot unusual consumption, and get cost-saving alerts to keep bills under control.
+        </p>
+        <a href="#tracker" class="inline-block bg-white text-indigo-700 font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-indigo-50 transition">
+          Get Started Free
+        </a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1611078481049-b77cdb8584e7?auto=format&fit=crop&w=600&q=80" alt="Utility Bills Illustration" class="w-full max-w-md rounded-lg shadow-lg" />
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="container mx-auto px-6 py-16">
+    <h2 class="text-3xl font-extrabold text-center mb-12 text-gray-900">Why Choose BillGuard?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 20l9-12H3l9 12z" />
+        </svg>
+        <h3 class="font-semibold text-xl mb-2 text-gray-900">Automatic Bill Tracking</h3>
+        <p class="text-gray-600">Easily add and monitor your utility bills in one dashboard with historical trends.</p>
+      </div>
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <h3 class="font-semibold text-xl mb-2 text-gray-900">Real-time Alerts</h3>
+        <p class="text-gray-600">Get notified when your utility usage or costs spike beyond typical patterns.</p>
+      </div>
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round"></circle>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3" />
+        </svg>
+        <h3 class="font-semibold text-xl mb-2 text-gray-900">Cost Saving Tips</h3>
+        <p class="text-gray-600">Receive personalized recommendations to reduce consumption and lower bills.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tracker (Working UI Tool) -->
+  <section id="tracker" class="bg-white shadow-inner py-16">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <h2 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Your Utility Bill Tracker</h2>
+
+      <form id="bill-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <label class="flex flex-col text-sm font-semibold text-gray-700">
+          Utility Type
+          <select id="utility-type" class="mt-1 rounded border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+            <option value="" disabled selected>Select Utility</option>
+            <option value="Electricity">Electricity</option>
+            <option value="Water">Water</option>
+            <option value="Gas">Gas</option>
+            <option value="Internet">Internet</option>
+          </select>
+        </label>
+        <label class="flex flex-col text-sm font-semibold text-gray-700">
+          Date
+          <input type="date" id="bill-date" class="mt-1 rounded border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
+        </label>
+        <label class="flex flex-col text-sm font-semibold text-gray-700">
+          Cost (USD)
+          <input type="number" min="0" step="0.01" id="bill-cost" class="mt-1 rounded border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. 150.00" required />
+        </label>
+        <label class="self-end">
+          <button
+            type="submit"
+            class="w-full bg-indigo-600 text-white font-semibold py-2 rounded shadow hover:bg-indigo-700 transition"
+          >
+            Add Bill
+          </button>
+        </label>
+      </form>
+
+      <div class="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50">
+        <table class="min-w-full divide-y divide-gray-200" id="bills-table">
+          <thead class="bg-indigo-600 text-white">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wide">Utility</th>
+              <th scope="col" class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wide">Date</th>
+              <th scope="col" class="px-6 py-3 text-right text-sm font-semibold uppercase tracking-wide">Cost (USD)</th>
+              <th scope="col" class="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wide">Alert</th>
+              <th scope="col" class="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wide">Remove</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white" id="bills-body">
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-center" colspan="5">No bills added yet.</td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-gray-100 font-semibold text-gray-900">
+            <tr>
+              <td class="px-6 py-3 text-left">Total</td>
+              <td></td>
+              <td class="px-6 py-3 text-right" id="total-cost">$0.00</td>
+              <td colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <section id="alert-section" class="mt-10 hidden p-6 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 rounded" role="alert" aria-live="polite">
+        <p id="alert-message" class="text-lg font-semibold"></p>
+        <p class="mt-1 text-sm">
+          Consider reviewing your usage or contacting your utility provider for cost saving options.
+        </p>
+      </section>
+    </div>
+  </section>
+
+  <!-- Contact / Footer -->
+  <footer id="contact" class="bg-indigo-700 text-indigo-100 py-12 mt-auto">
+    <div class="container mx-auto px-6 text-center md:text-left md:flex md:justify-between md:items-center">
+      <div class="mb-6 md:mb-0">
+        <h3 class="text-lg font-semibold mb-2">Contact Us</h3>
+        <p>support@billguard.com</p>
+        <p>+1 (555) 123-4567</p>
+      </div>
+      <p class="text-sm">&copy; 2024 BillGuard. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const form = document.getElementById('bill-form');
+      const utilityType = document.getElementById('utility-type');
+      const billDate = document.getElementById('bill-date');
+      const billCost = document.getElementById('bill-cost');
+      const billsBody = document.getElementById('bills-body');
+      const totalCostEl = document.getElementById('total-cost');
+      const alertSection = document.getElementById('alert-section');
+      const alertMessage = document.getElementById('alert-message');
+      const mobileMenuBtn = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      let bills = [];
+
+      // Toggle mobile menu
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Format date as readable string
+      function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        const d = new Date(dateString);
+        if (isNaN(d)) return dateString;
+        return d.toLocaleDateString(undefined, options);
+      }
+
+      function formatCurrency(num) {
+        return `$${num.toFixed(2)}`;
+      }
+
+      // Calculate average cost per utility (used for alert threshold)
+      function averageCostForUtility(utility) {
+        const filtered = bills.filter(b => b.utility === utility);
+        if (filtered.length === 0) return 0;
+        const sum = filtered.reduce((acc, b) => acc + b.cost, 0);
+        return sum / filtered.length;
+      }
+
+      // Check if a bill triggers an alert
+      function checkAlert(bill) {
+        // Alert if cost > 1.5 * average cost of that utility
+        const avg = averageCostForUtility(bill.utility);
+        return avg > 0 && bill.cost > avg * 1.5;
+      }
+
+      // Update alerts section
+      function updateAlerts() {
+        // Find any bills triggering alerts
+        const alertBills = bills.filter(checkAlert);
+        if (alertBills.length === 0) {
+          alertSection.classList.add('hidden');
+          alertMessage.textContent = '';
+          return;
+        }
+
+        // Display message with utility types and costs exceeding threshold
+        const alertsSummary = alertBills
+          .map(b => `${b.utility} bill of ${formatCurrency(b.cost)} on ${formatDate(b.date)}`)
+          .join('; ');
+
+        alertMessage.textContent = `⚠️ Alert: High cost detected for ${alertsSummary}`;
+        alertSection.classList.remove('hidden');
+      }
+
+      // Render bills table
+      function renderBills() {
+        billsBody.innerHTML = '';
+        if (bills.length === 0) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-gray-500 text-center" colspan="5">No bills added yet.</td>`;
+          billsBody.appendChild(tr);
+          totalCostEl.textContent = '$0.00';
+          updateAlerts();
+          return;
+        }
+
+        let total = 0;
+        bills.forEach((bill, i) => {
+          total += bill.cost;
+
+          const tr = document.createElement('tr');
+
+          // Alert icon if needed
+          const alertNeeded = checkAlert(bill);
+          const alertIcon = alertNeeded
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-6 w-6 text-yellow-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3l-8.47-14.14a2 2 0 00-3.3 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+            : "";
+
+          tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-gray-800 font-semibold">${bill.utility}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">${formatDate(bill.date)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-gray-800 font-mono">${formatCurrency(bill.cost)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-center" title="${alertNeeded ? 'Cost exceeds 1.5x average for this utility' : 'No alert'}">${alertIcon}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+              <button aria-label="Remove bill entry" data-index="${i}" class="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 rounded">
+                &times;
+              </button>
+            </td>
+          `;
+
+          billsBody.appendChild(tr);
+        });
+
+        totalCostEl.textContent = formatCurrency(total);
+        updateAlerts();
+      }
+
+      function resetForm() {
+        utilityType.value = "";
+        billDate.value = "";
+        billCost.value = "";
+        utilityType.focus();
+      }
+
+      // Add bill on form submit
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const utility = utilityType.value.trim();
+        const date = billDate.value;
+        const costVal = parseFloat(billCost.value);
+
+        if (!utility || !date || isNaN(costVal) || costVal < 0) return;
+
+        bills.push({ utility, date, cost: costVal });
+        bills.sort((a,b) => new Date(b.date) - new Date(a.date)); // Descending by date
+        renderBills();
+        resetForm();
+      });
+
+      // Remove bill
+      billsBody.addEventListener('click', e => {
+        if (e.target.matches('button[data-index]')) {
+          const idx = parseInt(e.target.getAttribute('data-index'));
+          if (!isNaN(idx)) {
+            bills.splice(idx, 1);
+            renderBills();
+          }
+        }
+      });
+
+      // Initial render
+      renderBills();
+    })();
+  </script>
+</body>
+</html>
+```
