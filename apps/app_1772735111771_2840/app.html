@@ -1,0 +1,337 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>On-Demand Contract Template Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for textarea */
+    textarea::-webkit-scrollbar {
+      width: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background-color: #a78bfa;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-30">
+    <div class="container mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+      <a href="#" class="text-indigo-600 font-extrabold text-2xl select-none">ContractBuilder</a>
+      <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#builder" class="hover:text-indigo-600 transition">Build a Contract</a>
+        <a href="#" class="hover:text-indigo-600 transition">Pricing</a>
+        <a href="#" class="hover:text-indigo-600 transition">Login</a>
+      </nav>
+      <button id="mobile-menu-btn" class="md:hidden focus:outline-none" aria-label="Toggle menu">
+        <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <nav id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+      <div class="flex flex-col px-6 py-4 space-y-3 text-gray-700 font-medium">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#builder" class="hover:text-indigo-600 transition">Build a Contract</a>
+        <a href="#" class="hover:text-indigo-600 transition">Pricing</a>
+        <a href="#" class="hover:text-indigo-600 transition">Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-indigo-600 text-white">
+    <div class="container mx-auto max-w-7xl px-6 py-16 text-center md:text-left md:flex md:items-center md:justify-between">
+      <div class="md:w-1/2 space-y-6">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">
+          On-Demand Contract Template Builder
+        </h1>
+        <p class="text-indigo-200 text-lg max-w-md">
+          Generate customized, industry-specific contract drafts quickly. Edit with ease and sign electronically — all in one place.
+        </p>
+        <a href="#builder" class="inline-block bg-white text-indigo-600 font-semibold px-6 py-3 rounded-lg hover:bg-indigo-100 transition">
+          Get Started for Free
+        </a>
+      </div>
+      <div class="mt-10 md:mt-0 md:w-1/2">
+        <img src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png" alt="App screenshot" class="rounded-lg shadow-lg mx-auto max-w-full" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="container mx-auto max-w-7xl px-6 py-16">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <h2 class="text-3xl font-extrabold text-gray-900">Powerful Features to Streamline Your Contracts</h2>
+      <p class="mt-4 text-gray-600">
+        Everything you need to craft and manage contracts with simplicity and confidence.
+      </p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto text-center">
+      <div class="p-6 bg-white rounded-xl shadow hover:shadow-indigo-300 transition">
+        <div class="mx-auto mb-4 w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M9 12h6" />
+            <path d="M9 16h6" />
+            <path d="M9 8h6" />
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">Industry-Specific Templates</h3>
+        <p class="text-gray-600">Select from expertly crafted templates tailored to your field.</p>
+      </div>
+      <div class="p-6 bg-white rounded-xl shadow hover:shadow-indigo-300 transition">
+        <div class="mx-auto mb-4 w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M12 20h9" />
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2" />
+            <path d="M12 4a4 4 0 0 1 0 8" />
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">Easy Editing</h3>
+        <p class="text-gray-600">Customize contract terms with our intuitive editor — no legal expertise required.</p>
+      </div>
+      <div class="p-6 bg-white rounded-xl shadow hover:shadow-indigo-300 transition">
+        <div class="mx-auto mb-4 w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M16 17l-4 4m0 0l-4-4m4 4V3" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">E-Signature Integration</h3>
+        <p class="text-gray-600">Collect signatures securely with built-in electronic signing capabilities.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contract Builder (working UI tool) -->
+  <section id="builder" class="bg-white border-t border-gray-200 py-16">
+    <div class="container mx-auto max-w-7xl px-6">
+      <h2 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Build Your Contract</h2>
+      <div class="md:flex md:space-x-8">
+        <!-- Form & Inputs -->
+        <form id="contractForm" class="md:w-1/3 bg-indigo-50 rounded-xl p-6 shadow space-y-6" onsubmit="return false;">
+          <div>
+            <label for="industry" class="block font-semibold text-gray-700 mb-1">Industry</label>
+            <select id="industry" name="industry" required
+              class="w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="" disabled selected>Select industry</option>
+              <option value="Software Development">Software Development</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Freelance Services">Freelance Services</option>
+            </select>
+          </div>
+          <div>
+            <label for="partyA" class="block font-semibold text-gray-700 mb-1">Party A (Your name)</label>
+            <input id="partyA" name="partyA" type="text" placeholder="e.g. Acme Corp"
+              class="w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+          </div>
+          <div>
+            <label for="partyB" class="block font-semibold text-gray-700 mb-1">Party B (Counterparty)</label>
+            <input id="partyB" name="partyB" type="text" placeholder="e.g. Beta LLC"
+              class="w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+          </div>
+          <div>
+            <label for="contractDate" class="block font-semibold text-gray-700 mb-1">Effective Date</label>
+            <input id="contractDate" name="contractDate" type="date"
+              class="w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+          </div>
+          <button id="generateBtn" type="submit"
+            class="w-full bg-indigo-600 text-white font-semibold py-2 rounded-md hover:bg-indigo-700 transition">Generate
+            Contract</button>
+        </form>
+
+        <!-- Contract Output & Editor -->
+        <section class="md:w-2/3 mt-12 md:mt-0">
+          <label for="contractOutput" class="block font-semibold text-gray-700 mb-2">Generated Contract</label>
+          <textarea id="contractOutput" readonly class="w-full h-[480px] p-4 bg-gray-100 rounded-lg border border-gray-300 text-gray-900 font-mono text-sm resize-y" aria-label="Generated contract text"></textarea>
+
+          <div class="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+              <input type="checkbox" id="editableToggle" />
+              <label for="editableToggle" class="select-none text-gray-700">Enable Editing</label>
+            </div>
+            <button id="signBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-indigo-700 transition" disabled>
+              e-Sign Contract
+            </button>
+          </div>
+
+          <div id="signatureMessage" class="mt-4 text-center text-green-600 font-semibold hidden" role="alert" aria-live="polite">
+            Contract signed successfully! ✔️
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-indigo-700 text-indigo-200 py-8 mt-auto select-none">
+    <div class="container mx-auto max-w-7xl px-6 text-center text-sm">
+      &copy; 2024 ContractBuilder, Inc. All rights reserved.
+    </div>
+  </footer>
+
+<script>
+  const industrySelect = document.getElementById('industry');
+  const partyAInput = document.getElementById('partyA');
+  const partyBInput = document.getElementById('partyB');
+  const dateInput = document.getElementById('contractDate');
+  const contractOutput = document.getElementById('contractOutput');
+  const generateBtn = document.getElementById('generateBtn');
+  const editableToggle = document.getElementById('editableToggle');
+  const signBtn = document.getElementById('signBtn');
+  const signatureMessage = document.getElementById('signatureMessage');
+  const contractForm = document.getElementById('contractForm');
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  // Mobile menu toggle
+  mobileMenuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Templates for industries
+  const templates = {
+    "Software Development": ({partyA, partyB, date}) =>
+`SOFTWARE DEVELOPMENT AGREEMENT
+
+This Software Development Agreement ("Agreement") is made as of ${date} between ${partyA} ("Client") and ${partyB} ("Developer").
+
+1. Scope of Work
+Developer agrees to design, develop, and deliver the software as described in Exhibit A.
+
+2. Payment Terms
+Client shall pay Developer the fees outlined in Exhibit B.
+
+3. Confidentiality
+Both parties agree to keep confidential all proprietary information.
+
+4. Term and Termination
+This Agreement commences on ${date} and continues until project completion or termination as described herein.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement.
+
+_____________________________        _____________________________
+${partyA}                            ${partyB}
+
+Date: _______________________       Date: _______________________
+    `,
+    "Real Estate": ({partyA, partyB, date}) =>
+`REAL ESTATE PURCHASE AGREEMENT
+
+This Real Estate Purchase Agreement ("Agreement") is entered into on ${date} by and between ${partyA} ("Buyer") and ${partyB} ("Seller").
+
+1. Property Description
+Seller agrees to sell and Buyer agrees to buy the property located at [Property Address].
+
+2. Purchase Price
+The purchase price shall be [Purchase Price].
+
+3. Closing Date
+The closing shall occur on or before [Closing Date].
+
+4. Contingencies
+This Agreement is contingent upon inspections and financing approval.
+
+IN WITNESS WHEREOF, the parties have signed below.
+
+_____________________________        _____________________________
+${partyA}                            ${partyB}
+
+Date: _______________________       Date: _______________________
+    `,
+    "Freelance Services": ({partyA, partyB, date}) =>
+`FREELANCE SERVICES AGREEMENT
+
+This Freelance Services Agreement ("Agreement") is made effective as of ${date} by and between ${partyA} ("Client") and ${partyB} ("Freelancer").
+
+1. Services
+Freelancer shall provide the services described in Exhibit A.
+
+2. Compensation
+Client agrees to pay Freelancer as set forth in Exhibit B.
+
+3. Intellectual Property
+Work product shall be owned by Client upon full payment.
+
+4. Term and Termination
+This Agreement is effective from ${date} until services are completed or terminated.
+
+IN WITNESS WHEREOF, the parties affix their signatures.
+
+_____________________________        _____________________________
+${partyA}                            ${partyB}
+
+Date: _______________________       Date: _______________________
+    `
+  };
+
+  // Generate contract function
+  function generateContract() {
+    if (!contractForm.reportValidity()) return;
+
+    const industry = industrySelect.value;
+    const partyA = partyAInput.value.trim();
+    const partyB = partyBInput.value.trim();
+    // Format date nicely
+    const dateRaw = dateInput.value;
+    if (!dateRaw) {
+      contractOutput.value = "";
+      return;
+    }
+    const dateObj = new Date(dateRaw);
+    const dateStr = dateObj.toLocaleDateString(undefined, {year: "numeric", month: "long", day: "numeric"});
+
+    if (!templates[industry]) {
+      contractOutput.value = "No template available for selected industry.";
+      return;
+    }
+
+    const contractText = templates[industry]({partyA, partyB, date: dateStr});
+    contractOutput.value = contractText;
+    contractOutput.readOnly = !editableToggle.checked;
+    signBtn.disabled = false;
+    signatureMessage.classList.add('hidden');
+  }
+
+  generateBtn.addEventListener('click', generateContract);
+
+  // Editable toggle control
+  editableToggle.addEventListener('change', () => {
+    if (!contractOutput.value) {
+      editableToggle.checked = false;
+      return;
+    }
+    contractOutput.readOnly = !editableToggle.checked;
+  });
+
+  // e-Sign button
+  signBtn.addEventListener('click', () => {
+    if (!contractOutput.value.trim()) return;
+
+    // Simple confirmation dialog simulating e-signature
+    const confirmed = confirm("By clicking OK, you electronically sign this contract.");
+    if (confirmed) {
+      signBtn.disabled = true;
+      editableToggle.disabled = true;
+      contractOutput.readOnly = true;
+      signatureMessage.classList.remove('hidden');
+    }
+  });
+
+  // Prevent form submit on Enter in inputs
+  contractForm.addEventListener('submit', e => e.preventDefault());
+</script>
+</body>
+</html>
+```

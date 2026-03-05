@@ -1,0 +1,379 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Receiptr - Expense Receipt Organizer</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-indigo-600 font-bold text-2xl hover:text-indigo-700 transition">Receiptr</a>
+      <nav class="space-x-6 text-gray-700 font-medium hidden md:flex">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#upload" class="hover:text-indigo-600 transition">Organize</a>
+        <a href="#download" class="hover:text-indigo-600 transition">Export</a>
+      </nav>
+      <button class="md:hidden focus:outline-none" aria-label="Open main menu" id="menu-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md">
+      <nav class="flex flex-col px-6 py-3 space-y-3 text-indigo-700 font-medium">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#upload" class="hover:text-indigo-600 transition">Organize</a>
+        <a href="#download" class="hover:text-indigo-600 transition">Export</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-indigo-600 text-white py-20">
+    <div class="container mx-auto px-6 max-w-5xl text-center">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Organize Your Expense Receipts Effortlessly</h1>
+      <p class="max-w-3xl mx-auto text-lg md:text-xl mb-8">Upload your receipts, extract important details automatically with OCR, and export your expenses to spreadsheet — all in one place.</p>
+      <a href="#upload" class="inline-block bg-white text-indigo-600 font-semibold px-8 py-3 rounded-lg shadow hover:bg-indigo-100 transition">Get Started for Free</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="py-16 bg-gray-100">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <h2 class="text-3xl font-extrabold text-center text-gray-900 mb-12">Features</h2>
+      <div class="grid gap-10 md:grid-cols-3">
+        <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600 mb-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 114 0v6m5 4H6a2 2 0 01-2-2v-7a2 2 0 012-2h.172a4 4 0 013.828-3 4 4 0 013.828 3H18a2 2 0 012 2v7a2 2 0 01-2 2z"/>
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Smart OCR Extraction</h3>
+          <p class="text-gray-600">Automatically extract date, vendor, amount, and tax info from your receipts with powerful on-device OCR powered by Tesseract.js.</p>
+        </div>
+        <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600 mb-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V8.618a2 2 0 011.553-1.894L9 4m0 16v-6m0 0l6-3m-6 3l6 3"/>
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Organized Expense Management</h3>
+          <p class="text-gray-600">Keep all your expenses neatly organized and searchable in your browser without any setup or account required.</p>
+        </div>
+        <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600 mb-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-4a4 4 0 118 0v4m-4 4v.01"/>
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Export to Spreadsheet</h3>
+          <p class="text-gray-600">Download your expense data in CSV format ready to open in Excel, Google Sheets, or any other spreadsheet tool instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Working UI Tool -->
+  <section id="upload" class="container mx-auto px-6 max-w-4xl py-16">
+    <h2 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Upload & Organize Your Receipts</h2>
+    <div class="bg-white rounded-xl shadow p-8">
+      <!-- Upload -->
+      <label for="file-input" class="block mb-3 font-semibold text-indigo-700 cursor-pointer hover:underline inline-flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+          <path d="M12 5v14m7-7H5"/>
+        </svg>
+        Click to Select a Receipt Image or Drag & Drop
+      </label>
+      <input type="file" id="file-input" accept="image/*" class="hidden" multiple />
+
+      <div id="drop-area" class="mt-4 p-6 border-2 border-dashed border-indigo-400 rounded-lg text-center text-indigo-500 cursor-pointer transition hover:bg-indigo-50" 
+           aria-label="Drop receipt images here">
+        Drag & Drop your receipt images here
+      </div>
+
+      <div id="progress-container" class="mt-6 space-y-4">
+        <!-- Dynamic OCR progress and results go here -->
+      </div>
+
+      <div class="mt-8 flex justify-end">
+        <button id="export-btn" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Export to CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Organized Data Table -->
+    <div class="mt-12 overflow-x-auto">
+      <table class="min-w-full bg-white rounded-lg shadow divide-y divide-gray-200" aria-label="Organized expenses table">
+        <thead class="bg-indigo-600 text-white">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-semibold">Filename</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold">Date</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold">Vendor</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold">Amount</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold">Raw OCR Text</th>
+          </tr>
+        </thead>
+        <tbody id="expense-table-body" class="divide-y divide-gray-100 text-gray-800"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t mt-auto">
+    <div class="container mx-auto px-6 py-6 text-center text-gray-600 text-sm">
+      &copy; 2024 Receiptr. All rights reserved.
+    </div>
+  </footer>
+
+<script>
+  (() => {
+    // Elements
+    const fileInput = document.getElementById('file-input');
+    const dropArea = document.getElementById('drop-area');
+    const progressContainer = document.getElementById('progress-container');
+    const expenseTableBody = document.getElementById('expense-table-body');
+    const exportBtn = document.getElementById('export-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuBtn = document.getElementById('menu-btn');
+
+    // Expenses array
+    const expenses = [];
+
+    // Utility: Format date string to YYYY-MM-DD or fallback
+    function formatDateString(str) {
+      // Try to parse various date formats common in receipts
+      // We'll use simple regex and heuristics
+      const dateRegexes = [
+        /\b(\d{4})[\/\-\.\s](\d{1,2})[\/\-\.\s](\d{1,2})\b/, // 2023-06-01 or 2023/06/01
+        /\b(\d{1,2})[\/\-\.\s](\d{1,2})[\/\-\.\s](\d{4})\b/, // 01/06/2023 or 01-06-2023
+      ];
+      for (const regex of dateRegexes) {
+        const match = regex.exec(str);
+        if (match) {
+          let year, month, day;
+          if (match[1].length === 4) {
+            // YYYY MM DD
+            year = match[1];
+            month = match[2].padStart(2, '0');
+            day = match[3].padStart(2, '0');
+          } else {
+            // DD MM YYYY
+            year = match[3];
+            month = match[2].padStart(2, '0');
+            day = match[1].padStart(2, '0');
+          }
+          return `${year}-${month}-${day}`;
+        }
+      }
+      return '';
+    }
+
+    // Utility: Extract amount (try multiple patterns)
+    function extractAmount(str) {
+      // Look for currency + amount patterns like $12.34 or 12.34
+      // Priority: numbers with decimal and currency symbol or "total"
+      // Spend some lines on heuristic extraction...
+
+      // Normalize spaces and commas (comma as thousand sep)
+      const normalized = str.replace(/\s/g, ' ').replace(/,/g, '');
+      // Match amounts with optional currency symbol (like $, €, £)
+      const amtRegex = /(?:total|amount|balance|due|subtotal)?[^\d]*([\$€£]?\s?\d{1,3}(?:\.\d{2})?)/gi;
+
+      let maxAmount = 0;
+      let foundAmount = '';
+
+      let m;
+      while ((m = amtRegex.exec(normalized)) !== null) {
+        let val = m[1].replace(/[^\d\.]/g, '');
+        if (val) {
+          let num = parseFloat(val);
+          if (!isNaN(num) && num > maxAmount) {
+            maxAmount = num;
+            foundAmount = num.toFixed(2);
+          }
+        }
+      }
+      // Return max amount found or empty string
+      return foundAmount || '';
+    }
+
+    // Utility: Extract vendor name guess (first non-empty line without date/amount)
+    function extractVendor(text) {
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      for (const line of lines) {
+        if (line.length < 3) continue;
+        // If line doesn't have date or amount, return as vendor candidate
+        if (!/\d{2,4}[\/\-\.\s]\d{1,2}[\/\-\.\s]\d{1,4}/.test(line) && !/[\$€£\d]+/.test(line)) {
+          return line;
+        }
+      }
+      return lines[0] || '';
+    }
+
+    // Render single expense row
+    function addExpenseRow(expense) {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-indigo-50';
+
+      const tdFile = document.createElement('td');
+      tdFile.className = 'px-6 py-3 whitespace-nowrap max-w-xs truncate';
+      tdFile.title = expense.filename;
+      tdFile.textContent = expense.filename;
+
+      const tdDate = document.createElement('td');
+      tdDate.className = 'px-6 py-3 whitespace-nowrap';
+      tdDate.textContent = expense.date || '—';
+
+      const tdVendor = document.createElement('td');
+      tdVendor.className = 'px-6 py-3 whitespace-nowrap max-w-sm truncate';
+      tdVendor.title = expense.vendor;
+      tdVendor.textContent = expense.vendor || '—';
+
+      const tdAmount = document.createElement('td');
+      tdAmount.className = 'px-6 py-3 whitespace-nowrap font-mono';
+      tdAmount.textContent = expense.amount ? `$${expense.amount}` : '—';
+
+      const tdRaw = document.createElement('td');
+      tdRaw.className = 'px-6 py-3 max-w-2xl truncate';
+      tdRaw.title = expense.rawText;
+      tdRaw.textContent = expense.rawText.replace(/\s+/g, ' ').trim();
+
+      tr.append(tdFile, tdDate, tdVendor, tdAmount, tdRaw);
+      expenseTableBody.appendChild(tr);
+    }
+
+    // Update export button state
+    function updateExportBtn() {
+      exportBtn.disabled = expenses.length === 0;
+    }
+
+    // Export to CSV
+    function exportToCSV() {
+      if (expenses.length === 0) return;
+      const headers = ['Filename','Date','Vendor','Amount','Raw OCR Text'];
+      const rows = expenses.map(e => [
+        `"${e.filename.replace(/"/g, '""')}"`,
+        e.date || '',
+        `"${(e.vendor || '').replace(/"/g, '""')}"`,
+        e.amount ? e.amount : '',
+        `"${(e.rawText || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`
+      ]);
+      const csvContent = [headers, ...rows].map(r => r.join(',')).join('\r\n');
+      const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `receiptr_expenses_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // OCR and process single image file
+    async function processFile(file) {
+      // Create progress UI
+      const container = document.createElement('div');
+      container.className = 'border border-indigo-200 rounded-md p-4 bg-indigo-50';
+
+      const title = document.createElement('p');
+      title.className = 'font-semibold text-indigo-700 mb-2 break-all';
+      title.textContent = `Processing: ${file.name}`;
+      container.appendChild(title);
+
+      const progressBar = document.createElement('progress');
+      progressBar.className = 'w-full h-4 rounded-md';
+      progressBar.max = 1;
+      progressBar.value = 0;
+      container.appendChild(progressBar);
+
+      const status = document.createElement('p');
+      status.className = 'mt-2 text-indigo-600 text-sm';
+      status.textContent = 'Initializing OCR...';
+      container.appendChild(status);
+
+      progressContainer.appendChild(container);
+
+      try {
+        const result = await Tesseract.recognize(file, 'eng', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              progressBar.value = m.progress;
+              status.textContent = `Recognizing text... ${(m.progress*100).toFixed(0)}%`;
+            } else {
+              status.textContent = m.status.charAt(0).toUpperCase() + m.status.slice(1) + '...';
+            }
+          }
+        });
+        const rawText = result.data.text;
+        // Extract info heuristically
+        const date = formatDateString(rawText);
+        const amount = extractAmount(rawText);
+        const vendor = extractVendor(rawText);
+
+        // Save expense
+        const expense = {
+          filename: file.name,
+          date,
+          amount,
+          vendor,
+          rawText
+        };
+        expenses.push(expense);
+
+        // Render row and update UI
+        addExpenseRow(expense);
+
+        status.textContent = 'OCR Complete ✔️';
+        progressBar.value = 1;
+      } catch (e) {
+        status.textContent = 'Error during OCR ❌';
+        console.error(e);
+      } finally {
+        updateExportBtn();
+      }
+    }
+
+    // Handle files input (FileList)
+    function handleFiles(files) {
+      if (!files.length) return;
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        processFile(file);
+      }
+    }
+
+    // Event listeners
+    fileInput.addEventListener('change', e => {
+      handleFiles(fileInput.files);
+      fileInput.value = '';
+    });
+
+    // Drag and drop
+    dropArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropArea.classList.add('bg-indigo-100');
+    });
+    dropArea.addEventListener('dragleave', e => {
+      e.preventDefault();
+      dropArea.classList.remove('bg-indigo-100');
+    });
+    dropArea.addEventListener('drop', e => {
+      e.preventDefault();
+      dropArea.classList.remove('bg-indigo-100');
+      if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+    });
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    // Export button
+    exportBtn.addEventListener('click', exportToCSV);
+
+    // Mobile menu toggle
+    menuBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.remove('hidden');
+      } else {
+        mobileMenu.classList.add('hidden');
+      }
+    });
+  })();
+</script>
+</body>
+</html>
+```

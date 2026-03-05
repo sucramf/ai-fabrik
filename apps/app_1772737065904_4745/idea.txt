@@ -1,0 +1,1 @@
+Simple invoice generator with integrated local tax calculator for freelancers
