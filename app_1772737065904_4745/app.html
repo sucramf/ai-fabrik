@@ -1,0 +1,520 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>InvoiceGen - Simple Invoice & Tax Calculator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    input[type="number"]::-webkit-inner-spin-button, 
+    input[type="number"]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+  <!-- Header -->
+  <header class="bg-white shadow-md fixed top-0 w-full z-30">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+      <a href="#" class="text-2xl font-extrabold text-indigo-600 select-none">
+        InvoiceGen
+      </a>
+      <nav class="space-x-6 text-gray-600 font-medium hidden md:flex">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#generator" class="hover:text-indigo-600 transition">Generator</a>
+      </nav>
+      <button id="darkToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode" class="ml-4 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+        <svg id="iconLight" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400 block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-11.34l-.7.7m-13.92 0l-.7-.7M21 12h-1M4 12H3m15.36 6.36l-.7-.7m-13.92 0l-.7.7M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg id="iconDark" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 118.646 3.646 7 7 0 0020.354 15.354z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="pt-24 max-w-7xl mx-auto px-6">
+
+    <!-- Hero -->
+    <section class="text-center max-w-3xl mx-auto my-16">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-600 leading-tight">
+        Simple Invoice Generator with Built-in Tax Calculator
+      </h1>
+      <p class="mt-4 text-lg text-gray-600">
+        Create professional invoices and calculate local taxes instantly. Perfect for freelancers and small businesses.
+      </p>
+      <a href="#generator" class="inline-block mt-8 bg-indigo-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-indigo-700 transition">
+        Get Started Free
+      </a>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="my-24">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Why InvoiceGen?</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a5 5 0 00-10 0v2m12 0v6a3 3 0 01-3 3h-8a3 3 0 01-3-3v-6m12 0H5" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Easy Invoicing</h3>
+          <p class="text-gray-600 text-sm">Generate beautifully formatted invoices in seconds with customizable fields.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2-1.343-2-3-2zM6 9v6m12-6v6" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 20h14a2 2 0 002-2v-5H3v5a2 2 0 002 2z" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Integrated Tax Calculator</h3>
+          <p class="text-gray-600 text-sm">Enter your local tax rate and get automatic tax calculations on your invoices.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M4 13h16M4 8h16M4 5h16" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Mobile Responsive</h3>
+          <p class="text-gray-600 text-sm">Work on your invoices anywhere — mobile, tablet, or desktop friendly.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 20h9" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Export & Save</h3>
+          <p class="text-gray-600 text-sm">Download invoices as PDF or print them directly from the app with ease.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Generator -->
+    <section id="generator" class="bg-white p-8 rounded-lg shadow max-w-4xl mx-auto mb-24">
+      <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Invoice Generator & Tax Calculator</h2>
+
+      <form id="invoiceForm" class="space-y-8">
+
+        <fieldset class="border border-gray-300 rounded-md p-4">
+          <legend class="text-lg font-semibold text-indigo-600 px-2">Your Info</legend>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div>
+              <label for="yourName" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <input type="text" id="yourName" name="yourName" placeholder="Jane Doe" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label for="yourEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" id="yourEmail" name="yourEmail" placeholder="jane@example.com" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="yourAddress" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <input type="text" id="yourAddress" name="yourAddress" placeholder="123 Freelancer St, City, Country" class="w-full border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-300 rounded-md p-4">
+          <legend class="text-lg font-semibold text-indigo-600 px-2">Client Info</legend>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div>
+              <label for="clientName" class="block text-sm font-medium text-gray-700 mb-1">Client Name</label>
+              <input type="text" id="clientName" name="clientName" placeholder="Client Inc." required class="w-full border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label for="clientEmail" class="block text-sm font-medium text-gray-700 mb-1">Client Email</label>
+              <input type="email" id="clientEmail" name="clientEmail" placeholder="client@example.com" class="w-full border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="clientAddress" class="block text-sm font-medium text-gray-700 mb-1">Client Address</label>
+              <input type="text" id="clientAddress" name="clientAddress" placeholder="456 Business Ave, City, Country" class="w-full border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="border border-gray-300 rounded-md p-4">
+          <legend class="text-lg font-semibold text-indigo-600 px-2">Invoice Items</legend>
+          <div id="itemsContainer" class="space-y-4 mt-4">
+            <!-- Invoice Items inserted here -->
+          </div>
+          <button type="button" id="addItemBtn" class="mt-4 inline-flex items-center px-4 py-2 border border-indigo-600 text-indigo-600 text-sm font-medium rounded-md hover:bg-indigo-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Item
+          </button>
+        </fieldset>
+
+        <fieldset class="border border-gray-300 rounded-md p-4 max-w-xs">
+          <legend class="text-lg font-semibold text-indigo-600 px-2">Tax Settings</legend>
+          <label for="taxRate" class="block text-sm font-medium text-gray-700 mb-1 mt-4">Tax Rate (%)</label>
+          <input type="number" id="taxRate" name="taxRate" min="0" max="100" step="0.01" value="10" class="w-full border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+        </fieldset>
+
+        <div class="text-center">
+          <button type="submit" class="mt-6 bg-indigo-600 text-white font-semibold px-10 py-3 rounded-lg shadow hover:bg-indigo-700 transition">
+            Generate Invoice
+          </button>
+        </div>
+      </form>
+
+      <!-- Invoice Output -->
+      <section id="invoiceOutput" class="mt-12 hidden bg-gray-50 border border-indigo-300 rounded-lg p-6 shadow-md">
+        <h3 class="text-2xl font-bold text-indigo-600 mb-4">Generated Invoice</h3>
+        <div id="invoicePreview" class="prose max-w-none overflow-x-auto"></div>
+        <div class="mt-6 flex justify-center gap-4">
+          <button id="printInvoiceBtn" class="bg-gray-800 text-white rounded px-5 py-2 hover:bg-gray-900 transition">Print Invoice</button>
+          <button id="downloadInvoiceBtn" class="bg-indigo-600 text-white rounded px-5 py-2 hover:bg-indigo-700 transition">Download PDF</button>
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-gray-200 py-8 text-center text-gray-500 text-sm select-none">
+    &copy; 2024 InvoiceGen. All rights reserved.
+  </footer>
+
+  <script>
+    "use strict";
+
+    // Dark mode toggle
+    (() => {
+      const darkToggle = document.getElementById("darkToggle");
+      const iconLight = document.getElementById("iconLight");
+      const iconDark = document.getElementById("iconDark");
+      const htmlEl = document.documentElement;
+
+      // Load theme from storage or system
+      const preferredDark = localStorage.getItem("invoiceGenDarkMode") === "true" ||
+                            (!("invoiceGenDarkMode" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+      if (preferredDark) {
+        htmlEl.classList.add("dark");
+        iconLight.classList.add("hidden");
+        iconDark.classList.remove("hidden");
+      }
+
+      darkToggle.addEventListener("click", () => {
+        htmlEl.classList.toggle("dark");
+        const isDark = htmlEl.classList.contains("dark");
+        iconLight.classList.toggle("hidden");
+        iconDark.classList.toggle("hidden");
+        localStorage.setItem("invoiceGenDarkMode", isDark);
+      });
+    })();
+
+    // Invoice item template
+    function createItemRow(index) {
+      const div = document.createElement("div");
+      div.className = "grid grid-cols-7 gap-3 items-center";
+      div.dataset.index = index;
+      div.innerHTML = `
+        <input type="text" name="desc-${index}" placeholder="Description" required
+          class="col-span-3 border border-gray-300 rounded-md p-2 focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+        <input type="number" name="qty-${index}" placeholder="Qty" min="1" step="1" value="1" required
+          class="col-span-1 border border-gray-300 rounded-md p-2 text-center focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+        <input type="number" name="price-${index}" placeholder="Unit Price" min="0" step="0.01" value="0.00" required
+          class="col-span-2 border border-gray-300 rounded-md p-2 text-right focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+        <button type="button" aria-label="Remove item" class="col-span-1 text-red-600 hover:text-red-800 transition" title="Remove Item">
+          ✕
+        </button>
+      `;
+      return div;
+    }
+
+    (function invoiceGen() {
+      const form = document.getElementById("invoiceForm");
+      const itemsContainer = document.getElementById("itemsContainer");
+      const addItemBtn = document.getElementById("addItemBtn");
+      const invoiceOutput = document.getElementById("invoiceOutput");
+      const invoicePreview = document.getElementById("invoicePreview");
+      const printInvoiceBtn = document.getElementById("printInvoiceBtn");
+      const downloadInvoiceBtn = document.getElementById("downloadInvoiceBtn");
+
+      let itemCount = 0;
+
+      // Initialize with one item row
+      function addItem() {
+        const row = createItemRow(itemCount++);
+        itemsContainer.appendChild(row);
+        // Add remove button event
+        row.querySelector("button").addEventListener("click", () => {
+          itemsContainer.removeChild(row);
+          if (itemsContainer.children.length === 0) {
+            addItem();
+          }
+        });
+      }
+
+      addItem();
+
+      addItemBtn.addEventListener("click", () => addItem());
+
+      // Format currency helper
+      function formatCurrency(value) {
+        return new Intl.NumberFormat(navigator.language || "en-US", { style: "currency", currency: "USD" }).format(value);
+      }
+
+      // Generate Invoice HTML preview
+      function generateInvoiceHTML(data) {
+        const {
+          yourInfo,
+          clientInfo,
+          items,
+          taxRate,
+          date,
+          invoiceNumber,
+          totals
+        } = data;
+
+        // Sanitize text for HTML display
+        function escapeHTML(str) {
+          return str.replace(/[&<>'"]/g, tag => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '\'': '&#39;',
+            '"': '&quot;'
+          })[tag]);
+        }
+
+        return `
+          <style>
+            .invoice-container {
+              font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+              Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+              color: #333;
+            }
+            .invoice-header, .invoice-footer {
+              border-bottom: 2px solid #4F46E5;
+              padding-bottom: 1rem;
+              margin-bottom: 1rem;
+            }
+            .invoice-footer {
+              border-top: none;
+              border-bottom: none;
+            }
+            .section-title {
+              color: #4F46E5;
+              font-weight: 600;
+              font-size: 1.25rem;
+              margin-bottom: 0.75rem;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th {
+              background-color: #EEF2FF;
+              font-weight: 600;
+              padding: 0.75rem;
+              border: 1px solid #CBD5E1;
+              text-align: left;
+            }
+            td {
+              border: 1px solid #CBD5E1;
+              padding: 0.5rem 0.75rem;
+            }
+            .text-right { text-align: right; }
+            .mt-4 { margin-top: 1rem; }
+            .mb-2 { margin-bottom: 0.5rem; }
+            .font-bold { font-weight: 700; }
+            .text-indigo { color: #6366F1; }
+          </style>
+          <div class="invoice-container">
+            <div class="invoice-header flex justify-between items-center">
+              <div>
+                <h1 class="text-3xl font-extrabold text-indigo mb-2">Invoice</h1>
+                <div><strong>Invoice #:</strong> ${escapeHTML(invoiceNumber)}</div>
+                <div><strong>Date:</strong> ${escapeHTML(date)}</div>
+              </div>
+              <div style="text-align:right;">
+                <strong>${escapeHTML(yourInfo.name)}</strong><br />
+                <div>${escapeHTML(yourInfo.address || "")}</div>
+                <div>${escapeHTML(yourInfo.email)}</div>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <div class="section-title">Bill To:</div>
+              <div><strong>${escapeHTML(clientInfo.name)}</strong></div>
+              <div>${escapeHTML(clientInfo.address || "")}</div>
+              <div>${escapeHTML(clientInfo.email || "")}</div>
+            </div>
+
+            <table aria-label="Invoice Items">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th style="width: 6rem;">Qty</th>
+                  <th style="width: 10rem; text-align: right;">Unit Price</th>
+                  <th style="width: 10rem; text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map(item => `
+                  <tr>
+                    <td>${escapeHTML(item.description)}</td>
+                    <td>${item.quantity}</td>
+                    <td class="text-right">${formatCurrency(item.unitPrice)}</td>
+                    <td class="text-right">${formatCurrency(item.lineTotal)}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3" class="text-right">Subtotal:</th>
+                  <th class="text-right">${formatCurrency(totals.subtotal)}</th>
+                </tr>
+                <tr>
+                  <th colspan="3" class="text-right">Tax (${taxRate} %):</th>
+                  <th class="text-right">${formatCurrency(totals.tax)}</th>
+                </tr>
+                <tr>
+                  <th colspan="3" class="text-right font-bold">Total:</th>
+                  <th class="text-right font-bold">${formatCurrency(totals.total)}</th>
+                </tr>
+              </tfoot>
+            </table>
+
+            <div class="invoice-footer mt-6 text-sm text-gray-600">
+              Thank you for your business!
+            </div>
+          </div>
+        `;
+      }
+
+      // Generate a simple invoice number - YYYYMMDD + 4-digit random
+      function generateInvoiceNumber() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
+        const rnd = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+        return `${yyyy}${mm}${dd}-${rnd}`;
+      }
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+
+        // Basic validation already covered by required in inputs.
+
+        // Collect your info
+        const yourInfo = {
+          name: form.yourName.value.trim(),
+          email: form.yourEmail.value.trim(),
+          address: form.yourAddress.value.trim()
+        };
+
+        // Client info
+        const clientInfo = {
+          name: form.clientName.value.trim(),
+          email: form.clientEmail.value.trim(),
+          address: form.clientAddress.value.trim()
+        };
+
+        // Tax rate
+        let taxRate = parseFloat(form.taxRate.value);
+        if (isNaN(taxRate) || taxRate < 0) taxRate = 0;
+
+        // Items
+        const items = [];
+        for (let i = 0; i < itemsContainer.children.length; i++) {
+          const row = itemsContainer.children[i];
+          const desc = row.querySelector(`input[name="desc-${i}"]`).value.trim();
+          const qty = Number(row.querySelector(`input[name="qty-${i}"]`).value);
+          const price = Number(row.querySelector(`input[name="price-${i}"]`).value);
+
+          if (!desc) {
+            alert(`Description is required on item #${i+1}`);
+            return;
+          }
+          if (qty <= 0 || isNaN(qty)) {
+            alert(`Please enter a valid quantity (>0) on item #${i+1}`);
+            return;
+          }
+          if (price < 0 || isNaN(price)) {
+            alert(`Please enter a valid unit price (>=0) on item #${i+1}`);
+            return;
+          }
+
+          const lineTotal = qty * price;
+          items.push({ description: desc, quantity: qty, unitPrice: price, lineTotal });
+        }
+
+        if (items.length === 0) {
+          alert("Please add at least one invoice item.");
+          return;
+        }
+
+        // Calculate totals
+        const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+        const tax = +(subtotal * (taxRate / 100)).toFixed(2);
+        const total = +(subtotal + tax).toFixed(2);
+
+        // Prepare data for rendering
+        const data = {
+          yourInfo, clientInfo, items, taxRate, date: new Date().toLocaleDateString(), invoiceNumber: generateInvoiceNumber(),
+          totals: { subtotal, tax, total }
+        };
+
+        invoicePreview.innerHTML = generateInvoiceHTML(data);
+        invoiceOutput.classList.remove("hidden");
+        invoiceOutput.scrollIntoView({ behavior: "smooth" });
+      });
+
+      printInvoiceBtn.addEventListener("click", () => {
+        if (!invoicePreview.innerHTML.trim()) return;
+        const printWindow = window.open("", "PRINT", "height=650,width=900,top=100,left=150");
+        printWindow.document.write(`
+          <html>
+            <head><title>Print Invoice</title>
+            <style>
+              body { margin: 2rem; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; }
+              table { width: 100%; border-collapse: collapse; }
+              th, td { border: 1px solid #333; padding: 0.5rem; text-align: left; }
+              th { background-color: #EEF2FF; }
+              h1, h3 { color: #4F46E5; }
+            </style>
+            </head>
+            <body>${invoicePreview.innerHTML}</body>
+          </html>`);
+
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      });
+
+      downloadInvoiceBtn.addEventListener("click", () => {
+        if (!invoicePreview.innerHTML.trim()) return;
+
+        // Use basic approach to save as HTML file (could suggest PDF but needs libs)
+        // We offer a HTML download named invoice.html
+
+        const blob = new Blob(
+          [`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Invoice</title><style>
+            body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; margin: 2rem; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #333; padding: 0.5rem; text-align: left; }
+            th { background-color: #EEF2FF; }
+            h1, h3 { color: #4F46E5; }
+          </style></head><body>` + invoicePreview.innerHTML + `</body></html>`],
+          { type: "text/html" }
+        );
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "invoice.html";
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+    })();
+  </script>
+</body>
+</html>
+```
