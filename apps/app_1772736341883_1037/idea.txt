@@ -1,1 +1,0 @@
-Client feedback aggregator for service businesses that collects, summarizes, and displays customer feedback in customizable reports

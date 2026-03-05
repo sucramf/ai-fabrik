@@ -1,1 +1,0 @@
-A web tool that instantly generates personalized daily gratitude journal prompts based on a user’s mood and recent activities, helping them cultivate positivity and mindfulness with minimal effort.

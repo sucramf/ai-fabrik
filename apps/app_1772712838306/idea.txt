@@ -1,1 +1,0 @@
-A web tool that instantly converts any text passage into a shareable, distraction-free reading page with adjustable font size, background color, and reading timer to help users focus and read comfortably.

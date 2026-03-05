@@ -1,1 +1,0 @@
-A web tool that generates personalized daily positive affirmations based on user-selected moods and goals, delivered via automated emails or notifications to boost motivation and mental wellbeing.
