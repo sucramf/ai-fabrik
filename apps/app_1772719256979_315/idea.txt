@@ -1,1 +1,0 @@
-A SaaS tool called "ClearInvoices" that simplifies invoice management for freelancers and small businesses by automatically generating, sending, and tracking invoices with payment reminders and simple revenue reports—all in one easy dashboard.

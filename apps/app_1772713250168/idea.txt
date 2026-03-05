@@ -1,1 +1,0 @@
-A tool that converts long, complex URLs into short, descriptive, easy-to-remember custom links—perfect for sharing on social media or messaging—offering simple link tracking and expiration controls.

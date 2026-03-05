@@ -1,1 +1,0 @@
-Small business utility bill tracker and alert system for cost-saving notifications

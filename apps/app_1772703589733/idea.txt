@@ -1,1 +1,0 @@
-A web tool that generates personalized daily 3-step productivity plans based on your available time and main goals, sending reminders and progress tracking via email or app notifications.

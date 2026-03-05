@@ -1,1 +1,0 @@
-A web tool that instantly converts any handwritten math problem photo into neatly typed, editable equations and step-by-step solutions. Users snap or upload a picture, and the tool outputs clear digital math work—helpful for students, tutors, and parents. Simple, focused, and scalable as a subscription service.

@@ -1,1 +1,0 @@
-A web tool that quickly generates personalized daily affirmations based on a user’s mood input each morning—simple text output they can copy, print, or save to boost positivity throughout their day.

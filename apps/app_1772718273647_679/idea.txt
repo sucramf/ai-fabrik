@@ -1,1 +1,0 @@
-A web tool that generates personalized daily outfit suggestions based on the user’s local weather forecast and their saved wardrobe items. Users input or upload pictures/descriptions of their clothes once, then each morning they get a tailored outfit recommendation with weather-appropriate adjustments, saving time and decision fatigue.

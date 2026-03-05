@@ -1,1 +1,0 @@
-A web tool that instantly generates personalized daily affirmations based on a user’s current mood and goals, delivered via email or app notification each morning. Users input their feelings and focus areas briefly, and the tool crafts positive, motivating statements to boost mindset and productivity.

@@ -1,1 +1,0 @@
-A web tool that instantly summarizes long emails or articles into a few easy-to-read bullet points, helping busy people quickly grasp the key information without reading the entire text.
