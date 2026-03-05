@@ -1,1 +1,0 @@
-A web tool called "QuickSplit" that instantly calculates how to evenly split any bill among a group, including options for tax, tip, and partial payments, generating a shareable payment summary link for easy group settling.

@@ -1,1 +1,0 @@
-A tool that generates personalized daily email reminders based on your own custom habits and goals—users input small tasks or habits they want to build, set preferred times, and get a clean, minimal reminder email each day with motivational tips and progress tracking.

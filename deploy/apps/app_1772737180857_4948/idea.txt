@@ -1,1 +1,0 @@
-Expense receipt organizer with OCR and export to spreadsheet

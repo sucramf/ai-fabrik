@@ -1,1 +1,0 @@
-A web tool that lets users quickly generate and share customizable daily to-do lists with built-in priority suggestions based on task type and estimated time, helping people organize their day efficiently without complex setups.

@@ -1,1 +1,0 @@
-A web tool that quickly summarizes long emails into 3-5 bullet points, helping busy users grasp key info without reading the entire message.

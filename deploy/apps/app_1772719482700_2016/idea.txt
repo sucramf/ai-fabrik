@@ -1,1 +1,0 @@
-A subscription-based tool called "MeetingRecap" that automatically transcribes and summarizes video/audio calls from platforms like Zoom, Teams, or Google Meet into easy-to-read action items and highlights, helping small teams save time on note-taking and follow-ups.

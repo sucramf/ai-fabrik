@@ -1,1 +1,0 @@
-A web tool that instantly converts any URL into a clean, printable one-page summary by extracting and formatting only the main content—no ads, sidebars, or clutter—perfect for easy reading, offline saving, or quick sharing.
