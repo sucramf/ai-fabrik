@@ -1,0 +1,252 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Daily To-Do List Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+      }
+      50% {
+        box-shadow: 0 0 16px rgba(37, 99, 235, 0.9);
+      }
+    }
+    .glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <header class="bg-white shadow-md py-6 px-8 sticky top-0 z-50">
+    <h1 class="text-3xl font-extrabold text-indigo-600 tracking-tight">Smart To-Do Generator</h1>
+    <p class="mt-1 text-gray-500 max-w-xl">Generate personalized prioritized daily task lists tailored to your goals & schedule.</p>
+  </header>
+
+  <main class="flex-grow max-w-4xl mx-auto px-6 py-10">
+    <form id="goalForm" class="bg-white rounded-lg shadow-lg p-8 space-y-6" novalidate>
+      <div>
+        <label for="goals" class="block text-lg font-medium text-gray-700 mb-2">Your Goals (one per line)</label>
+        <textarea id="goals" rows="5" placeholder="E.g., Finish project report, workout, call clients" required
+          class="w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+        <p class="mt-1 text-sm text-gray-400">List the main goals you want to achieve today.</p>
+      </div>
+
+      <div>
+        <label for="availableTime" class="block text-lg font-medium text-gray-700 mb-2">Available Time Today (hours)</label>
+        <input type="number" id="availableTime" min="0.5" max="24" step="0.5" value="8" required
+          class="w-32 rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <p class="mt-1 text-sm text-gray-400">How many hours do you have for tasks today?</p>
+      </div>
+
+      <div>
+        <label for="reminderToggle" class="inline-flex items-center space-x-3 cursor-pointer">
+          <input type="checkbox" id="reminderToggle" class="form-checkbox h-5 w-5 text-indigo-600" />
+          <span class="text-gray-700 font-medium">Enable Reminder Notifications</span>
+        </label>
+        <p class="mt-1 text-sm text-gray-400">Allow browser to send you reminders 10 minutes before planned tasks.</p>
+      </div>
+
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 transition rounded-md py-3 text-white font-semibold text-lg glow">
+        Generate To-Do List
+      </button>
+    </form>
+
+    <section id="resultSection" class="mt-12 hidden">
+      <h2 class="text-2xl font-bold text-indigo-700 mb-4">Your Personalized To-Do List</h2>
+      <ul id="todoList" class="space-y-4"></ul>
+      <div id="noTasks" class="text-gray-500 mt-4 hidden">No tasks generated. Please enter valid goals and time.</div>
+    </section>
+  </main>
+
+  <footer class="bg-white shadow-inner p-6 text-center text-gray-500 text-sm select-none">
+    &copy; 2024 Smart To-Do Generator. Powered by Tailwind & Simple JS.
+  </footer>
+
+  <script>
+    // Helper: Estimate task durations (in hours) based on rough complexity from goal text length and keywords
+    function estimateTaskDuration(goalText) {
+      // Base duration: 0.5 - 2 hours depending on length
+      let base = Math.min(Math.max(goalText.length / 30, 0.5), 2);
+
+      // Boost duration for some keywords (simulate task complexity)
+      const keywords = [
+        { word: "call", duration: 0.5 },
+        { word: "email", duration: 0.3 },
+        { word: "project", duration: 1.5 },
+        { word: "report", duration: 1.2 },
+        { word: "workout", duration: 1 },
+        { word: "meeting", duration: 1 },
+        { word: "read", duration: 0.7 },
+        { word: "plan", duration: 0.8 },
+        { word: "design", duration: 1.5 },
+        { word: "review", duration: 1 },
+        { word: "write", duration: 1 },
+      ];
+
+      const lower = goalText.toLowerCase();
+      let extra = 0;
+      for (const k of keywords) {
+        if (lower.includes(k.word)) {
+          extra = Math.max(extra, k.duration);
+        }
+      }
+      return Math.max(base, extra);
+    }
+
+    // Priority score to sort tasks - higher priority for shorter duration and containing urgent keywords
+    function priorityScore(task) {
+      // Urgent keywords boost
+      const urgentWords = ["urgent", "ASAP", "important", "now", "priority", "today"];
+      let score = 0;
+      const text = task.text.toLowerCase();
+      for (const w of urgentWords) {
+        if (text.includes(w)) {
+          score += 10;
+        }
+      }
+      // Shorter estimated duration gets higher score (so done quickly)
+      score += Math.max(0, 5 - task.duration);
+      return score;
+    }
+
+    // Request and check notification permissions
+    async function requestNotificationPermission() {
+      if (!("Notification" in window)) {
+        alert("This browser does not support notifications.");
+        return false;
+      }
+      if (Notification.permission === "granted") {
+        return true;
+      }
+      if (Notification.permission !== "denied") {
+        let permission = await Notification.requestPermission();
+        return permission === "granted";
+      }
+      return false;
+    }
+
+    // Show notification
+    function showNotification(title, body) {
+      if (Notification.permission === "granted") {
+        new Notification(title, {
+          body,
+          icon: "https://cdn-icons-png.flaticon.com/512/1827/1827504.png"
+        });
+      }
+    }
+
+    // Schedule notifications
+    let notificationTimers = [];
+    function scheduleNotifications(tasks) {
+      // Clear previous timers
+      notificationTimers.forEach(t => clearTimeout(t));
+      notificationTimers = [];
+
+      // Current time in ms
+      const now = Date.now();
+
+      let accumulatedTime = 0; // in ms, tasks executed sequentially
+
+      for (const task of tasks) {
+        const durationMs = task.duration * 60 * 60 * 1000; // convert hours to ms
+        // Notify 10 minutes before task start, if start time is in future
+        const notifyTime = now + accumulatedTime - 10 * 60 * 1000;
+        if (notifyTime > now) {
+          notificationTimers.push(setTimeout(() => {
+            showNotification("Upcoming Task Reminder", `Upcoming: ${task.text}`);
+          }, notifyTime - now));
+        }
+        accumulatedTime += durationMs;
+      }
+    }
+
+    // Main form handler
+    document.getElementById("goalForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const goalsInput = document.getElementById("goals").value.trim();
+      const availableTimeInput = parseFloat(document.getElementById("availableTime").value);
+      const remindersEnabled = document.getElementById("reminderToggle").checked;
+
+      if (!goalsInput || isNaN(availableTimeInput) || availableTimeInput <= 0) {
+        alert("Please enter valid goals and available time.");
+        return;
+      }
+
+      // Parse goals into tasks
+      let tasks = goalsInput.split("\n")
+        .map(g => g.trim())
+        .filter(g => g.length > 0)
+        .map(g => ({
+          text: g,
+          duration: estimateTaskDuration(g),
+        }));
+
+      if (tasks.length === 0) {
+        alert("Please enter at least one valid goal.");
+        return;
+      }
+
+      // Calculate total estimated duration
+      let totalDuration = tasks.reduce((acc, t) => acc + t.duration, 0);
+
+      // If totalDuration > available, scale down durations proportionally (minimum per task 0.25h)
+      if (totalDuration > availableTimeInput) {
+        const scale = availableTimeInput / totalDuration;
+        tasks = tasks.map(t => ({
+          ...t,
+          duration: Math.max(0.25, t.duration * scale)
+        }));
+        totalDuration = tasks.reduce((acc, t) => acc + t.duration, 0);
+      }
+
+      // Prioritize tasks using priority score (descending)
+      tasks.sort((a, b) => priorityScore(b) - priorityScore(a));
+
+      // Display tasks
+      const todoList = document.getElementById("todoList");
+      todoList.innerHTML = "";
+
+      for (const t of tasks) {
+        const item = document.createElement("li");
+        item.className = "bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex justify-between items-center shadow-sm hover:shadow-md transition";
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = t.text;
+        textSpan.className = "text-indigo-900 font-medium text-lg";
+
+        const durationSpan = document.createElement("span");
+        durationSpan.textContent = `${t.duration.toFixed(2)}h`;
+        durationSpan.className = "text-indigo-600 font-semibold bg-indigo-100 rounded-full px-3 py-1 text-sm select-none";
+
+        item.appendChild(textSpan);
+        item.appendChild(durationSpan);
+        todoList.appendChild(item);
+      }
+
+      document.getElementById("noTasks").classList.toggle("hidden", tasks.length > 0);
+      document.getElementById("resultSection").classList.remove("hidden");
+
+      // Handle notifications
+      if (remindersEnabled) {
+        const granted = await requestNotificationPermission();
+        if (!granted) {
+          alert("Notifications permission denied or dismissed. Reminders will not be sent.");
+          return;
+        }
+        scheduleNotifications(tasks);
+      } else {
+        // Clear any existing scheduled notifications if reminders disabled
+        notificationTimers.forEach(t => clearTimeout(t));
+        notificationTimers = [];
+      }
+    });
+  </script>
+</body>
+</html>
+```

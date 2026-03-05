@@ -1,0 +1,276 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MeetSum - Meeting Summary & Action Item Extractor</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    /* Custom scrollbar for textarea and output */
+    textarea::-webkit-scrollbar,
+    #result::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    textarea::-webkit-scrollbar-track,
+    #result::-webkit-scrollbar-track {
+      background: #eef2ff;
+      border-radius: 4px;
+    }
+    textarea::-webkit-scrollbar-thumb,
+    #result::-webkit-scrollbar-thumb {
+      background: #6366f1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-indigo-50 to-white text-gray-900 font-sans antialiased min-h-screen flex flex-col">
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+      <a href="#" class="text-3xl font-extrabold text-indigo-600 select-none tracking-tight">MeetSum</a>
+      <ul class="hidden md:flex space-x-12 font-semibold text-indigo-700">
+        <li><a href="#tool" class="hover:text-indigo-500 transition-colors">Tool</a></li>
+        <li><a href="#features" class="hover:text-indigo-500 transition-colors">Features</a></li>
+        <li><a href="#footer" class="hover:text-indigo-500 transition-colors">Contact</a></li>
+      </ul>
+      <button id="btn-menu" aria-label="Toggle Menu" class="md:hidden text-indigo-600 focus:outline-none hover:text-indigo-500 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden bg-white shadow-inner hidden">
+      <ul class="flex flex-col space-y-3 p-6 font-semibold text-indigo-700 border-t border-indigo-100">
+        <li><a href="#tool" class="block hover:text-indigo-500 transition-colors">Tool</a></li>
+        <li><a href="#features" class="block hover:text-indigo-500 transition-colors">Features</a></li>
+        <li><a href="#footer" class="block hover:text-indigo-500 transition-colors">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-r from-indigo-700 to-indigo-600 text-white">
+    <div class="max-w-7xl mx-auto px-6 py-24 md:py-32 grid grid-cols-1 md:grid-cols-2 items-center gap-y-12 md:gap-x-16">
+      <div class="max-w-3xl mx-auto md:mx-0 text-center md:text-left drop-shadow-lg">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-[1.1]">
+          Automate Meeting Notes &amp; Action Items with AI
+        </h1>
+        <p class="mt-6 text-indigo-200 text-lg md:text-xl leading-relaxed max-w-xl">
+          Stop wasting time writing meeting summaries. Upload recordings or transcripts and get clear summaries, key decisions, and actionable tasks — instantly.
+        </p>
+        <a href="#tool" class="inline-block mt-10 px-10 py-4 bg-white text-indigo-700 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300">Try it Now for Free</a>
+      </div>
+      <div aria-hidden="true" class="max-w-md mx-auto md:mx-0">
+        <img src="https://cdn.dribbble.com/users/1202684/screenshots/7055983/media/c0a71b1961dc8424a1b06e3d551f5d10.png" alt="Meeting summary illustration" class="rounded-3xl shadow-lg ring-2 ring-indigo-500 ring-opacity-20" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool Section -->
+  <section id="tool" class="max-w-7xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-extrabold text-center text-gray-900 mb-12 select-none tracking-tight">Meeting Summary &amp; Action Item Extractor</h2>
+    <div class="flex flex-col md:flex-row gap-12 md:gap-14">
+      <form id="extractor-form" class="flex-1 bg-white p-10 rounded-3xl shadow-2xl flex flex-col gap-8">
+        <label for="inputText" class="block text-lg font-semibold text-gray-800 select-none">Paste Meeting Transcript</label>
+        <textarea
+          id="inputText"
+          rows="9"
+          placeholder="Paste your meeting transcript here..."
+          class="resize-y w-full rounded-xl border border-indigo-300 p-5 font-medium text-gray-900 placeholder-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
+          required
+        ></textarea>
+
+        <div class="text-sm text-gray-500 select-none">
+          Or upload an audio/video recording (MP3, MP4, WAV) to generate summary (simulated).
+        </div>
+        <input
+          type="file"
+          id="fileInput"
+          accept="audio/*,video/*"
+          class="block text-indigo-700 hover:text-indigo-600 transition cursor-pointer"
+        />
+
+        <button
+          type="submit"
+          class="mt-auto w-full py-4 bg-indigo-600 text-white text-lg font-semibold rounded-3xl shadow-lg hover:bg-indigo-700 hover:shadow-xl transition duration-300"
+        >
+          Generate Summary &amp; Action Items
+        </button>
+      </form>
+
+      <section
+        id="result"
+        class="flex-1 bg-white p-10 rounded-3xl shadow-2xl flex flex-col overflow-y-auto max-h-[580px]"
+        aria-live="polite"
+      >
+        <h3 class="text-2xl font-extrabold text-gray-900 mb-6 select-none tracking-tight">AI Generated Output</h3>
+        <pre id="output" class="whitespace-pre-wrap text-gray-700 font-medium leading-relaxed flex-grow scrollbar-thin scrollbar-thumb-indigo-400 scrollbar-track-indigo-100 rounded-lg p-4 bg-indigo-50">
+No summary generated yet. Paste a transcript or upload a recording to start.
+        </pre>
+      </section>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="bg-indigo-50 py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-extrabold text-center text-indigo-900 mb-20 select-none tracking-tight">Features that Supercharge Your Meetings</h2>
+      <div class="grid gap-12 md:grid-cols-3">
+        <article class="bg-white rounded-3xl p-10 shadow-md hover:shadow-lg transition cursor-default flex flex-col">
+          <div class="mb-6 w-16 h-16 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-full select-none shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 10h.01M12 10h.01M16 10h.01M9 16h6" />
+              <path d="M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 select-none">AI-Powered Transcript Summarization</h3>
+          <p class="text-gray-600 flex-grow">Get concise summaries that capture all key points without sifting through long transcripts.</p>
+        </article>
+
+        <article class="bg-white rounded-3xl p-10 shadow-md hover:shadow-lg transition cursor-default flex flex-col">
+          <div class="mb-6 w-16 h-16 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-full select-none shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12h6m-6 4h6m-3-8v8" />
+              <path d="M12 6v2" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 select-none">Extract Action Items</h3>
+          <p class="text-gray-600 flex-grow">Automatically identify tasks, assignees and deadlines to ensure nothing slips through the cracks.</p>
+        </article>
+
+        <article class="bg-white rounded-3xl p-10 shadow-md hover:shadow-lg transition cursor-default flex flex-col">
+          <div class="mb-6 w-16 h-16 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-full select-none shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z" />
+              <path d="M12 14c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 select-none">Ideal for Remote Teams</h3>
+          <p class="text-gray-600 flex-grow">Designed for distributed teams and busy professionals who want faster, smarter meeting management.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-white border-t border-gray-200 mt-auto py-12 text-center text-gray-600 select-none px-6">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-sm sm:text-base">© 2024 MeetSum. All rights reserved.</p>
+      <p class="mt-3 text-sm sm:text-base">Designed with <span aria-label="love" role="img">❤️</span> to boost your meeting productivity.</p>
+      <p class="mt-3 text-sm sm:text-base">
+        <a href="mailto:support@meetsum.ai" class="text-indigo-600 font-semibold hover:underline transition">support@meetsum.ai</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const btnMenu = document.getElementById("btn-menu");
+    const mobileMenu = document.getElementById("mobile-menu");
+    btnMenu.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+
+    // Simulated AI extraction function (simple heuristics)
+    function extractSummaryAndActionItems(text) {
+      const lines = text.trim().split(/\n+/).filter(Boolean);
+      let summary = "";
+      let count = 0;
+      for (const line of lines) {
+        if (count >= 3) break;
+        summary += line.trim() + " ";
+        count++;
+      }
+      summary = summary.trim();
+
+      const actionVerbs = [
+        "assign","complete","follow up","schedule","send","review","update","prepare","organize",
+        "finalize","confirm","plan","discuss","call","email","submit","get","check","approve"
+      ];
+
+      let actionItems = [];
+
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        let lline = line.toLowerCase();
+
+        if (actionVerbs.some(verb => lline.includes(verb))) {
+          let assigneeMatch = line.match(/\b(to|for)\s([A-Z][a-zA-Z]+)/);
+          let assignee = assigneeMatch ? assigneeMatch[2] : "";
+
+          let deadlineMatch = line.match(/\b(by|before|due on|deadline)\b.*?(\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w* \d{1,2}(?:st|nd|rd|th)?|\d{1,2}[\/\-]\d{1,2}[\/\-]?\d{0,4}|\bthis week\b|\btomorrow\b|\btoday\b)/i);
+          let deadline = deadlineMatch ? deadlineMatch[0] : "";
+
+          let actionText = line.trim();
+
+          actionItems.push({
+            text: actionText,
+            assignee: assignee,
+            deadline: deadline
+          });
+        }
+      }
+      if (actionItems.length === 0) {
+        actionItems.push({text:"No explicit action items detected."});
+      }
+
+      return {summary, actionItems};
+    }
+
+    // Generate formatted output
+    function formatOutput({summary, actionItems}) {
+      let out = "📄 Meeting Summary:\n\n";
+      out += summary + "\n\n";
+
+      out += "📝 Action Items:\n";
+      actionItems.forEach((item, i) => {
+        let line = `${i + 1}. ${item.text}`;
+        if (item.assignee) line += ` (Assignee: ${item.assignee})`;
+        if (item.deadline) line += ` [Deadline: ${item.deadline}]`;
+        out += line + "\n";
+      });
+
+      return out.trim();
+    }
+
+    // Form handling
+    const form = document.getElementById("extractor-form");
+    const output = document.getElementById("output");
+    const inputText = document.getElementById("inputText");
+    const fileInput = document.getElementById("fileInput");
+
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+
+      // Clear any previous output and show loading text
+      output.textContent = "Generating summary and action items... ⏳";
+
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        // Simulated transcription delay
+        await new Promise(r => setTimeout(r, 1500));
+        const demoTranscript = `Project kickoff meeting held on Monday.
+John to prepare presentation slides by next Monday.
+Sarah will review the budget report and send feedback by Friday.
+Schedule follow-up meeting for next week.
+Team to finalize project timeline before next month.`;
+
+        const result = extractSummaryAndActionItems(demoTranscript);
+        output.textContent = formatOutput(result);
+      } else {
+        const text = inputText.value.trim();
+        if (!text) {
+          output.textContent = "Please paste a transcript or upload a recording to generate summary.";
+          return;
+        }
+        await new Promise(r => setTimeout(r, 800));
+        const result = extractSummaryAndActionItems(text);
+        output.textContent = formatOutput(result);
+      }
+    });
+  </script>
+</body>
+</html>
+```

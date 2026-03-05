@@ -1,0 +1,1 @@
+A SaaS tool called "EasyReceipt" that automatically organizes and categorizes digital receipts from emails and photo uploads, providing small business owners and freelancers with an easy way to track expenses for tax season without manual data entry. Subscription includes storage, expense reports, and export to popular accounting software.

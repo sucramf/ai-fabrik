@@ -1,0 +1,1 @@
+AutoMealPrep: a web tool where users input their dietary preferences, available ingredients, and time constraints; it instantly generates simple, healthy meal prep plans with grocery lists and cooking steps tailored to weekdays.

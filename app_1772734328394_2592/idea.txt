@@ -1,0 +1,1 @@
+Simple inventory tracking SaaS for local craft stores with barcode scanning support

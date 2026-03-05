@@ -1,0 +1,1 @@
+A web tool that converts messy, copied text from emails or documents into clean, plain text by automatically removing extra spaces, line breaks, formatting artifacts, and fixing punctuation spacing—all with one click. Users can paste text, clean it instantly, and copy the output for clear communication or easy note-taking.

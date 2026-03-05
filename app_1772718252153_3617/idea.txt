@@ -1,0 +1,1 @@
+A web tool that instantly generates personalized grocery shopping lists based on a user’s basic meal preferences and household size, with options to save, edit, and export lists to phone reminders or printable format.

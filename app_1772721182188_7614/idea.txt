@@ -1,0 +1,1 @@
+A web tool that generates personalized daily productivity playlists by analyzing your calendar and preferred music genres to boost focus and energy throughout the day.

@@ -1,0 +1,533 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EventEase - Simple Event Scheduling & Reminders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for RSVP list */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f3f4f6;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #8b5cf6;
+      border-radius: 10px;
+      border: 2px solid #f3f4f6;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen font-sans">
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 flex justify-between items-center h-16">
+      <a href="#" class="text-3xl font-extrabold text-purple-700 select-none tracking-wide hover:text-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">
+        EventEase
+      </a>
+      <ul class="hidden md:flex space-x-10 font-semibold text-gray-700">
+        <li><a href="#hero" class="hover:text-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Home</a></li>
+        <li><a href="#tool" class="hover:text-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Tool</a></li>
+        <li><a href="#pricing" class="hover:text-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Pricing</a></li>
+      </ul>
+      <a href="#tool" class="hidden md:inline-block bg-purple-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-purple-700 transition focus:outline-none focus:ring-2 focus:ring-purple-500 ring-purple-600" aria-label="Get started with EventEase">
+        Get Started
+      </a>
+      <button id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" class="md:hidden p-2 rounded-md text-purple-700 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+      <ul class="flex flex-col p-5 space-y-3 font-semibold text-gray-700">
+        <li><a href="#hero" class="block py-3 px-4 hover:text-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Home</a></li>
+        <li><a href="#tool" class="block py-3 px-4 hover:text-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Tool</a></li>
+        <li><a href="#pricing" class="block py-3 px-4 hover:text-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Pricing</a></li>
+        <li><a href="#tool" class="block py-3 bg-purple-600 text-white rounded-md text-center hover:bg-purple-700 transition font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500">
+          Get Started
+        </a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero" class="flex-grow bg-gradient-to-r from-purple-700 to-indigo-700 text-white">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-24 sm:py-32 text-center">
+      <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto drop-shadow-lg leading-tight">
+        Simplify Your Event Scheduling &amp; Reminders with <span class="underline decoration-purple-300 decoration-4">EventEase</span>
+      </h1>
+      <p class="mt-8 max-w-3xl mx-auto text-lg sm:text-xl font-medium drop-shadow-md text-purple-200">
+        Create events, send automated reminders via email &amp; SMS, track RSVPs, and easily integrate with calendar apps — all in one simple platform.
+      </p>
+      <a href="#tool" class="mt-12 inline-block bg-white text-purple-700 font-extrabold px-10 py-4 rounded-xl shadow-lg hover:bg-purple-50 focus:outline-none focus:ring-4 focus:ring-purple-300 transition text-lg sm:text-xl">
+        Start Scheduling Now
+      </a>
+    </div>
+  </section>
+
+  <!-- Tool UI -->
+  <section id="tool" class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-20 sm:py-24">
+    <h2 class="text-4xl font-extrabold text-center text-purple-700 mb-16 tracking-tight">EventEase Tool</h2>
+    <div class="flex flex-col md:flex-row md:space-x-16 gap-10">
+      <!-- Event creation form -->
+      <form id="event-form" class="md:flex-1 bg-white p-10 rounded-2xl shadow-xl space-y-8 ring-1 ring-gray-200">
+        <h3 class="text-3xl font-semibold text-gray-900 mb-6">Create New Event</h3>
+
+        <div>
+          <label for="event-name" class="block font-semibold text-gray-700 mb-2">Event Name <span class="text-red-600">*</span></label>
+          <input id="event-name" name="eventName" type="text" required placeholder="e.g. Monthly Workshop" autocomplete="off" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label for="event-date" class="block font-semibold text-gray-700 mb-2">Date <span class="text-red-600">*</span></label>
+            <input id="event-date" name="eventDate" type="date" required class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition" />
+          </div>
+          <div>
+            <label for="event-time" class="block font-semibold text-gray-700 mb-2">Time <span class="text-red-600">*</span></label>
+            <input id="event-time" name="eventTime" type="time" required class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition" />
+          </div>
+        </div>
+
+        <div>
+          <label for="event-desc" class="block font-semibold text-gray-700 mb-2">Description</label>
+          <textarea id="event-desc" name="eventDesc" rows="4" placeholder="Brief description or details" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 resize-y focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition"></textarea>
+        </div>
+
+        <div>
+          <label for="event-location" class="block font-semibold text-gray-700 mb-2">Location / Link</label>
+          <input id="event-location" name="eventLocation" type="text" placeholder="Physical address or virtual meeting link" autocomplete="off" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition" />
+        </div>
+
+        <div>
+          <label for="event-recurrence" class="block font-semibold text-gray-700 mb-2">Recurrence</label>
+          <select id="event-recurrence" name="eventRecurrence" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition">
+            <option value="none" selected>None (One-time event)</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+
+        <fieldset class="border border-gray-300 rounded-lg p-6 bg-purple-50">
+          <legend class="font-semibold text-purple-700 mb-4 text-lg">Reminders</legend>
+          <div class="flex flex-col space-y-3">
+            <label class="inline-flex items-center space-x-3 cursor-pointer">
+              <input type="checkbox" id="reminder-email" checked class="form-checkbox h-5 w-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-400 transition" />
+              <span class="select-none text-purple-900 font-medium">Email Reminder</span>
+            </label>
+            <label class="inline-flex items-center space-x-3 cursor-pointer">
+              <input type="checkbox" id="reminder-sms" class="form-checkbox h-5 w-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-400 transition" />
+              <span class="select-none text-purple-900 font-medium">SMS Reminder</span>
+            </label>
+            <label for="reminder-time" class="mt-4 block font-semibold text-purple-800 text-base">Reminder Time Before Event</label>
+            <select id="reminder-time" class="w-full border border-purple-400 rounded-lg px-4 py-3 font-semibold bg-white text-purple-900 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition">
+              <option value="60">1 Hour Before</option>
+              <option value="1440" selected>1 Day Before</option>
+              <option value="10080">1 Week Before</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <div>
+          <label for="attendees" class="block font-semibold text-gray-700 mb-2">Add Attendees (Name &amp; Email or Phone)</label>
+          <small class="text-gray-500 block mb-2">Format: Name &lt;email@domain.com&gt; or Name &lt;+1234567890&gt;, one per line</small>
+          <textarea id="attendees" rows="6" placeholder="e.g. Jane Doe &lt;jane@example.com&gt;" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 resize-y focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-transparent transition"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-purple-600 text-white font-extrabold py-4 rounded-xl hover:bg-purple-700 shadow-lg transition focus:outline-none focus:ring-4 focus:ring-purple-500">
+          Create Event
+        </button>
+        <p id="form-feedback" role="alert" class="mt-3 text-center text-sm font-semibold min-h-[1.25rem]"></p>
+      </form>
+
+      <!-- Event details & RSVP tracking -->
+      <div class="md:flex-1 bg-white p-10 rounded-2xl shadow-xl flex flex-col ring-1 ring-gray-200 min-h-[600px]">
+        <h3 class="text-3xl font-semibold text-gray-900 mb-6 tracking-tight">Upcoming Events</h3>
+        <div id="events-list" class="flex-grow overflow-auto max-h-[480px] divide-y divide-gray-200 rounded-lg border border-gray-200 p-6 bg-white ring-1 ring-gray-100">
+          <p class="text-gray-500 select-none text-center mt-28 text-lg">No events created yet.</p>
+        </div>
+
+        <div id="event-details" class="mt-12 hidden flex flex-col space-y-6 border-t border-gray-300 pt-8">
+          <h4 class="text-2xl font-extrabold text-purple-700" id="detail-event-name"></h4>
+          <p id="detail-event-desc" class="text-gray-800 leading-relaxed"></p>
+
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-gray-700 font-semibold">
+            <div>
+              <dt class="text-gray-500 text-sm">Date &amp; Time</dt>
+              <dd id="detail-event-date-time" class="mt-1 text-lg"></dd>
+            </div>
+            <div>
+              <dt class="text-gray-500 text-sm">Location/Link</dt>
+              <dd class="mt-1">
+                <a href="#" target="_blank" rel="noopener" id="detail-event-location" class="text-purple-600 hover:underline break-words cursor-pointer"></a>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-gray-500 text-sm">Recurrence</dt>
+              <dd id="detail-event-recurrence" class="mt-1"></dd>
+            </div>
+            <div>
+              <dt class="text-gray-500 text-sm">Reminders</dt>
+              <dd id="detail-event-reminders" class="mt-1"></dd>
+            </div>
+          </dl>
+
+          <div class="pt-2">
+            <h5 class="font-semibold text-gray-900 mb-3">Attendees &amp; RSVPs</h5>
+            <ul id="rsvp-list" class="max-h-40 overflow-auto border border-gray-300 rounded-lg p-4 space-y-3 bg-gray-50 shadow-inner custom-scrollbar">
+              <!-- Dynamically filled -->
+            </ul>
+          </div>
+
+          <button id="send-reminders-btn" class="w-full bg-purple-600 text-white font-extrabold py-3 rounded-xl hover:bg-purple-700 transition shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-500" title="Simulate sending reminders">
+            Send Reminders Now
+          </button>
+          <p id="send-reminders-feedback" role="alert" class="mt-3 text-sm font-semibold text-green-800 min-h-[1.25rem] text-center"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="bg-white py-24">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+      <h2 class="text-4xl font-extrabold text-center text-purple-700 mb-16 tracking-tight">Pricing Plans</h2>
+      <div class="grid gap-12 max-w-5xl mx-auto md:grid-cols-3 text-center px-4 sm:px-0">
+        <div class="border border-gray-300 rounded-3xl p-10 shadow-md hover:shadow-xl transition duration-300 ease-in-out flex flex-col">
+          <h3 class="text-2xl font-semibold mb-5 text-gray-800">Free</h3>
+          <p class="text-5xl font-extrabold mb-6 text-purple-700 tracking-tight">$0<span class="text-lg font-normal">/mo</span></p>
+          <ul class="mb-8 space-y-4 text-gray-700 flex-grow">
+            <li>Up to 3 events/month</li>
+            <li>Max 20 attendees/event</li>
+            <li>Email reminders only</li>
+            <li>Basic RSVP tracking</li>
+          </ul>
+          <button class="bg-purple-600 text-white px-8 py-4 rounded-2xl font-semibold cursor-not-allowed opacity-60 select-none" disabled aria-current="true" aria-label="Current plan Free">
+            Current Plan
+          </button>
+        </div>
+        <div class="border-4 border-purple-600 rounded-3xl p-10 shadow-2xl bg-purple-50 flex flex-col">
+          <h3 class="text-2xl font-semibold mb-5 text-purple-700">Pro</h3>
+          <p class="text-5xl font-extrabold mb-6 text-purple-800 tracking-tight">$19<span class="text-lg font-normal">/mo</span></p>
+          <ul class="mb-8 space-y-4 text-gray-800 flex-grow">
+            <li>Up to 20 events/month</li>
+            <li>Max 100 attendees/event</li>
+            <li>Email &amp; SMS reminders</li>
+            <li>Calendar integrations</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="bg-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-purple-700 shadow-lg transition focus:outline-none focus:ring-4 focus:ring-purple-500" aria-label="Choose Pro plan">
+            Choose Pro
+          </button>
+        </div>
+        <div class="border border-gray-300 rounded-3xl p-10 shadow-md hover:shadow-xl transition duration-300 ease-in-out flex flex-col">
+          <h3 class="text-2xl font-semibold mb-5 text-gray-800">Enterprise</h3>
+          <p class="text-5xl font-extrabold mb-6 text-purple-700 tracking-tight">$49<span class="text-lg font-normal">/mo</span></p>
+          <ul class="mb-8 space-y-4 text-gray-700 flex-grow">
+            <li>Unlimited events &amp; attendees</li>
+            <li>Email &amp; SMS reminders</li>
+            <li>Full calendar &amp; CRM integration</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <button class="bg-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-purple-700 shadow-lg transition focus:outline-none focus:ring-4 focus:ring-purple-500" aria-label="Contact Sales for Enterprise plan">
+            Contact Sales
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-10 mt-auto">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+      <p class="text-center md:text-left text-sm select-none">© 2024 EventEase. All rights reserved.</p>
+      <nav class="flex flex-wrap justify-center gap-8 text-sm font-semibold" aria-label="Footer navigation">
+        <a href="#hero" class="hover:text-purple-400 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-1 py-0.5">Home</a>
+        <a href="#tool" class="hover:text-purple-400 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-1 py-0.5">Tool</a>
+        <a href="#pricing" class="hover:text-purple-400 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-1 py-0.5">Pricing</a>
+        <a href="mailto:support@eventease.com" class="hover:text-purple-400 transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-1 py-0.5">Support</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', !expanded);
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Data storage: in-memory events array (simulate persistence)
+    let events = [];
+
+    // Utility: parse attendees textarea input
+    function parseAttendees(input) {
+      const lines = input.split('\n').map(l => l.trim()).filter(l => l.length);
+      const attendees = [];
+      const emailOrPhoneRegex = /<([^>]+)>$/;
+      lines.forEach(line => {
+        const m = line.match(emailOrPhoneRegex);
+        if (!m) return; // ignore lines without valid <...>
+        const contact = m[1];
+        const name = line.replace(emailOrPhoneRegex, '').trim();
+        // Simple type detection
+        const isPhone = /^[+]?[\d\s\-()]{6,}$/.test(contact);
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
+        if (!isPhone && !isEmail) return; // skip invalid contact
+        attendees.push({
+          name: name || contact,
+          contact,
+          type: isEmail? 'email': 'sms',
+          rsvp: null // null = no response yet, true = attending, false = not attending
+        });
+      });
+      return attendees;
+    }
+
+    // Render functions
+    const eventsListEl = document.getElementById('events-list');
+    const eventDetailsEl = document.getElementById('event-details');
+    const feedbackEl = document.getElementById('form-feedback');
+
+    function formatDateTime(dateStr, timeStr) {
+      const dt = new Date(dateStr + 'T' + timeStr);
+      if (isNaN(dt)) return 'Invalid Date';
+      return dt.toLocaleString(undefined, {
+        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit',
+      });
+    }
+
+    function recurrenceLabel(val) {
+      switch(val) {
+        case 'none': return 'One-time event';
+        case 'daily': return 'Daily';
+        case 'weekly': return 'Weekly';
+        case 'monthly': return 'Monthly';
+        default: return 'Unknown';
+      }
+    }
+
+    function reminderLabel(email, sms, minsBefore) {
+      const timesMap = {
+        60: "1 hour before",
+        1440: "1 day before",
+        10080: "1 week before"
+      };
+      let parts = [];
+      if(email) parts.push('Email');
+      if(sms) parts.push('SMS');
+      if(parts.length === 0) return 'No reminders set';
+      return parts.join(' & ') + ` (${timesMap[minsBefore] || ''})`;
+    }
+
+    // Render the list of events summary
+    function renderEventsList() {
+      if(events.length === 0) {
+        eventsListEl.innerHTML = '<p class="text-gray-500 select-none text-center mt-28 text-lg">No events created yet.</p>';
+        eventDetailsEl.classList.add('hidden');
+        return;
+      }
+
+      eventsListEl.innerHTML = '';
+      events.forEach((ev, idx) => {
+        const div = document.createElement('div');
+        div.className = "py-4 flex justify-between items-center cursor-pointer hover:bg-purple-50 rounded-lg p-4 transition shadow-sm focus:ring-2 focus:ring-purple-400 focus:outline-none";
+        div.tabIndex = 0;
+        div.setAttribute('role', 'button');
+        div.setAttribute('aria-label', `View details for event: ${ev.name}`);
+        div.innerHTML = `
+          <div>
+            <p class="font-semibold text-purple-700 text-lg">${ev.name}</p>
+            <p class="text-sm text-gray-600 mt-0.5">${formatDateTime(ev.date, ev.time)}</p>
+          </div>
+          <div class="text-sm text-gray-500 select-none px-3 py-1 rounded-lg bg-purple-100">
+            Attendees: ${ev.attendees.length}
+          </div>
+        `;
+        div.onclick = () => selectEvent(idx);
+        div.onkeypress = (e) => { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); selectEvent(idx); }};
+        eventsListEl.appendChild(div);
+      });
+      eventDetailsEl.classList.add('hidden');
+    }
+
+    // Show details of selected event
+    function selectEvent(index) {
+      const ev = events[index];
+      const nameEl = document.getElementById('detail-event-name');
+      const descEl = document.getElementById('detail-event-desc');
+      const dtEl = document.getElementById('detail-event-date-time');
+      const locEl = document.getElementById('detail-event-location');
+      const recEl = document.getElementById('detail-event-recurrence');
+      const remEl = document.getElementById('detail-event-reminders');
+
+      nameEl.textContent = ev.name;
+      descEl.textContent = ev.description || 'No description provided.';
+      dtEl.textContent = formatDateTime(ev.date, ev.time);
+
+      if(ev.location) {
+        locEl.textContent = ev.location;
+        if(ev.location.startsWith('http://') || ev.location.startsWith('https://')) {
+          locEl.href = ev.location;
+          locEl.classList.remove('pointer-events-none', 'text-gray-400', 'cursor-default');
+          locEl.setAttribute('aria-disabled', 'false');
+        } else {
+          locEl.href = '#';
+          locEl.classList.add('pointer-events-none', 'text-gray-400', 'cursor-default');
+          locEl.setAttribute('aria-disabled', 'true');
+        }
+      } else {
+        locEl.textContent = 'Not specified';
+        locEl.href = '#';
+        locEl.classList.add('pointer-events-none', 'text-gray-400', 'cursor-default');
+        locEl.setAttribute('aria-disabled', 'true');
+      }
+      recEl.textContent = recurrenceLabel(ev.recurrence);
+      remEl.textContent = reminderLabel(ev.reminderEmail, ev.reminderSMS, ev.reminderMins);
+
+      // RSVP list
+      const rsvpList = document.getElementById('rsvp-list');
+      rsvpList.innerHTML = '';
+      if(ev.attendees.length === 0) {
+        rsvpList.innerHTML = '<li class="text-gray-500 select-none text-center py-4">No attendees added yet.</li>';
+      } else {
+        ev.attendees.forEach((at, i) => {
+          const li = document.createElement('li');
+          li.className = "flex justify-between items-center bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition focus-within:ring-2 focus-within:ring-purple-400";
+          li.tabIndex = 0;
+          li.setAttribute('aria-label', `${at.name}, ${at.contact} (${at.type.toUpperCase()}). RSVP status: ${at.rsvp === true ? "Attending" : at.rsvp === false ? "Not attending" : "No response"}`);
+          li.innerHTML = `
+            <div>
+              <p class="font-semibold text-gray-900 truncate max-w-xs">${escapeHtml(at.name)}</p>
+              <p class="text-xs text-gray-500 truncate max-w-xs">${escapeHtml(at.contact)} (${at.type.toUpperCase()})</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <button aria-label="Mark ${at.name} as Attending" title="Attending" class="rsvp-btn text-green-600 hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 rounded-md p-1 ${at.rsvp === true ? 'font-bold' : 'font-normal'}" type="button" tabindex="0" >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+              </button>
+              <button aria-label="Mark ${at.name} as Not Attending" title="Not attending" class="rsvp-btn text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 rounded-md p-1 ${at.rsvp === false ? 'font-bold' : 'font-normal'}" type="button" tabindex="0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+          `;
+          const [btnYes, btnNo] = li.querySelectorAll('.rsvp-btn');
+          btnYes.onclick = () => { at.rsvp = true; renderEventsList(); selectEvent(index); };
+          btnYes.onkeypress = (e) => { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); at.rsvp = true; renderEventsList(); selectEvent(index); } };
+          btnNo.onclick = () => { at.rsvp = false; renderEventsList(); selectEvent(index); };
+          btnNo.onkeypress = (e) => { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); at.rsvp = false; renderEventsList(); selectEvent(index); } };
+          rsvpList.appendChild(li);
+        });
+      }
+
+      // Send reminders button
+      const sendBtn = document.getElementById('send-reminders-btn');
+      const sendFb = document.getElementById('send-reminders-feedback');
+      sendFb.textContent = '';
+      sendBtn.disabled = false;
+      sendBtn.onclick = () => {
+        sendBtn.disabled = true;
+        sendFb.textContent = "Sending reminders...";
+        setTimeout(() => {
+          // Simulate sending reminders
+          let count = 0;
+          ev.attendees.forEach(at => {
+            if(ev.reminderEmail && at.type === 'email') count++;
+            if(ev.reminderSMS && at.type === 'sms') count++;
+          });
+          sendFb.textContent = `Reminders sent to ${count} contact${count !== 1 ? 's' : ''} (simulated).`;
+          sendBtn.disabled = false;
+        }, 1500);
+      };
+
+      eventDetailsEl.classList.remove('hidden');
+      eventDetailsEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Escape HTML simple utility for innerHTML safety (attendee names)
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[m]);
+    }
+
+    // Form submit handler
+    const eventForm = document.getElementById('event-form');
+    eventForm.addEventListener('submit', e => {
+      e.preventDefault();
+      feedbackEl.textContent = '';
+      feedbackEl.className = 'text-center text-sm font-semibold min-h-[1.25rem]';
+      const name = eventForm['eventName'].value.trim();
+      const date = eventForm['eventDate'].value;
+      const time = eventForm['eventTime'].value;
+      if(!name || !date || !time) {
+        feedbackEl.textContent = "Please fill in all required fields.";
+        feedbackEl.classList.add('text-red-600');
+        return;
+      }
+
+      const desc = eventForm['eventDesc'].value.trim();
+      const location = eventForm['eventLocation'].value.trim();
+      const recurrence = eventForm['eventRecurrence'].value;
+      const reminderEmail = document.getElementById('reminder-email').checked;
+      const reminderSMS = document.getElementById('reminder-sms').checked;
+      const reminderMins = parseInt(document.getElementById('reminder-time').value, 10);
+      const attendeesInput = document.getElementById('attendees').value.trim();
+
+      const attendees = parseAttendees(attendeesInput);
+
+      if(attendees.length > 100) {
+        feedbackEl.textContent = "You have added more than 100 attendees, consider upgrading your plan.";
+        feedbackEl.classList.remove('text-red-600');
+        feedbackEl.classList.add('text-yellow-600');
+      } else {
+        feedbackEl.classList.remove('text-red-600', 'text-yellow-600');
+      }
+
+      // Add event to the in-memory list
+      events.push({
+        name,
+        date,
+        time,
+        description: desc,
+        location,
+        recurrence,
+        reminderEmail,
+        reminderSMS,
+        reminderMins,
+        attendees
+      });
+
+      feedbackEl.textContent = "Event created successfully!";
+      feedbackEl.classList.remove('text-red-600', 'text-yellow-600');
+      feedbackEl.classList.add("text-green-700");
+
+      eventForm.reset();
+      document.getElementById('reminder-email').checked = true;
+      document.getElementById('reminder-sms').checked = false;
+      document.getElementById('reminder-time').value = '1440';
+
+      renderEventsList();
+
+      // Show details of newly created event
+      selectEvent(events.length - 1);
+    });
+
+    // Initialize default rendering
+    renderEventsList();
+  </script>
+</body>
+</html>
+```

@@ -1,0 +1,1 @@
+A web tool that instantly converts any recipe's ingredient amounts based on the number of servings you want—just paste the recipe, input desired servings, and get adjusted quantities with easy-to-read measurements.

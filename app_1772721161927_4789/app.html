@@ -1,0 +1,267 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PolishIt - Professional Text Refiner</title>
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+  <style>
+    /* Custom scrollbar for textarea/output */
+    textarea, #output {
+      scrollbar-width: thin;
+      scrollbar-color: #93c5fd #e0e7ff;
+    }
+    textarea::-webkit-scrollbar, #output::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb, #output::-webkit-scrollbar-thumb {
+      background-color: #3b82f6;
+      border-radius: 4px;
+    }
+    textarea::-webkit-scrollbar-track, #output::-webkit-scrollbar-track {
+      background-color: #e0e7ff;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed selection:bg-blue-400 selection:text-white">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#hero" class="text-2xl font-bold text-blue-600 hover:text-blue-700 flex items-center space-x-2">
+        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h10a2 2 0 012 2z"></path></svg>
+        <span>PolishIt</span>
+      </a>
+      <ul class="hidden md:flex space-x-8 text-gray-700 font-medium">
+        <li><a href="#features" class="hover:text-blue-600 transition">Features</a></li>
+        <li><a href="#tool" class="hover:text-blue-600 transition">Try it</a></li>
+        <li><a href="#contact" class="hover:text-blue-600 transition">Contact</a></li>
+      </ul>
+      <button id="menuBtn" aria-label="Open menu" class="md:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
+      <ul class="px-6 py-4 space-y-3 font-semibold text-gray-700">
+        <li><a href="#features" class="block hover:text-blue-600 transition">Features</a></li>
+        <li><a href="#tool" class="block hover:text-blue-600 transition">Try it</a></li>
+        <li><a href="#contact" class="block hover:text-blue-600 transition">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero" class="relative bg-white pt-20 pb-24 sm:pt-32 sm:pb-32">
+    <div class="max-w-7xl mx-auto px-6 text-center sm:text-left flex flex-col sm:flex-row items-center gap-12">
+      <div class="sm:flex-1 max-w-xl">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight text-gray-900">
+          Turn your casual messages into <span class="text-blue-600">professional, polite, and clear</span> communication — instantly.
+        </h1>
+        <p class="mt-6 text-gray-600 text-lg sm:text-xl max-w-lg">
+          PolishIt lets you transform informal texts or emails into polished messages with minimal effort. Impress your coworkers, clients, and friends by communicating better every time.
+        </p>
+        <a href="#tool" class="inline-block mt-8 px-8 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-shadow shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          Try it Now
+        </a>
+      </div>
+      <div class="sm:flex-1 max-w-md w-full bg-blue-50 rounded-xl p-6 shadow-lg">
+        <img src="https://tailwindui.com/img/components/marketing/illustration-feature-03.svg" alt="Illustration: Clear communication" class="w-full h-auto select-none" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="max-w-7xl mx-auto px-6 py-20 bg-white">
+    <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-14">Why PolishIt?</h2>
+    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+      <article class="flex flex-col items-start space-y-4">
+        <div class="p-4 bg-blue-100 rounded-lg text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M12 20h9"></path>
+            <path d="M2 12h9"></path>
+            <path d="M3 6h18"></path>
+            <path d="M10 20v-5a3 3 0 016 0v5"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900">Instant Transformation</h3>
+        <p class="text-gray-600">Get your message refined to sound polite and professional in a single click — no waiting or complicated editing required.</p>
+      </article>
+
+      <article class="flex flex-col items-start space-y-4">
+        <div class="p-4 bg-blue-100 rounded-lg text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M12 8v.01"></path>
+            <path d="M8 12h8"></path>
+            <path d="M12 16v.01"></path>
+            <path d="M3 16h3a2 2 0 012 2v3"></path>
+            <path d="M16 3h5v5"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900">Clear & Polite</h3>
+        <p class="text-gray-600">Say exactly what you mean, politely and professionally, with messages that are easy to read and understand.</p>
+      </article>
+
+      <article class="flex flex-col items-start space-y-4">
+        <div class="p-4 bg-blue-100 rounded-lg text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M21 10a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <path d="M15 17l-3-3-3 3"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900">Easy to Use</h3>
+        <p class="text-gray-600">No learning curve. Just paste your message, click polish, and get a ready-to-send professional version.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Tool Section -->
+  <section id="tool" class="max-w-5xl mx-auto px-6 py-20 bg-blue-50 rounded-xl my-16 shadow-lg">
+    <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-10">Try PolishIt Now</h2>
+    <div class="flex flex-col md:flex-row md:space-x-10 gap-10">
+      <div class="flex-1 flex flex-col">
+        <label for="inputText" class="font-semibold mb-2 text-gray-700">Paste your informal text here:</label>
+        <textarea id="inputText" rows="10" placeholder="Hey! Can u send me the report asap? Thx!" class="resize-none rounded-md border border-gray-300 px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"></textarea>
+        <button id="polishBtn" class="mt-4 px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 self-start">
+          Polish It
+        </button>
+      </div>
+      <div class="flex-1 flex flex-col">
+        <label for="output" class="font-semibold mb-2 text-gray-700">Polished professional version:</label>
+        <pre id="output" tabindex="0" aria-live="polite" class="whitespace-pre-wrap bg-white rounded-md border border-gray-300 p-4 h-48 md:h-full overflow-y-auto text-gray-900 shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500"></pre>
+        <button id="copyBtn" class="mt-4 px-6 py-3 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 self-start" title="Copy polished text to clipboard">
+          Copy
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="max-w-7xl mx-auto px-6 py-20 bg-white border-t border-gray-200 text-center">
+    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Questions or Feedback?</h3>
+    <p class="text-gray-700 max-w-xl mx-auto mb-6">We’d love to hear from you! Reach out anytime.</p>
+    <a href="mailto:support@polishit.app" class="inline-block px-8 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" >
+      Contact Support
+    </a>
+  </section>
+
+  <footer class="bg-white border-t border-gray-200 py-8 mt-20 text-center text-gray-500 text-sm select-none">
+    &copy; 2024 PolishIt. All rights reserved.
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Polishing logic (simple demo)
+    // In a real SaaS, polishing would use a backend NLP API or AI.
+    function polishText(text) {
+      if (!text.trim()) return '';
+
+      // Basic substitutions and polishing heuristics demo
+      // - Replace sms/text abbreviations
+      // - Fix casual tone to polite
+      // - Add greetings / closing lines
+      // - Correct contractions & slang
+      let polished = text;
+
+      // Lowercase entire text first for consistent processing
+      // but preserve original capitalization of proper nouns (very simple approach)
+      polished = polished.trim();
+
+      // Common informal -> formal replacements
+      const replacements = [
+        [/\b(u|you)\b/gi, 'you'],
+        [/\bur\b/gi, 'your'],
+        [/\bplz\b/gi, 'please'],
+        [/\bthx\b/gi, 'thank you'],
+        [/\btho\b/gi, 'although'],
+        [/\bcuz\b/gi, 'because'],
+        [/\bbtw\b/gi, 'by the way'],
+        [/\bomg\b/gi, 'oh my'],
+        [/\b asap\b/gi, 'as soon as possible'],
+        [/\bmsg\b/gi, 'message'],
+        [/\bc u\b/gi, 'see you'],
+        [/\bFYI\b/gi, 'for your information'],
+        [/\bbtw\b/gi, 'by the way'],
+        [/\bgotta\b/gi, 'have to'],
+        [/\bcan't\b/gi, 'cannot'],
+        [/\bwon't\b/gi, 'will not'],
+        [/\bim\b/gi, "I'm"],
+        [/\bidk\b/gi, "I don't know"],
+        [/\br\b/gi, 'are'],
+      ];
+
+      replacements.forEach(([regex, replacement]) => {
+        polished = polished.replace(regex, replacement);
+      });
+
+      // Add polite opening/closing if none present
+      const hasGreeting = /\b(hi|hello|dear|good morning|good afternoon|good evening)\b/i.test(polished);
+      const hasClosing = /\b(sincerely|best regards|thank you|thanks|regards|kind regards)\b/i.test(polished);
+
+      if (!hasGreeting) polished = "Hello,\n\n" + polished;
+      if (!hasClosing) polished += "\n\nThank you for your attention.\nBest regards,\n[Your Name]";
+
+      // Capitalize sentences (simple approach)
+      polished = polished.replace(/(?:^|[.!?]\s+)([a-z])/g, (m, c) => c.toUpperCase());
+
+      // Replace multiple spaces/newlines with single
+      polished = polished.replace(/\n{3,}/g, '\n\n').replace(/ +/g, ' ');
+
+      return polished;
+    }
+
+    const inputText = document.getElementById('inputText');
+    const polishBtn = document.getElementById('polishBtn');
+    const output = document.getElementById('output');
+    const copyBtn = document.getElementById('copyBtn');
+
+    polishBtn.addEventListener('click', () => {
+      const input = inputText.value;
+      let polished = polishText(input);
+      if (!polished) {
+        output.textContent = '* Please enter text to polish *';
+        output.classList.add('italic', 'text-gray-400');
+      } else {
+        output.textContent = polished;
+        output.classList.remove('italic', 'text-gray-400');
+      }
+    });
+
+    inputText.addEventListener('keydown', (e) => {
+      // Submit on Ctrl+Enter or Cmd+Enter
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        polishBtn.click();
+      }
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const text = output.textContent;
+      if (!text || text.startsWith('*')) return;
+
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.disabled = true;
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+          copyBtn.disabled = false;
+        }, 2000);
+      }).catch(() => {
+        alert('Failed to copy. Please copy manually.');
+      });
+    });
+  </script>
+
+</body>
+</html>
+```

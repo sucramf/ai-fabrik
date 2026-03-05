@@ -1,0 +1,1 @@
+A web tool that generates personalized daily affirmations based on a user’s mood and goals. Users input how they feel and what they want to focus on (e.g., confidence, productivity), and the tool creates a customized positive affirmation to start their day. Simple, uplifting, and easy to use as a daily habit starter.

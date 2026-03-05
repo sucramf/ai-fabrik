@@ -1,0 +1,1 @@
+A web tool called "QuickSplit" that allows users to easily divide shared expenses and generate simple payment links. Users input the total amount, add participants, assign who paid what or how much each owes, and the tool calculates balances and creates shareable payment URLs for settling debts quickly. Perfect for roommates, trips, or group gifts.

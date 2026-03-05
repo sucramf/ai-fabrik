@@ -1,0 +1,1 @@
+A SaaS tool called "QuickContract Review" for small businesses and freelancers that uses AI to analyze uploaded contracts, highlighting risky clauses, missing standard protections, and unusual terms in plain language—helping non-lawyers quickly understand key contract points before signing.

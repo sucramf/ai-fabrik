@@ -1,0 +1,491 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FocusRead - Distraction-free Reading Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for modern look */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #93c5fd;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <header class="bg-white shadow-md px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0 sticky top-0 z-30">
+    <h1 class="text-3xl font-extrabold text-indigo-600 select-none tracking-tight">FocusRead</h1>
+    <nav class="text-sm space-x-6 text-indigo-600 font-semibold tracking-wide" aria-label="Primary Navigation">
+      <a href="#editor" class="hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded transition">Editor</a>
+      <a href="#reader" class="hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded transition">Reader</a>
+    </nav>
+  </header>
+
+  <main class="flex-grow container mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-10">
+    <!-- Editor Section -->
+    <section id="editor" class="flex flex-col bg-white rounded-xl shadow-lg p-8 ring-1 ring-gray-200">
+      <h2 class="text-2xl font-semibold mb-4 border-b border-indigo-300 pb-3 tracking-wide">Paste Your Text</h2>
+      <textarea
+        id="inputText"
+        rows="12"
+        placeholder="Paste or write any text passage here..."
+        class="w-full resize-y rounded-lg border border-gray-300 p-4 text-gray-900 placeholder-gray-400 leading-relaxed focus:outline-none focus:ring-4 focus:ring-indigo-400 transition shadow-sm"
+        spellcheck="true"
+        aria-label="Text input area"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="true"
+      ></textarea>
+
+      <button
+        id="generateBtn"
+        type="button"
+        class="mt-6 self-start bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-7 rounded-lg shadow-lg transition focus:outline-none focus:ring-4 focus:ring-indigo-500 active:scale-95"
+        aria-describedby="generateDesc"
+        aria-live="polite"
+      >
+        Generate Reader Link
+      </button>
+
+      <p id="generateDesc" class="sr-only">
+        Generates a shareable link that opens a distraction-free reader page with your text.
+      </p>
+
+      <div
+        id="linkContainer"
+        class="mt-5 hidden bg-indigo-50 border border-indigo-300 rounded-lg p-4 break-words select-all text-indigo-900 shadow-inner"
+        aria-live="polite"
+      >
+        <label for="shareLink" class="block text-indigo-700 font-semibold mb-2 text-sm tracking-tight">Shareable Reading Link:</label>
+        <input
+          type="text"
+          id="shareLink"
+          readonly
+          class="w-full bg-indigo-100 border border-indigo-300 rounded-md p-3 font-mono text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-text select-text"
+          aria-label="Shareable reader link"
+          spellcheck="false"
+          tabindex="0"
+        />
+      </div>
+    </section>
+
+    <!-- Reader Preview Section -->
+    <section id="reader" class="flex flex-col bg-white rounded-xl shadow-lg p-8 ring-1 ring-gray-200">
+      <h2 class="text-2xl font-semibold mb-4 border-b border-indigo-300 pb-3 tracking-wide">Reader Preview &amp; Settings</h2>
+
+      <div
+        id="readerPreviewWrapper"
+        class="flex-1 overflow-auto rounded-lg border border-gray-300 bg-white p-8 prose max-w-none text-gray-900 shadow-inner transition-all duration-300 min-h-[20rem] focus-visible:outline-indigo-500 focus-visible:outline-offset-2"
+        tabindex="0"
+        aria-live="polite"
+        aria-label="Reading preview area"
+        role="region"
+      >
+        <p class="text-gray-400 select-none italic">Your formatted reading page will appear here.</p>
+      </div>
+
+      <form id="settingsForm" class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8" aria-label="Reader settings form">
+        <div class="flex flex-col">
+          <label for="fontSize" class="block text-gray-700 font-semibold mb-2 tracking-wide">Font Size</label>
+          <input
+            type="range"
+            id="fontSize"
+            min="14"
+            max="36"
+            value="18"
+            step="1"
+            aria-valuemin="14"
+            aria-valuemax="36"
+            aria-valuenow="18"
+            aria-label="Adjust font size"
+            class="w-full h-2 bg-indigo-300 rounded-lg accent-indigo-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+          <div class="mt-1 text-sm text-gray-500 font-mono" id="fontSizeVal" aria-live="polite">18 px</div>
+        </div>
+
+        <div class="flex flex-col">
+          <label for="bgColor" class="block text-gray-700 font-semibold mb-2 tracking-wide">Background Color</label>
+          <select
+            id="bgColor"
+            aria-label="Select background color"
+            class="w-full border border-gray-300 rounded-lg p-3 text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer transition shadow-sm"
+          >
+            <option value="bg-white" selected>White</option>
+            <option value="bg-gray-100">Light Gray</option>
+            <option value="bg-gray-900">Dark (Black)</option>
+            <option value="bg-yellow-50">Soft Yellow</option>
+            <option value="bg-blue-50">Soft Blue</option>
+            <option value="bg-green-50">Soft Green</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col">
+          <label for="timer" class="block text-gray-700 font-semibold mb-2 tracking-wide">Reading Timer (minutes)</label>
+          <input
+            type="number"
+            id="timer"
+            min="0"
+            max="180"
+            step="1"
+            value="0"
+            aria-label="Set reading timer in minutes"
+            class="w-full border border-gray-300 rounded-lg p-3 text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="0 = off"
+          />
+          <div class="mt-1 text-sm text-gray-500">0 means no timer</div>
+        </div>
+      </form>
+
+      <div class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <button
+          id="openReaderBtn"
+          type="button"
+          class="w-full sm:flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg shadow-lg transition focus:outline-none focus:ring-4 focus:ring-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 flex justify-center items-center gap-2"
+          disabled
+          aria-disabled="true"
+          aria-describedby="openReaderDesc"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-4m-1-6l5 5m0 0l-5 5m5-5H9" /></svg>
+          Open Reader
+        </button>
+        <p id="openReaderDesc" class="sr-only">
+          Opens a distraction-free reading page in a new tab with your text and settings.
+        </p>
+
+        <button
+          id="copyPreviewBtn"
+          type="button"
+          class="w-full sm:w-auto bg-indigo-100 text-indigo-700 font-semibold py-3 px-6 rounded-lg shadow hover:bg-indigo-200 transition focus:outline-none focus:ring-4 focus:ring-indigo-400 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+          disabled
+          aria-disabled="true"
+          aria-label="Copy previewed formatted text to clipboard"
+        >
+          Copy Preview Text
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-white border-t border-gray-200 text-center py-5 text-gray-600 text-sm select-none tracking-wide">
+    &copy; 2024 FocusRead. Created by ChatGPT.
+  </footer>
+
+<script>
+(() => {
+  const inputText = document.getElementById('inputText');
+  const generateBtn = document.getElementById('generateBtn');
+  const linkContainer = document.getElementById('linkContainer');
+  const shareLinkInput = document.getElementById('shareLink');
+  const readerPreviewWrapper = document.getElementById('readerPreviewWrapper');
+  const fontSizeInput = document.getElementById('fontSize');
+  const fontSizeVal = document.getElementById('fontSizeVal');
+  const bgColorSelect = document.getElementById('bgColor');
+  const timerInput = document.getElementById('timer');
+  const openReaderBtn = document.getElementById('openReaderBtn');
+  const copyPreviewBtn = document.getElementById('copyPreviewBtn');
+
+  // Encode data to share via URL (Base64)
+  function encodeData(obj) {
+    return btoa(encodeURIComponent(JSON.stringify(obj)));
+  }
+
+  // Decode data from URL
+  function decodeData(b64) {
+    try {
+      return JSON.parse(decodeURIComponent(atob(b64)));
+    } catch {
+      return null;
+    }
+  }
+
+  // Sanitize text for preview: simple replacement to preserve line breaks and escape
+  function sanitizeText(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    let escaped = div.innerHTML;
+
+    const paragraphs = escaped.split(/\n{2,}/).map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+    return paragraphs || '<p><em>(Empty text)</em></p>';
+  }
+
+  // Update preview with current text and settings
+  function updatePreview() {
+    const text = inputText.value.trim();
+
+    if (!text) {
+      readerPreviewWrapper.innerHTML = '<p class="text-gray-400 select-none italic">Your formatted reading page will appear here.</p>';
+      openReaderBtn.disabled = true;
+      openReaderBtn.setAttribute('aria-disabled', 'true');
+      copyPreviewBtn.disabled = true;
+      copyPreviewBtn.setAttribute('aria-disabled', 'true');
+      linkContainer.classList.add('hidden');
+      return;
+    }
+
+    const fs = fontSizeInput.value + 'px';
+    const bgClass = bgColorSelect.value;
+
+    // Remove all bg- classes and add the selected one plus consistent classes
+    readerPreviewWrapper.className = readerPreviewWrapper.className
+      .split(' ')
+      .filter(c => !c.startsWith('bg-') && c !== 'text-gray-900' && c !== 'text-gray-100')
+      .concat([bgClass, 'prose', 'max-w-none', 'rounded-lg', 'p-8', 'overflow-auto', 'border', 'border-gray-300'])
+      .join(' ');
+
+    // Adjust text color for dark bg
+    if (bgClass === 'bg-gray-900') {
+      readerPreviewWrapper.classList.remove('text-gray-900');
+      readerPreviewWrapper.classList.add('text-gray-100');
+    } else {
+      readerPreviewWrapper.classList.remove('text-gray-100');
+      readerPreviewWrapper.classList.add('text-gray-900');
+    }
+
+    readerPreviewWrapper.style.fontSize = fs;
+    readerPreviewWrapper.innerHTML = sanitizeText(text);
+
+    openReaderBtn.disabled = false;
+    openReaderBtn.setAttribute('aria-disabled', 'false');
+    copyPreviewBtn.disabled = false;
+    copyPreviewBtn.setAttribute('aria-disabled', 'false');
+  }
+
+  // Update font size value indicator
+  fontSizeInput.addEventListener('input', () => {
+    fontSizeVal.textContent = fontSizeInput.value + ' px';
+    updatePreview();
+  });
+
+  bgColorSelect.addEventListener('change', updatePreview);
+
+  timerInput.addEventListener('input', () => {
+    let val = parseInt(timerInput.value, 10);
+    if (isNaN(val) || val < 0) val = 0;
+    if (val > 180) val = 180;
+    timerInput.value = val;
+    updatePreview();
+  });
+
+  inputText.addEventListener('input', updatePreview);
+
+  // Generate shareable reading link with all data encoded
+  generateBtn.addEventListener('click', () => {
+    const text = inputText.value.trim();
+    if (!text) {
+      alert('Please enter some text before generating a shareable link.');
+      inputText.focus();
+      return;
+    }
+
+    const data = {
+      text: text,
+      fontSize: fontSizeInput.value,
+      bgColor: bgColorSelect.value,
+      timer: Number(timerInput.value)
+    };
+
+    const encoded = encodeData(data);
+    const url = `${location.origin}${location.pathname}#reader=${encoded}`;
+
+    shareLinkInput.value = url;
+    linkContainer.classList.remove('hidden');
+
+    shareLinkInput.focus();
+    shareLinkInput.select();
+  });
+
+  // Open reader in a new tab with current settings and text encoded in URL
+  openReaderBtn.addEventListener('click', () => {
+    const text = inputText.value.trim();
+    if (!text) return;
+
+    const data = {
+      text: text,
+      fontSize: fontSizeInput.value,
+      bgColor: bgColorSelect.value,
+      timer: Number(timerInput.value)
+    };
+    const encoded = encodeData(data);
+    const url = `${location.origin}${location.pathname}#reader=${encoded}`;
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  });
+
+  // Copy preview content text (not HTML) to clipboard
+  copyPreviewBtn.addEventListener('click', () => {
+    const text = readerPreviewWrapper.innerText.trim();
+    if (!text) return;
+
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        const original = copyPreviewBtn.textContent;
+        copyPreviewBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyPreviewBtn.textContent = original;
+        }, 2000);
+      })
+      .catch(() => {
+        alert('Failed to copy text. Please copy manually.');
+      });
+  });
+
+  // On load: if URL has #reader=encodedData, parse and show distraction-free reading page
+  function createReaderPage(data) {
+    const {
+      text = '',
+      fontSize = '18',
+      bgColor = 'bg-white',
+      timer = 0
+    } = data || {};
+
+    const body = document.body;
+    body.innerHTML = '';
+    body.className = '';
+
+    body.style.margin = '0';
+    body.style.padding = '0';
+    body.classList.add(bgColor, 'min-h-screen', 'font-sans', 'flex', 'flex-col');
+
+    if (bgColor === 'bg-gray-900') {
+      body.classList.remove('text-gray-900');
+      body.classList.add('text-gray-100');
+    } else {
+      body.classList.remove('text-gray-100');
+      body.classList.add('text-gray-900');
+    }
+
+    const container = document.createElement('main');
+    container.setAttribute('role', 'main');
+    container.className = 'max-w-3xl mx-auto p-10 flex-grow flex flex-col';
+
+    const header = document.createElement('header');
+    header.className = 'flex flex-col sm:flex-row justify-between items-center mb-8 gap-4';
+
+    const timerDisplay = document.createElement('div');
+    timerDisplay.className = 'text-lg font-semibold select-none tracking-wide';
+    timerDisplay.style.minWidth = '8rem';
+    if (timer > 0) {
+      timerDisplay.textContent = `Timer: ${timer}:00`;
+    } else {
+      timerDisplay.textContent = '';
+    }
+    header.appendChild(timerDisplay);
+
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'flex space-x-4';
+
+    // Exit button
+    const exitBtn = document.createElement('button');
+    exitBtn.type = 'button';
+    exitBtn.textContent = '× Close';
+    exitBtn.title = 'Close reader and return';
+    exitBtn.className = 'text-indigo-600 font-semibold hover:text-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-500 rounded-lg px-4 py-2 border border-indigo-600 hover:bg-indigo-100 transition shadow-md';
+    exitBtn.addEventListener('click', () => {
+      location.hash = '';
+      location.reload();
+    });
+    btnGroup.appendChild(exitBtn);
+
+    // Share button
+    const shareBtn = document.createElement('button');
+    shareBtn.type = 'button';
+    shareBtn.textContent = 'Share';
+    shareBtn.title = 'Copy this reading page link';
+    shareBtn.className = 'text-indigo-600 font-semibold hover:text-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-500 rounded-lg px-4 py-2 border border-indigo-600 hover:bg-indigo-100 transition shadow-md';
+    shareBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(location.href).then(() => {
+        shareBtn.textContent = 'Copied!';
+        setTimeout(() => shareBtn.textContent = 'Share', 2000);
+      }).catch(() => alert('Failed to copy link.'));
+    });
+    btnGroup.appendChild(shareBtn);
+
+    header.appendChild(btnGroup);
+    container.appendChild(header);
+
+    const article = document.createElement('article');
+    article.className = 'prose max-w-none flex-grow overflow-auto outline-none';
+    article.style.fontSize = fontSize + 'px';
+    article.setAttribute('tabindex', '0');
+    article.setAttribute('aria-live', 'polite');
+    article.innerHTML = sanitizeText(text);
+    container.appendChild(article);
+
+    let timerIntervalId = null;
+
+    if (timer > 0) {
+      const timerBarContainer = document.createElement('div');
+      timerBarContainer.className = 'h-3 w-full rounded-full bg-indigo-100 overflow-hidden mt-8 shadow-inner';
+
+      const timerBar = document.createElement('div');
+      timerBar.className = 'h-full bg-indigo-600 transition-all duration-1000 ease-linear rounded-full';
+      timerBar.style.width = '100%';
+
+      timerBarContainer.appendChild(timerBar);
+      container.appendChild(timerBarContainer);
+
+      let secondsLeft = timer * 60;
+
+      function updateTimer() {
+        if (secondsLeft <= 0) {
+          clearInterval(timerIntervalId);
+          timerDisplay.textContent = 'Time up!';
+          timerBar.style.width = '0%';
+          alert('Reading timer finished!');
+          return;
+        }
+
+        secondsLeft--;
+
+        const minutes = Math.floor(secondsLeft / 60);
+        const seconds = secondsLeft % 60;
+        timerDisplay.textContent = `Timer: ${minutes}:${seconds.toString().padStart(2,'0')}`;
+
+        const percent = (secondsLeft / (timer * 60)) * 100;
+        timerBar.style.width = percent + '%';
+      }
+
+      timerIntervalId = setInterval(updateTimer, 1000);
+    }
+
+    body.appendChild(container);
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        location.hash = '';
+        location.reload();
+      }
+    });
+  }
+
+  // On load: check hash for reader param
+  function init() {
+    const hash = location.hash;
+    if (hash.startsWith('#reader=')) {
+      const encoded = hash.slice(8);
+      const data = decodeData(encoded);
+      if (data && data.text) {
+        createReaderPage(data);
+        return;
+      }
+    }
+
+    updatePreview();
+
+    inputText.focus();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
+```

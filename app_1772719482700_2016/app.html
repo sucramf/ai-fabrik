@@ -1,0 +1,318 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MeetingRecap – AI Meeting Transcription & Summarization Tool</title>
+  <meta name="description" content="MeetingRecap automatically transcribes & summarizes your meetings into actionable highlights." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen font-sans">
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-50">
+    <div class="container mx-auto flex items-center justify-between px-6 py-5">
+      <a href="#" class="text-2xl font-extrabold text-indigo-600 hover:text-indigo-700 transition">MeetingRecap</a>
+      <div class="hidden md:flex space-x-10 font-semibold text-gray-700">
+        <a href="#tool" class="hover:text-indigo-600 transition">Tool</a>
+        <a href="#pricing" class="hover:text-indigo-600 transition">Pricing</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </div>
+      <button id="btnDemo" class="md:hidden text-indigo-600 focus:outline-none" aria-label="Open menu" title="Open menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="bg-indigo-600 text-white">
+    <div class="container mx-auto max-w-3xl px-6 py-24 text-center">
+      <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-6 drop-shadow-md">
+        Turn your meetings into clear, actionable summaries — <br class="hidden sm:inline"/> effortlessly.
+      </h1>
+      <p class="text-lg sm:text-xl text-indigo-100 max-w-xl mx-auto mb-12 leading-relaxed">
+        MeetingRecap automatically transcribes and extracts key action items and highlights from your video or audio calls — saving your team hours of note-taking and follow-ups.
+      </p>
+      <a href="#tool" class="inline-block bg-white text-indigo-700 font-semibold rounded-xl px-10 py-4 shadow-lg hover:bg-indigo-50 focus:ring-4 focus:ring-indigo-300 transition">
+        Try it Now for Free
+      </a>
+      <p class="mt-6 text-indigo-200 italic text-sm max-w-md mx-auto select-none">
+        Supports recorded or live audio & video files from Zoom, Teams, Google Meet & more.
+      </p>
+    </div>
+  </section>
+
+  <!-- Tool UI Section -->
+  <section id="tool" class="flex-grow bg-white py-20 px-4 sm:px-6 lg:px-8">
+    <div class="container mx-auto max-w-4xl space-y-12">
+      <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">MeetingRecap Tool</h2>
+
+      <form id="recapForm" class="space-y-8" autocomplete="off" novalidate>
+        <p class="text-center text-gray-700 max-w-xl mx-auto px-4 sm:px-0 leading-relaxed">
+          Upload an audio or video file of your meeting, or paste a meeting transcript to generate a concise summary with action items.
+        </p>
+
+        <div>
+          <label for="fileInput" class="block text-sm font-medium text-gray-700 mb-3">Upload Audio/Video File (MP3, MP4, WAV)</label>
+          <input id="fileInput" type="file" accept="audio/*,video/*" 
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-800 placeholder-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition" />
+          <p class="mt-1 text-xs text-gray-400 select-none">Max file size: 20MB</p>
+        </div>
+
+        <div>
+          <label for="transcriptInput" class="block text-sm font-medium text-gray-700 mb-3">
+            Or paste meeting transcript text here
+          </label>
+          <textarea id="transcriptInput" rows="8" placeholder="Paste your transcript here..."
+            class="w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-gray-800 placeholder-gray-400 resize-y focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition leading-relaxed min-h-[160px]"></textarea>
+          <p class="mt-1 text-xs text-gray-400 select-none">
+            Transcript text max 15,000 characters.
+          </p>
+        </div>
+
+        <div class="text-center">
+          <button type="submit" id="submitBtn" 
+            class="inline-flex items-center justify-center gap-3 bg-indigo-600 text-white rounded-xl px-10 py-3 font-semibold hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition">
+            Generate Summary
+            <svg id="loadingSpinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true" role="img">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <section id="result" class="hidden mt-16 bg-gray-50 border border-gray-200 rounded-xl p-8 shadow-md">
+        <h3 class="text-2xl font-semibold mb-6 text-gray-900 border-b border-gray-300 pb-3">Meeting Summary</h3>
+        <article id="summaryText" class="prose max-w-none text-gray-800 whitespace-pre-wrap break-words"></article>
+      </section>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="bg-indigo-50 py-20 px-6 sm:px-12 lg:px-20">
+    <div class="container mx-auto max-w-7xl text-center">
+      <h2 class="text-4xl font-extrabold text-indigo-900 mb-8 tracking-tight">Simple, Transparent Pricing</h2>
+      <p class="text-indigo-700 max-w-3xl mx-auto mb-16 text-lg leading-relaxed">
+        Whether you're a small team or a growing business, there's a plan that fits your needs. Start with the free tier — no credit card required.
+      </p>
+
+      <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-lg p-10 border-2 border-indigo-300 flex flex-col">
+          <h3 class="text-2xl font-bold text-indigo-700 mb-5">Free</h3>
+          <p class="text-5xl font-extrabold text-indigo-900 mb-6 leading-none">
+            $0<span class="text-lg font-normal ml-1">/month</span>
+          </p>
+          <ul class="text-gray-700 mb-8 space-y-3 text-left text-base flex-grow">
+            <li>⚡ 5 meeting summaries per month</li>
+            <li>🕒 Up to 30 minutes audio/video</li>
+            <li>📄 Transcript pasting support</li>
+            <li>Basic action item extraction</li>
+          </ul>
+          <button class="bg-indigo-600 text-white rounded-xl px-6 py-3 font-semibold hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-400 transition w-full">
+            Get Started
+          </button>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl p-12 border-4 border-indigo-600 scale-[1.06] relative flex flex-col">
+          <div class="absolute top-0 right-0 bg-indigo-600 text-white px-4 py-1 rounded-bl-2xl text-sm font-semibold select-none tracking-wide">
+            Most Popular
+          </div>
+          <h3 class="text-2xl font-bold text-indigo-900 mb-6">Pro</h3>
+          <p class="text-5xl font-extrabold text-indigo-900 mb-8 leading-none">
+            $15<span class="text-lg font-normal ml-1">/month</span>
+          </p>
+          <ul class="text-gray-800 mb-10 space-y-4 text-left text-base flex-grow">
+            <li>✅ Unlimited meeting summaries</li>
+            <li>🕒 Up to 2 hours audio/video</li>
+            <li>✓ Transcript pasting + uploads</li>
+            <li>🎯 Advanced action items & highlights</li>
+            <li>⚙️ Priority email support</li>
+          </ul>
+          <button class="bg-indigo-600 text-white rounded-xl px-6 py-3 font-semibold hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-400 transition w-full">
+            Upgrade Now
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-10 border-2 border-indigo-300 flex flex-col">
+          <h3 class="text-2xl font-bold text-indigo-700 mb-5">Enterprise</h3>
+          <p class="text-4xl font-extrabold text-indigo-900 mb-7 leading-none">
+            Custom
+          </p>
+          <ul class="text-gray-700 mb-8 space-y-3 text-left text-base flex-grow">
+            <li>🔒 Dedicated account manager</li>
+            <li>☁️ API access & integrations</li>
+            <li>📈 Team usage analytics</li>
+            <li>🔧 Custom branding & SLAs</li>
+          </ul>
+          <button class="bg-indigo-600 text-white rounded-xl px-6 py-3 font-semibold hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-400 transition w-full">
+            Contact Sales
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-indigo-900 text-indigo-300 px-6 py-14 mt-auto select-none">
+    <div class="container mx-auto max-w-7xl flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+      <p class="text-sm">&copy; 2024 MeetingRecap. All rights reserved.</p>
+      <nav class="space-x-8 text-sm font-medium flex flex-wrap justify-center md:justify-end gap-6 md:gap-0">
+        <a href="#" class="hover:text-indigo-100 transition">Privacy Policy</a>
+        <a href="#" class="hover:text-indigo-100 transition">Terms of Service</a>
+        <a href="mailto:support@meetingrecap.io" class="hover:text-indigo-100 transition break-all">support@meetingrecap.io</a>
+      </nav>
+    </div>
+  </footer>
+
+<script>
+(() => {
+  const form = document.getElementById('recapForm');
+  const fileInput = document.getElementById('fileInput');
+  const transcriptInput = document.getElementById('transcriptInput');
+  const submitBtn = document.getElementById('submitBtn');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const resultSection = document.getElementById('result');
+  const summaryText = document.getElementById('summaryText');
+
+  // Helper: split text into sentences
+  function splitSentences(text) {
+    return text.match(/[^.!?\r\n]+[.!?\r\n]*/g) || [text];
+  }
+
+  // Extract action items: sentences with typical verbs like "need", "must", "should", "will", "action", "assign"
+  function extractActionItems(sentences) {
+    const actionVerbs = ['need', 'must', 'should', 'will', 'action', 'assign', 'todo', 'follow up', 'follow-up', 'complete', 'do', 'implement', 'schedule', 'plan'];
+    const lowerSentences = sentences.map(s => s.toLowerCase());
+    let items = [];
+    for (let i = 0; i < sentences.length; i++) {
+      for (const verb of actionVerbs) {
+        if (lowerSentences[i].includes(verb)) {
+          items.push(sentences[i].trim());
+          break;
+        }
+      }
+    }
+    return items;
+  }
+
+  // Extract highlights: sentences containing important words or longer sentences (naive approach)
+  function extractHighlights(sentences) {
+    const highlightKeywords = ['important', 'note', 'decided', 'agreed', 'deadline', 'goal', 'risk', 'plan', 'priority', 'problem', 'challenge'];
+    const highlights = [];
+    for (let s of sentences) {
+      const ls = s.toLowerCase();
+      if (highlightKeywords.some(k => ls.includes(k)) || s.length > 100) {
+        highlights.push(s.trim());
+      }
+    }
+    return highlights;
+  }
+
+  // Simple summary: first few sentences + highlights
+  function generateSummary(text) {
+    const sentences = splitSentences(text);
+    if (sentences.length === 0) return "No content to summarize.";
+
+    const actionItems = extractActionItems(sentences);
+    const highlights = extractHighlights(sentences);
+
+    // Get first 3 sentences as intro summary
+    let intro = sentences.slice(0,3).join(' ').trim();
+
+    let summary = `${intro}\n\n`;
+
+    if (highlights.length) {
+      summary += "Highlights:\n";
+      highlights.forEach(h => summary += `• ${h}\n`);
+      summary += "\n";
+    }
+
+    if (actionItems.length) {
+      summary += "Action Items:\n";
+      actionItems.forEach((a,i) => summary += `${i+1}. ${a}\n`);
+    }
+
+    if (!highlights.length && !actionItems.length) {
+      summary += "No explicit highlights or action items detected.";
+    }
+
+    return summary.trim();
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    summaryText.textContent = '';
+    summaryText.innerHTML = '';
+    resultSection.classList.add('hidden');
+
+    if (!fileInput.files.length && transcriptInput.value.trim().length === 0) {
+      alert('Please upload a file or paste a transcript.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    loadingSpinner.classList.remove('hidden');
+
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+
+      // File size limit 20 MB (20971520 bytes)
+      if (file.size > 20971520) {
+        alert('File size exceeds 20MB limit.');
+        submitBtn.disabled = false;
+        loadingSpinner.classList.add('hidden');
+        return;
+      }
+
+      const fileTypeOk = /^(audio|video)\//.test(file.type);
+      if (!fileTypeOk) {
+        alert('Unsupported file type. Please upload audio or video files only.');
+        submitBtn.disabled = false;
+        loadingSpinner.classList.add('hidden');
+        return;
+      }
+
+      // For demo: Show audio/video player to user & explain we don't do auto-transcription in browser
+      summaryText.innerHTML = `<p class="italic text-gray-600 mb-6">Note: Automatic transcription for audio/video files is not supported in this demo.<br>Please play your file below and manually paste a transcript in the form to generate a summary.</p>`;
+
+      // Create media element for playback
+      const url = URL.createObjectURL(file);
+      const isAudio = file.type.startsWith('audio/');
+      const mediaEl = document.createElement(isAudio ? 'audio' : 'video');
+      mediaEl.controls = true;
+      mediaEl.src = url;
+      mediaEl.className = 'max-w-full rounded-lg shadow-md mb-4';
+      mediaEl.setAttribute('aria-label', isAudio ? 'Audio player' : 'Video player');
+      summaryText.appendChild(mediaEl);
+
+      resultSection.classList.remove('hidden');
+
+    } else if (transcriptInput.value.trim().length > 0) {
+      // Process transcript text
+      
+      const txt = transcriptInput.value.trim();
+      if (txt.length > 15000) {
+        alert('Transcript text exceeds 15,000 character limit.');
+        submitBtn.disabled = false;
+        loadingSpinner.classList.add('hidden');
+        return;
+      }
+      // Simulate some processing delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      const summary = generateSummary(txt);
+      summaryText.textContent = summary;
+      resultSection.classList.remove('hidden');
+    }
+
+    loadingSpinner.classList.add('hidden');
+    submitBtn.disabled = false;
+  });
+})();
+</script>
+</body>
+</html>
+```

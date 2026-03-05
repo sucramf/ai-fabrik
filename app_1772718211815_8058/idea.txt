@@ -1,0 +1,1 @@
+A web tool that generates personalized, daily morning affirmation messages based on user-selected goals and moods, delivered via email or text to boost motivation and positivity.

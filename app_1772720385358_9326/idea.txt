@@ -1,0 +1,1 @@
+A web tool that instantly generates personalized, easy-to-understand summaries of any webpage or article you paste in, highlighting key points and action items. Ideal for busy people who want quick takeaways without reading full texts.

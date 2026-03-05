@@ -1,0 +1,385 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickSplit - Effortless Group Expense Splitting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 selection:bg-indigo-600 selection:text-white">
+  <header class="bg-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-xl font-extrabold text-indigo-600 hover:text-indigo-700">QuickSplit</a>
+      <nav class="space-x-6 text-gray-600 text-sm sm:text-base">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Try Tool</a>
+        <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700 transition">Sign Up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="bg-indigo-600 text-white py-20">
+      <div class="max-w-5xl mx-auto px-6 text-center">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-4">Simplify Splitting Group Expenses</h1>
+        <p class="text-lg sm:text-xl max-w-3xl mx-auto mb-8">QuickSplit instantly divides group bills with tax, tip, and individual adjustments so everyone pays exactly their share. Perfect for friends, roommates, and travelers.</p>
+        <a href="#tool" class="inline-block bg-white text-indigo-600 font-semibold px-8 py-3 rounded-lg shadow hover:bg-indigo-50 transition">Try the Tool Now</a>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-20 bg-gray-100">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-3xl font-extrabold text-center mb-12 text-gray-900">Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <div class="mb-4 text-indigo-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c.832 0 1.5-.756 1.5-1.75S12.832 4.5 12 4.5 10.5 5.256 10.5 6.25 11.168 8 12 8zM12 4v4m0 10v1m0-1a4 4 0 01-4-4v-3a4 4 0 018 0v3a4 4 0 01-4 4z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 text-center">Instant Split Calculation</h3>
+            <p class="text-gray-600 text-center">Enter your total and participants, add adjustments, and get accurate per-person costs instantly, including tax & tip.</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <div class="mb-4 text-indigo-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4-4 4 4m0-6l-4 4-4-4" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 text-center">Custom Adjustments</h3>
+            <p class="text-gray-600 text-center">Apply individual item costs or discounts for fairness, like someone ordering a pricier dish or skipping the tip.</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <div class="mb-4 text-indigo-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 text-center">Ready for Scaling</h3>
+            <p class="text-gray-600 text-center">Future plans include saved group profiles, payment reminders, and payment app integrations for a full SaaS experience.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool -->
+    <section id="tool" class="max-w-5xl mx-auto px-6 py-16">
+      <h2 class="text-3xl font-extrabold text-center mb-8 text-gray-900">QuickSplit Tool</h2>
+
+      <form id="splitForm" class="bg-white rounded-lg shadow p-8 max-w-3xl mx-auto space-y-8">
+        <fieldset class="space-y-4">
+          <legend class="text-xl font-semibold border-b pb-2 mb-6">Bill Details</legend>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+            <label for="totalBill" class="font-medium">Total Bill ($)</label>
+            <input 
+              type="number" 
+              name="totalBill" 
+              id="totalBill" 
+              min="0" 
+              step="0.01" 
+              placeholder="e.g. 120.50" 
+              required 
+              class="sm:col-span-2 border rounded-md px-3 py-2 focus:outline-indigo-500 focus:ring-indigo-300 focus:ring-2"
+            />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+            <label for="taxPercent" class="font-medium">Tax %</label>
+            <input 
+              type="number" 
+              name="taxPercent" 
+              id="taxPercent" 
+              min="0" 
+              max="100" 
+              step="0.1" 
+              placeholder="e.g. 8.5" 
+              value="8.5"
+              required 
+              class="sm:col-span-2 border rounded-md px-3 py-2 focus:outline-indigo-500 focus:ring-indigo-300 focus:ring-2"
+            />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+            <label for="tipPercent" class="font-medium">Tip %</label>
+            <input 
+              type="number" 
+              name="tipPercent" 
+              id="tipPercent" 
+              min="0" 
+              max="100" 
+              step="0.1" 
+              placeholder="e.g. 15" 
+              value="15"
+              required 
+              class="sm:col-span-2 border rounded-md px-3 py-2 focus:outline-indigo-500 focus:ring-indigo-300 focus:ring-2"
+            />
+          </div>
+        </fieldset>
+
+        <fieldset class="space-y-4">
+          <legend class="text-xl font-semibold border-b pb-2 mb-6 flex justify-between items-center">
+            Participants
+            <button type="button" id="addParticipantBtn" class="text-indigo-600 font-semibold hover:text-indigo-800 transition inline-flex items-center space-x-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Add Person</span>
+            </button>
+          </legend>
+
+          <div id="participantsContainer" class="space-y-4">
+            <!-- Participant template inserted by JS -->
+          </div>
+          <p class="text-xs text-gray-500 mt-2">You can add individual adjustments per person (e.g. pricier dishes or discounts).</p>
+        </fieldset>
+
+        <div class="text-center">
+          <button type="submit" class="bg-indigo-600 text-white px-10 py-3 rounded-lg font-semibold shadow hover:bg-indigo-700 transition">Calculate Split</button>
+        </div>
+      </form>
+
+      <section id="results" class="mt-16 max-w-3xl mx-auto hidden">
+        <h3 class="text-2xl font-bold mb-6 text-center text-indigo-700">Amount Owed Per Person</h3>
+        <div id="resultsList" class="space-y-4 text-gray-900"></div>
+        <button id="resetBtn" class="mt-10 block mx-auto bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition">Reset</button>
+      </section>
+    </section>
+  </main>
+
+  <footer class="bg-white border-t mt-20">
+    <div class="max-w-7xl mx-auto px-6 py-8 text-center text-gray-500 text-sm">
+      &copy; 2024 QuickSplit. Made to simplify sharing costs with friends and family.
+    </div>
+  </footer>
+
+<script>
+(() => {
+  const participantsContainer = document.getElementById("participantsContainer");
+  const addParticipantBtn = document.getElementById("addParticipantBtn");
+  const splitForm = document.getElementById("splitForm");
+  const resultsSection = document.getElementById("results");
+  const resultsList = document.getElementById("resultsList");
+  const resetBtn = document.getElementById("resetBtn");
+
+  let participantIdCounter = 0;
+
+  // Participant HTML template function
+  function createParticipantElement(id, name = "", adjustment = "0") {
+    const wrapper = document.createElement("div");
+    wrapper.className = "grid grid-cols-1 sm:grid-cols-6 gap-3 items-end";
+
+    // Name input
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "sm:col-span-3";
+    const nameLabel = document.createElement("label");
+    nameLabel.setAttribute("for", `participantName_${id}`);
+    nameLabel.className = "block text-sm font-medium text-gray-700";
+    nameLabel.textContent = "Name";
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = `participantName_${id}`;
+    nameInput.id = `participantName_${id}`;
+    nameInput.placeholder = "e.g. Alice";
+    nameInput.value = name;
+    nameInput.required = true;
+    nameInput.className = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
+    nameDiv.appendChild(nameLabel);
+    nameDiv.appendChild(nameInput);
+
+    // Adjustment input
+    const adjDiv = document.createElement("div");
+    adjDiv.className = "sm:col-span-2";
+    const adjLabel = document.createElement("label");
+    adjLabel.setAttribute("for", `participantAdj_${id}`);
+    adjLabel.className = "block text-sm font-medium text-gray-700";
+    adjLabel.textContent = "Adjustment ($)";
+    const adjInput = document.createElement("input");
+    adjInput.type = "number";
+    adjInput.name = `participantAdj_${id}`;
+    adjInput.id = `participantAdj_${id}`;
+    adjInput.step = "0.01";
+    adjInput.value = adjustment;
+    adjInput.placeholder = "e.g. 5.00 or -2.50";
+    adjInput.className = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
+    adjDiv.appendChild(adjLabel);
+    adjDiv.appendChild(adjInput);
+
+    // Remove button div
+    const removeDiv = document.createElement("div");
+    removeDiv.className = "sm:col-span-1 flex justify-end";
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "text-red-600 hover:text-red-800 font-semibold transition flex items-center";
+    removeBtn.title = "Remove person";
+    removeBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
+      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    `;
+    removeBtn.onclick = () => {
+      wrapper.remove();
+      if (participantsContainer.children.length === 0) {
+        addParticipant();
+      }
+    };
+    removeDiv.appendChild(removeBtn);
+
+    wrapper.appendChild(nameDiv);
+    wrapper.appendChild(adjDiv);
+    wrapper.appendChild(removeDiv);
+
+    return wrapper;
+  }
+
+  function addParticipant(name = "", adjustment = "0") {
+    participantIdCounter++;
+    const participantEl = createParticipantElement(participantIdCounter, name, adjustment);
+    participantsContainer.appendChild(participantEl);
+  }
+
+  // Initialize with 2 participants by default
+  addParticipant();
+  addParticipant();
+
+  addParticipantBtn.addEventListener("click", () => addParticipant());
+
+  splitForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const formData = new FormData(splitForm);
+    const totalBillRaw = formData.get("totalBill");
+    const taxPercentRaw = formData.get("taxPercent");
+    const tipPercentRaw = formData.get("tipPercent");
+
+    const totalBill = parseFloat(totalBillRaw);
+    const taxPercent = parseFloat(taxPercentRaw);
+    const tipPercent = parseFloat(tipPercentRaw);
+
+    if (
+      isNaN(totalBill) || totalBill < 0 ||
+      isNaN(taxPercent) || taxPercent < 0 ||
+      isNaN(tipPercent) || tipPercent < 0
+    ) {
+      alert("Please enter valid positive numbers for Bill, Tax, and Tip.");
+      return;
+    }
+
+    // Extract participants
+    const participants = [];
+    for (let i = 1; i <= participantIdCounter; i++) {
+      const name = formData.get(`participantName_${i}`);
+      let adj = formData.get(`participantAdj_${i}`);
+
+      if (name === null || adj === null) continue; // participant removed
+
+      if (name.trim() === "") {
+        alert("Participant names cannot be empty.");
+        return;
+      }
+      adj = parseFloat(adj);
+      if (isNaN(adj)) {
+        alert("Please enter valid numbers for adjustments.");
+        return;
+      }
+
+      participants.push({
+        name: name.trim(),
+        adjustment: adj,
+      });
+    }
+
+    if (participants.length < 1) {
+      alert("Add at least one participant.");
+      return;
+    }
+
+
+    /*
+      Calculation logic:
+      1. Calculate base total = total bill + tax + tip
+      2. Calculate tax & tip in dollars
+      3. Sum adjustments
+      4. Calculate balanced base share = (totalBill + tax + tip - sum(adjustments)) / number of participants
+      5. Each person owes base share + their adjustment
+      6. Ensure no negative owes (if adjustment is heavily negative, min owed is zero)
+    */
+
+    // Calculate tax and tip amounts
+    const taxAmount = totalBill * (taxPercent / 100);
+    const tipAmount = totalBill * (tipPercent / 100);
+
+    const sumAdjustments = participants.reduce((sum, p) => sum + p.adjustment, 0);
+
+    // Calculate balanced base share per person
+    const basePortion = totalBill + taxAmount + tipAmount - sumAdjustments;
+
+    if (basePortion < 0) {
+      alert("Combined individual adjustments exceed the bill + tax + tip. Please revise.");
+      return;
+    }
+
+    const baseShare = basePortion / participants.length;
+
+    // Calculate final owed amounts
+    const results = participants.map(p => {
+      let owed = baseShare + p.adjustment;
+      owed = Math.max(0, owed);
+      return { name: p.name, owed };
+    });
+
+    // Round results to 2 decimals and fix total sum difference by slight adjustment
+    let totalOwed = results.reduce((acc, p) => acc + p.owed, 0);
+    totalOwed = Math.round(totalOwed * 100) / 100;
+
+    const grandTotal = Math.round((totalBill + taxAmount + tipAmount) * 100) / 100;
+    let diff = Math.round((grandTotal - totalOwed) * 100) / 100;
+
+    // Fix difference by adjusting last person's owed amount
+    if (Math.abs(diff) >= 0.01) {
+      results[results.length - 1].owed += diff;
+      results[results.length - 1].owed = Math.round(results[results.length - 1].owed * 100) / 100;
+    }
+
+    // Render results
+    resultsList.innerHTML = "";
+    results.forEach(({ name, owed }) => {
+      const item = document.createElement("div");
+      item.className = "flex justify-between bg-indigo-50 border border-indigo-200 rounded-md px-6 py-3 shadow-sm";
+      const nameEl = document.createElement("div");
+      nameEl.className = "font-semibold text-indigo-900";
+      nameEl.textContent = name;
+
+      const owedEl = document.createElement("div");
+      owedEl.className = "font-mono text-indigo-700";
+      owedEl.textContent = `$${owed.toFixed(2)}`;
+
+      item.appendChild(nameEl);
+      item.appendChild(owedEl);
+      resultsList.appendChild(item);
+    });
+
+    resultsSection.classList.remove("hidden");
+    // Scroll to results smoothly
+    resultsSection.scrollIntoView({ behavior: "smooth" });
+  });
+
+  resetBtn.addEventListener("click", () => {
+    resultsSection.classList.add("hidden");
+    splitForm.reset();
+
+    // Remove all participants except two (reset form to initial state)
+    participantsContainer.innerHTML = "";
+    participantIdCounter = 0;
+    addParticipant();
+    addParticipant();
+
+    // Scroll to top of tool
+    splitForm.scrollIntoView({ behavior: "smooth" });
+  });
+})();
+</script>
+</body>
+</html>
+```
