@@ -1,0 +1,1 @@
+A web tool that instantly converts long, complex URLs into short, easy-to-remember custom aliases that users can personalize and share, with built-in link analytics tracking basic stats like clicks, referrers, and geographic location.

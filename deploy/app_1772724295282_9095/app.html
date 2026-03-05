@@ -1,0 +1,400 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SocialEventScheduler - Simplify Your Event Planning</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for event list */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #a0aec0;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-extrabold text-purple-600 hover:text-purple-700">SocialEventScheduler</a>
+      <nav class="space-x-6 text-gray-600 hidden md:flex font-medium">
+        <a href="#features" class="hover:text-purple-600 transition">Features</a>
+        <a href="#tool" class="hover:text-purple-600 transition">Try Demo</a>
+        <a href="#footer" class="hover:text-purple-600 transition">Contact</a>
+      </nav>
+      <button id="menuBtn" class="md:hidden focus:outline-none">
+        <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" 
+          stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" >
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <nav id="mobileMenu" class="bg-white shadow-inner md:hidden hidden">
+      <div class="flex flex-col px-6 py-2 space-y-2">
+        <a href="#features" class="text-purple-600 font-semibold hover:underline">Features</a>
+        <a href="#tool" class="text-purple-600 font-semibold hover:underline">Try Demo</a>
+        <a href="#footer" class="text-purple-600 font-semibold hover:underline">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-20 px-6 md:px-12">
+    <div class="container mx-auto max-w-5xl text-center md:text-left md:flex md:items-center md:gap-12">
+      <div class="md:flex-1">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg">
+          Simplify Your Social Event Planning<br class="hidden md:block" />
+          <span class="text-yellow-300">Schedule, Share & RSVP</span> in One Tool
+        </h1>
+        <p class="mt-6 text-lg md:text-xl max-w-xl mx-auto md:mx-0 drop-shadow-sm">
+          Stop juggling multiple apps. Create your event, propose dates, invite friends, and track RSVPs effortlessly.
+          Perfect for meetups, parties, and any social gathering.
+        </p>
+        <a href="#tool" class="inline-block mt-8 bg-yellow-400 text-purple-900 font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-yellow-500 transition">
+          Try It Now - It's Free
+        </a>
+      </div>
+      <div class="hidden md:block md:flex-1 mt-10 md:mt-0">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/calendar/calendar-plain.svg" alt="Calendar icon" class="w-72 mx-auto opacity-90" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="container mx-auto px-6 py-20 max-w-5xl">
+    <h2 class="text-3xl font-bold text-center text-purple-700 mb-12">Why SocialEventScheduler?</h2>
+    <div class="grid gap-12 md:grid-cols-3">
+      <div class="bg-white rounded-2xl p-8 shadow hover:shadow-lg transition">
+        <svg class="h-12 w-12 mb-4 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" 
+          stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M8 7V3m8 4V3M3 11h18M5 11v10a2 2 0 002 2h10a2 2 0 002-2v-10"/>
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Easy Event Creation</h3>
+        <p class="text-gray-600">Add your event details, propose multiple dates and locations to find what works best for your group.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow hover:shadow-lg transition">
+        <svg class="h-12 w-12 mb-4 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" 
+          stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">RSVP & Voting</h3>
+        <p class="text-gray-600">Invite friends and allow them to vote on dates and confirm attendance all in one place.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow hover:shadow-lg transition">
+        <svg class="h-12 w-12 mb-4 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" 
+          stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v14a5 5 0 01-5 5H8a5 5 0 01-5-5V4z" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Share & Export</h3>
+        <p class="text-gray-600">Share your finalized event easily and export to calendar apps or social platforms to spread the word.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool / Demo -->
+  <section id="tool" class="bg-white py-20 px-6">
+    <div class="container mx-auto max-w-4xl bg-purple-50 rounded-2xl p-10 shadow-lg">
+      <h2 class="text-3xl font-bold text-purple-700 mb-8 text-center">Create Your Social Event</h2>
+
+      <form id="eventForm" class="space-y-8" novalidate>
+        <div>
+          <label for="eventName" class="block text-purple-900 font-semibold mb-2">Event Name <sup class="text-red-600">*</sup></label>
+          <input id="eventName" name="eventName" type="text" required placeholder="Birthday party, Hiking trip..." class="w-full rounded-lg border border-purple-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+          <p id="eventNameError" class="text-red-600 mt-1 text-sm hidden">Please enter an event name.</p>
+        </div>
+
+        <div>
+          <label class="block text-purple-900 font-semibold mb-2">Propose Dates <sup class="text-red-600">*</sup></label>
+          <div id="datesContainer" class="space-y-2">
+            <input class="w-full rounded-lg border border-purple-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" type="datetime-local" name="dates[]" required />
+          </div>
+          <button type="button" id="addDateBtn" class="mt-2 text-purple-700 hover:text-purple-900 font-semibold flex items-center space-x-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 inline" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Add another date</span>
+          </button>
+          <p id="datesError" class="text-red-600 mt-1 text-sm hidden">Please add at least one valid date.</p>
+        </div>
+
+        <div>
+          <label class="block text-purple-900 font-semibold mb-2">Location (optional)</label>
+          <input id="location" name="location" type="text" placeholder="Central Park, Zoom, etc." class="w-full rounded-lg border border-purple-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+        </div>
+
+        <div>
+          <label for="invitees" class="block text-purple-900 font-semibold mb-2">Invitees Emails <sup class="text-red-600">*</sup></label>
+          <textarea id="invitees" name="invitees" rows="3" placeholder="Enter emails separated by commas" class="w-full rounded-lg border border-purple-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" required></textarea>
+          <p id="inviteesError" class="text-red-600 mt-1 text-sm hidden">Please enter at least one valid email.</p>
+        </div>
+
+        <button type="submit" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg text-white font-semibold w-full transition">Generate Event Summary & Share Link</button>
+      </form>
+
+      <section id="resultSection" class="mt-12 hidden">
+        <h3 class="text-2xl font-semibold text-purple-700 mb-4">Event Summary</h3>
+        <div class="bg-white rounded-lg shadow p-6 text-gray-700 space-y-4">
+          <p><strong>Event Name:</strong> <span id="resEventName"></span></p>
+          <p><strong>Dates Proposed:</strong></p>
+          <ul id="resDates" class="list-disc list-inside"></ul>
+          <p><strong>Location:</strong> <span id="resLocation"></span></p>
+          <p><strong>Invitees:</strong></p>
+          <ul id="resInvitees" class="list-disc list-inside max-h-36 overflow-y-auto"></ul>
+          <p class="mt-4 text-purple-800 font-semibold">Share this link with your friends to RSVP and vote:</p>
+          <input type="text" id="shareLink" readonly class="w-full mt-1 rounded border border-purple-300 px-3 py-2 cursor-pointer bg-purple-100 text-purple-900" title="Click to copy" />
+          <p id="copyMsg" class="text-green-600 mt-1 text-sm hidden">Copied to clipboard!</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-purple-900 text-purple-300 py-10 mt-auto">
+    <div class="container mx-auto px-6 max-w-5xl text-center md:text-left grid md:grid-cols-3 gap-8">
+      <div>
+        <h4 class="font-semibold text-lg mb-2 text-yellow-400">SocialEventScheduler</h4>
+        <p>© 2024 SocialEventScheduler. All rights reserved.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-lg mb-2 text-yellow-400">Resources</h4>
+        <ul class="space-y-1">
+          <li><a href="#features" class="hover:underline">Features</a></li>
+          <li><a href="#tool" class="hover:underline">Try Demo</a></li>
+          <li><a href="mailto:support@socialeventscheduler.com" class="hover:underline">Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-lg mb-2 text-yellow-400">Contact</h4>
+        <p>Email: <a href="mailto:support@socialeventscheduler.com" class="text-yellow-300 hover:underline">support@socialeventscheduler.com</a></p>
+        <p>Twitter: <a href="https://twitter.com/socialevents" target="_blank" rel="noopener" class="text-yellow-300 hover:underline">@SocialEvents</a></p>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Add more date inputs
+  const addDateBtn = document.getElementById('addDateBtn');
+  const datesContainer = document.getElementById('datesContainer');
+
+  addDateBtn.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'datetime-local';
+    input.name = 'dates[]';
+    input.required = true;
+    input.className = 'w-full rounded-lg border border-purple-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500';
+    datesContainer.appendChild(input);
+  });
+
+  // Validate email format basic check
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  // Format date/time nicely
+  function formatDateTimeLocal(input) {
+    if (!input) return '';
+    const dt = new Date(input);
+    if (isNaN(dt)) return '';
+    return dt.toLocaleString(undefined, { 
+      weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', 
+      hour: '2-digit', minute: '2-digit' 
+    });
+  }
+
+  // Event form handling
+  const eventForm = document.getElementById('eventForm');
+  const resultSection = document.getElementById('resultSection');
+  const resEventName = document.getElementById('resEventName');
+  const resDates = document.getElementById('resDates');
+  const resLocation = document.getElementById('resLocation');
+  const resInvitees = document.getElementById('resInvitees');
+  const shareLinkInput = document.getElementById('shareLink');
+
+  const eventNameError = document.getElementById('eventNameError');
+  const datesError = document.getElementById('datesError');
+  const inviteesError = document.getElementById('inviteesError');
+
+  eventForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Clear errors
+    eventNameError.classList.add('hidden');
+    datesError.classList.add('hidden');
+    inviteesError.classList.add('hidden');
+
+    let valid = true;
+
+    // Check event name
+    const eventName = eventForm.eventName.value.trim();
+    if(!eventName) {
+      eventNameError.classList.remove('hidden');
+      valid = false;
+    }
+
+    // Validate dates
+    const dateInputs = [...datesContainer.querySelectorAll('input[name="dates[]"]')];
+    const dates = dateInputs.map(inp => inp.value).filter(v => v);
+    if(dates.length === 0 || dates.some(d => !d)) {
+      datesError.textContent = 'Please add at least one valid date.';
+      datesError.classList.remove('hidden');
+      valid = false;
+    }
+
+    // Validate invitees emails
+    let inviteesRaw = eventForm.invitees.value.trim();
+    if (!inviteesRaw) {
+      inviteesError.textContent = 'Please enter at least one valid email.';
+      inviteesError.classList.remove('hidden');
+      valid = false;
+    }
+    const inviteesArray = inviteesRaw.split(',').map(s => s.trim()).filter(s => s);
+    if (inviteesArray.length === 0) {
+      inviteesError.textContent = 'Please enter at least one valid email.';
+      inviteesError.classList.remove('hidden');
+      valid = false;
+    }
+    else if(inviteesArray.some(em => !validateEmail(em))) {
+      inviteesError.textContent = 'One or more emails are invalid.';
+      inviteesError.classList.remove('hidden');
+      valid = false;
+    }
+
+    if(!valid) return;
+
+    // Fill results
+    resEventName.textContent = eventName;
+
+    resDates.innerHTML = '';
+    dates.forEach(d => {
+      const li = document.createElement('li');
+      li.textContent = formatDateTimeLocal(d);
+      resDates.appendChild(li);
+    });
+
+    const location = eventForm.location.value.trim();
+    resLocation.textContent = location || 'Not specified';
+
+    resInvitees.innerHTML = '';
+    inviteesArray.forEach(em => {
+      const li = document.createElement('li');
+      li.textContent = em;
+      resInvitees.appendChild(li);
+    });
+
+    // Generate a shareable link
+    // Simulate encoded event data in URL hash (no backend)
+    const eventData = {
+      eventName,
+      dates,
+      location,
+      invitees: inviteesArray
+    };
+    const encoded = encodeURIComponent(btoa(JSON.stringify(eventData)));
+    const url = `${location.origin}${location.pathname}#event=${encoded}`;
+    shareLinkInput.value = url;
+
+    resultSection.classList.remove('hidden');
+
+    // Scroll to results
+    resultSection.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Copy share link on click
+  shareLinkInput.addEventListener('click', () => {
+    shareLinkInput.select();
+    shareLinkInput.setSelectionRange(0, 99999); // for mobile
+    navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+      const copyMsg = document.getElementById('copyMsg');
+      copyMsg.classList.remove('hidden');
+      setTimeout(() => copyMsg.classList.add('hidden'), 2500);
+    });
+  });
+
+  // On page load: if URL has event hash, display summary preview
+  window.addEventListener('load', () => {
+    if(location.hash.startsWith('#event=')) {
+      try {
+        const encoded = location.hash.slice(7);
+        const decoded = atob(decodeURIComponent(encoded));
+        const data = JSON.parse(decoded);
+
+        // Autofill form for demonstration
+        eventForm.eventName.value = data.eventName || '';
+        // Clear all date inputs first
+        datesContainer.innerHTML = '';
+        if(Array.isArray(data.dates) && data.dates.length > 0) {
+          for(let d of data.dates) {
+            const inp = document.createElement('input');
+            inp.type = 'datetime-local';
+            inp.name = 'dates[]';
+            inp.required = true;
+            inp.className = 'w-full rounded-lg border border-purple-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500';
+
+            // date-local expects format: YYYY-MM-DDTHH:mm, but sometimes seconds etc
+            // Try to get compatible string
+            const dt = new Date(d);
+            if(!isNaN(dt)) {
+              // Formatting YYYY-MM-DDTHH:mm
+              const yyyy = dt.getFullYear();
+              const mm = String(dt.getMonth() + 1).padStart(2, '0');
+              const dd = String(dt.getDate()).padStart(2, '0');
+              const hh = String(dt.getHours()).padStart(2, '0');
+              const min = String(dt.getMinutes()).padStart(2, '0');
+              inp.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+            } else {
+              inp.value = d;
+            }
+            datesContainer.appendChild(inp);
+          }
+        } else {
+          // add one empty input if none
+          const inp = document.createElement('input');
+          inp.type = 'datetime-local';
+          inp.name = 'dates[]';
+          inp.required = true;
+          inp.className = 'w-full rounded-lg border border-purple-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500';
+          datesContainer.appendChild(inp);
+        }
+
+        eventForm.location.value = data.location || '';
+        eventForm.invitees.value = (Array.isArray(data.invitees) ? data.invitees.join(', ') : '');
+
+        resultSection.classList.remove('hidden');
+        resEventName.textContent = data.eventName || '';
+        resDates.innerHTML = '';
+        (data.dates || []).forEach(d => {
+          const li = document.createElement('li');
+          li.textContent = formatDateTimeLocal(d);
+          resDates.appendChild(li);
+        });
+        resLocation.textContent = data.location || 'Not specified';
+        resInvitees.innerHTML = '';
+        (data.invitees || []).forEach(em => {
+          const li = document.createElement('li');
+          li.textContent = em;
+          resInvitees.appendChild(li);
+        });
+        shareLinkInput.value = location.href;
+      } catch {
+        // silently fail on errors
+      }
+    }
+  });
+</script>
+</body>
+</html>
+```

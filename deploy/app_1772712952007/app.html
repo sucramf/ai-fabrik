@@ -1,0 +1,335 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AffirmMate - Your Daily Positive Affirmations</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .fade-in {
+      animation: fade-in 0.4s ease forwards;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-700 via-purple-800 to-pink-700 min-h-screen flex flex-col text-indigo-900 tracking-normal">
+  <header class="flex justify-between items-center px-6 py-6 max-w-7xl mx-auto w-full">
+    <a href="#app" class="text-white text-3xl font-extrabold tracking-tight select-none hover:text-pink-300 transition focus:outline-none focus:ring-2 focus:ring-pink-300 rounded">
+      AffirmMate
+    </a>
+    <nav class="flex space-x-8 text-indigo-200 font-semibold select-none text-sm sm:text-base">
+      <a href="#app" class="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white rounded">Get Started</a>
+      <a href="#how-it-works" class="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white rounded">How it Works</a>
+      <a href="#footer" class="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white rounded">Contact</a>
+    </nav>
+  </header>
+
+  <main id="app" class="flex-grow flex flex-col justify-center items-center px-6 sm:px-12 max-w-md mx-auto w-full text-center select-none">
+    <h2 class="text-white text-4xl sm:text-5xl font-extrabold leading-tight mb-6 drop-shadow-lg max-w-xl mx-auto">
+      Your Personalized Daily Positive Affirmations
+    </h2>
+    <p class="text-indigo-200 mb-12 max-w-lg mx-auto drop-shadow-md text-base sm:text-lg leading-relaxed">
+      Start each day motivated and uplifted. Tell us how you feel, and we’ll craft affirmations just for you — delivered right to your email or as a browser notification.
+    </p>
+
+    <form id="affirmationForm" class="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl p-8 w-full max-w-lg shadow-lg space-y-6 ring-1 ring-white/20">
+      <fieldset class="space-y-4">
+        <label for="mood" class="block mb-2 font-semibold text-indigo-900 text-base">How are you feeling today?</label>
+        <select id="mood" name="mood" required
+          class="w-full rounded-lg border-0 px-5 py-3 text-indigo-900 font-semibold 
+                 focus:outline-none focus:ring-4 focus:ring-pink-400 transition shadow-md 
+                 placeholder:text-indigo-400"
+          aria-describedby="mood-help"
+        >
+          <option value="" disabled selected>Select your mood</option>
+          <option value="happy">Happy 😊</option>
+          <option value="anxious">Anxious 😟</option>
+          <option value="tired">Tired 😴</option>
+          <option value="motivated">Motivated 🚀</option>
+          <option value="stressed">Stressed 😣</option>
+          <option value="hopeful">Hopeful 🌈</option>
+          <option value="neutral">Neutral 😐</option>
+        </select>
+        <p id="mood-help" class="sr-only">Choose one mood option</p>
+      </fieldset>
+
+      <fieldset class="space-y-4">
+        <label for="name" class="block mb-2 font-semibold text-indigo-900 text-base">Your Name (optional)</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="e.g. Alex"
+          autocomplete="name"
+          class="w-full rounded-lg border-0 px-5 py-3 text-indigo-900 font-semibold 
+                 focus:outline-none focus:ring-4 focus:ring-pink-400 transition shadow-md"
+          aria-describedby="name-help"
+        />
+        <p id="name-help" class="sr-only">Optional, used to personalize your affirmation</p>
+      </fieldset>
+
+      <fieldset class="space-y-4">
+        <label for="email" class="block mb-2 font-semibold text-indigo-900 text-base">Your Email <span class="text-pink-600">*</span></label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+          class="w-full rounded-lg border-0 px-5 py-3 text-indigo-900 font-semibold 
+                 focus:outline-none focus:ring-4 focus:ring-pink-400 transition shadow-md"
+          aria-describedby="email-help"
+        />
+        <p id="email-help" class="sr-only">Required; we’ll send your daily affirmations here</p>
+      </fieldset>
+
+      <fieldset class="flex flex-col space-y-3 border-t border-white/30 pt-6" aria-describedby="delivery-help" role="radiogroup" aria-label="Deliver affirmation via">
+        <span class="font-semibold text-indigo-900 text-base select-text">Deliver affirmation via:</span>
+        <label class="inline-flex items-center space-x-3 cursor-pointer rounded-lg px-3 py-2 transition hover:bg-white/30 focus-within:ring-2 focus-within:ring-pink-400 focus-within:ring-offset-1">
+          <input type="radio" name="delivery" value="email" checked class="text-pink-600 focus:ring-pink-500 cursor-pointer" />
+          <span class="text-indigo-900 select-text">Email</span>
+        </label>
+        <label class="inline-flex items-center space-x-3 cursor-pointer rounded-lg px-3 py-2 transition hover:bg-white/30 focus-within:ring-2 focus-within:ring-pink-400 focus-within:ring-offset-1">
+          <input type="radio" name="delivery" value="notification" class="text-pink-600 focus:ring-pink-500 cursor-pointer" />
+          <span class="text-indigo-900 select-text">Browser Notification</span>
+        </label>
+        <p id="delivery-help" class="sr-only">Choose how you want to receive your daily affirmation</p>
+      </fieldset>
+
+      <button
+        type="submit"
+        class="w-full bg-pink-600 text-white font-bold rounded-xl py-3 drop-shadow-lg 
+               hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-400 focus:ring-offset-2 
+               transition disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        Generate My Affirmation
+      </button>
+    </form>
+
+    <section aria-live="polite" aria-atomic="true" class="mt-14 max-w-lg w-full px-5 select-text">
+      <div id="result" class="bg-white bg-opacity-95 rounded-3xl p-6 text-pink-700 font-semibold text-lg shadow-2xl hidden fade-in"></div>
+    </section>
+  </main>
+
+  <section
+    id="how-it-works"
+    class="bg-white/10 backdrop-blur-md py-20 px-6 max-w-5xl mx-auto w-full text-indigo-100 select-none rounded-3xl mt-20 shadow-lg ring-1 ring-white/20"
+  >
+    <h3 class="text-center text-3xl font-extrabold mb-14 drop-shadow-lg tracking-wide">How It Works</h3>
+    <div class="grid gap-12 sm:grid-cols-3 text-center">
+      <div class="space-y-5 px-4">
+        <div
+          class="inline-flex items-center justify-center mx-auto bg-pink-600 rounded-full w-20 h-20 text-white text-3xl font-black shadow-xl ring-4 ring-white/40"
+          aria-hidden="true"
+        >
+          1
+        </div>
+        <p class="text-base sm:text-lg leading-relaxed font-medium">
+          Each morning, tell us how you’re feeling by selecting your mood.
+        </p>
+      </div>
+      <div class="space-y-5 px-4">
+        <div
+          class="inline-flex items-center justify-center mx-auto bg-pink-600 rounded-full w-20 h-20 text-white text-3xl font-black shadow-xl ring-4 ring-white/40"
+          aria-hidden="true"
+        >
+          2
+        </div>
+        <p class="text-base sm:text-lg leading-relaxed font-medium">
+          We generate tailored positive affirmations to boost your motivation and well-being.
+        </p>
+      </div>
+      <div class="space-y-5 px-4">
+        <div
+          class="inline-flex items-center justify-center mx-auto bg-pink-600 rounded-full w-20 h-20 text-white text-3xl font-black shadow-xl ring-4 ring-white/40"
+          aria-hidden="true"
+        >
+          3
+        </div>
+        <p class="text-base sm:text-lg leading-relaxed font-medium">
+          Receive your personalized affirmation daily via email or browser notification.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer
+    id="footer"
+    class="bg-indigo-900/90 text-indigo-200 py-8 text-center select-none mt-20 rounded-t-3xl shadow-inner ring-1 ring-white/10"
+  >
+    <p class="text-sm sm:text-base select-text">© 2024 AffirmMate — Crafted with care to brighten your day.</p>
+  </footer>
+
+  <script>
+    (() => {
+      const affirmationsByMood = {
+        happy: [
+          "Today is a wonderful day filled with joy and laughter.",
+          "Your happiness shines and inspires everyone around you.",
+          "You deserve all the good feelings you’re experiencing.",
+          "Keep spreading your positive energy far and wide."
+        ],
+        anxious: [
+          "You are safe, calm, and in control.",
+          "Breathe deeply – you have the strength to handle this moment.",
+          "Each challenge is an opportunity for growth and peace.",
+          "You are stronger than any anxious thought."
+        ],
+        tired: [
+          "It’s okay to rest; your body and mind are worthy of care.",
+          "Your energy renews with every peaceful pause.",
+          "You will recharge and come back even stronger.",
+          "Rest is a form of productivity – honor it today."
+        ],
+        motivated: [
+          "You have the power and passion to achieve your goals.",
+          "Every step you take is progress toward your dreams.",
+          "Your motivation lights the path to success.",
+          "Keep pushing forward – greatness awaits you."
+        ],
+        stressed: [
+          "Let go of what you cannot control and focus on what you can.",
+          "Peace flows through you with every mindful breath.",
+          "You can handle this – one moment at a time.",
+          "Stress is temporary; your strength is permanent."
+        ],
+        hopeful: [
+          "Brighter days are coming, filled with endless possibilities.",
+          "Your hope fuels the amazing things yet to come.",
+          "Hold onto your dreams – they are within reach.",
+          "The future you desire is unfolding beautifully."
+        ],
+        neutral: [
+          "Today is a fresh start filled with potential.",
+          "You have the power to choose joy and peace.",
+          "Each moment is a new chance to be your best self.",
+          "You are enough, just as you are."
+        ]
+      };
+
+      function randomFromArray(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      const form = document.getElementById("affirmationForm");
+      const resultEl = document.getElementById("result");
+
+      // Browser notification permission request & utility
+      async function notifyUser(message) {
+        if (!("Notification" in window)) {
+          alert(
+            "Your browser does not support notifications. We will send your affirmation via email instead."
+          );
+          return false;
+        } else if (Notification.permission === "granted") {
+          new Notification("Your Daily Affirmation", {
+            body: message,
+            icon: "https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
+          });
+          return true;
+        } else if (Notification.permission !== "denied") {
+          try {
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+              new Notification("Your Daily Affirmation", {
+                body: message,
+                icon: "https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
+              });
+              return true;
+            } else {
+              return false;
+            }
+          } catch {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+
+      // Mimic email sending (for demo, just show a message)
+      function sendEmail(name, email, message) {
+        // In a real app, you'd call backend API here.
+        // We'll simulate with a timeout.
+        return new Promise((resolve) => {
+          setTimeout(() => resolve(true), 1500);
+        });
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (form.checkValidity() === false) {
+          form.reportValidity();
+          return;
+        }
+        resultEl.classList.add("hidden");
+        // Remove fade-in (if any) before next fade
+        resultEl.classList.remove("fade-in");
+
+        // disable form, show loading on button
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = "Generating...";
+
+        const mood = form.mood.value;
+        const nameRaw = form.name.value.trim();
+        const email = form.email.value.trim();
+        const delivery = form.delivery.value;
+
+        let chosenAffirmation =
+          randomFromArray(affirmationsByMood[mood] || affirmationsByMood.neutral);
+        if (nameRaw) {
+          // Personalize with name
+          if (/your\b/i.test(chosenAffirmation)) {
+            chosenAffirmation = chosenAffirmation.replace(/\byour\b/gi, nameRaw + "'s");
+          } else {
+            chosenAffirmation =
+              `Hey ${nameRaw}, ` +
+              chosenAffirmation.charAt(0).toLowerCase() +
+              chosenAffirmation.slice(1);
+          }
+        }
+
+        if (delivery === "notification") {
+          const hasNotified = await notifyUser(chosenAffirmation);
+          if (!hasNotified) {
+            // fallback to email
+            await sendEmail(nameRaw, email, chosenAffirmation);
+            resultEl.textContent = `Browser notifications are not enabled. Your affirmation has been sent to ${email}.`;
+          } else {
+            resultEl.textContent =
+              "Your daily affirmation has been sent as a browser notification.";
+          }
+        } else {
+          await sendEmail(nameRaw, email, chosenAffirmation);
+          resultEl.textContent = `Your daily affirmation has been sent to ${email}.`;
+        }
+
+        resultEl.classList.remove("hidden", "opacity-0");
+        // Trigger fade in animation
+        setTimeout(() => {
+          resultEl.classList.add("fade-in");
+        }, 0);
+
+        submitButton.disabled = false;
+        submitButton.textContent = "Generate My Affirmation";
+
+        // Scroll to result
+        resultEl.scrollIntoView({ behavior: "smooth" });
+      });
+    })();
+  </script>
+</body>
+</html>
+```

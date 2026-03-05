@@ -1,0 +1,370 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickPolicy - Rapid Privacy & Terms Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom smooth shadow */
+    .soft-shadow {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    /* Hide number input arrows for better UI */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance:none;
+      margin:0;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-3xl font-extrabold text-indigo-600 select-none tracking-tight">QuickPolicy</a>
+      <ul class="hidden md:flex space-x-10 text-gray-700 font-semibold tracking-wide">
+        <li><a href="#tool" class="hover:text-indigo-600 transition-colors duration-200">Tool</a></li>
+        <li><a href="#features" class="hover:text-indigo-600 transition-colors duration-200">Features</a></li>
+        <li><a href="#pricing" class="hover:text-indigo-600 transition-colors duration-200">Pricing</a></li>
+        <li><a href="#contact" class="hover:text-indigo-600 transition-colors duration-200">Contact</a></li>
+      </ul>
+      <a href="#tool" class="hidden md:inline-block bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition">Start Now</a>
+
+      <!-- Mobile menu button -->
+      <button id="menu-btn" class="md:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Toggle menu" aria-expanded="false">
+        <svg class="w-7 h-7 text-gray-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="menu" class="hidden md:hidden bg-white border-t border-gray-200 shadow-lg">
+      <ul class="flex flex-col space-y-3 py-6 px-8 text-gray-700 font-semibold tracking-wide">
+        <li><a href="#tool" class="block hover:text-indigo-600 transition-colors duration-200">Tool</a></li>
+        <li><a href="#features" class="block hover:text-indigo-600 transition-colors duration-200">Features</a></li>
+        <li><a href="#pricing" class="block hover:text-indigo-600 transition-colors duration-200">Pricing</a></li>
+        <li><a href="#contact" class="block hover:text-indigo-600 transition-colors duration-200">Contact</a></li>
+        <li><a href="#tool" class="block bg-indigo-600 text-white py-3 px-6 rounded-lg mt-3 text-center shadow-md hover:bg-indigo-700 transition">Start Now</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="pt-28 bg-white">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col-reverse md:flex-row items-center gap-16 md:gap-20">
+      <div class="md:w-1/2 max-w-xl text-center md:text-left">
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 leading-tight">
+          Rapidly Generate <span class="text-indigo-600">Customized Privacy Policies</span> &amp; Terms of Service
+        </h1>
+        <p class="mt-6 text-lg text-gray-600 max-w-lg mx-auto md:mx-0">
+          QuickPolicy helps small businesses and startups create legally compliant, up-to-date policies without the headache. Stay protected and integrate with your favorite website builders seamlessly.
+        </p>
+        <a href="#tool" class="inline-block mt-10 bg-indigo-600 text-white px-10 py-3 rounded-xl font-semibold shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition">
+          Try It Now - It's Free
+        </a>
+      </div>
+      <div class="md:w-1/2 flex justify-center md:justify-end">
+        <img src="https://cdn.dribbble.com/users/583279/screenshots/14113778/media/fd7396e0f3c3640ca488e7be7d2a7a10.png?compress=1&resize=800x600" alt="Privacy Policy illustration" class="rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg" loading="lazy" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Tool Section -->
+  <section id="tool" class="bg-gray-50 py-20">
+    <div class="max-w-4xl mx-auto px-6 md:px-12">
+      <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-10 tracking-wide">Create Your Policy in Minutes</h2>
+      <form id="policy-form" class="bg-white rounded-2xl soft-shadow p-10 space-y-8" novalidate>
+        <p class="text-gray-700 text-center text-lg max-w-xl mx-auto mb-6">Answer a few simple questions and get your customized policy instantly.</p>
+
+        <div class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
+          <div class="flex-1">
+            <label for="businessName" class="block text-sm font-semibold text-gray-700 mb-2">Business / Startup Name</label>
+            <input required type="text" id="businessName" name="businessName" placeholder="Example Inc." 
+              class="w-full rounded-lg border bg-white border-gray-300 px-5 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+          </div>
+          <div class="flex-1">
+            <label for="websiteURL" class="block text-sm font-semibold text-gray-700 mb-2">Website URL</label>
+            <input required type="url" id="websiteURL" name="websiteURL" placeholder="https://example.com" 
+              class="w-full rounded-lg border bg-white border-gray-300 px-5 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+          </div>
+        </div>
+
+        <div>
+          <label for="businessType" class="block text-sm font-semibold text-gray-700 mb-2">Business Type</label>
+          <select required id="businessType" name="businessType" aria-describedby="businessTypeDesc"
+            class="w-full rounded-lg border bg-white border-gray-300 px-5 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+            <option value="" disabled selected>Select your business type</option>
+            <option value="ecommerce">Ecommerce / Online Store</option>
+            <option value="startup">Startup / SaaS</option>
+            <option value="blog">Blog / Content Website</option>
+            <option value="service">Service Provider</option>
+            <option value="app">Mobile / Web App</option>
+            <option value="other">Other</option>
+          </select>
+          <p id="businessTypeDesc" class="sr-only">Choose business type for tailored policy</p>
+        </div>
+
+        <fieldset class="space-y-3">
+          <legend class="block text-sm font-semibold text-gray-700 mb-1">Do you collect personal data from your users?</legend>
+          <div class="flex space-x-10">
+            <label class="inline-flex items-center cursor-pointer">
+              <input required type="radio" name="collectData" value="yes" class="form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2" />
+              <span class="ml-3 text-gray-700 select-none">Yes</span>
+            </label>
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="radio" name="collectData" value="no" class="form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2" />
+              <span class="ml-3 text-gray-700 select-none">No</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div id="dataTypesWrapper" class="hidden">
+          <p class="block text-sm font-semibold text-gray-700 mb-3">What types of personal data do you collect? <span class="text-sm font-normal">(select all that apply)</span></p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <label class="inline-flex items-center space-x-3 rounded-lg border border-gray-300 px-4 py-2 cursor-pointer hover:bg-indigo-50 transition">
+              <input type="checkbox" name="dataTypes" value="name" class="form-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2 rounded transition" />
+              <span class="text-gray-700 select-none">Name</span>
+            </label>
+            <label class="inline-flex items-center space-x-3 rounded-lg border border-gray-300 px-4 py-2 cursor-pointer hover:bg-indigo-50 transition">
+              <input type="checkbox" name="dataTypes" value="email" class="form-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2 rounded transition" />
+              <span class="text-gray-700 select-none">Email</span>
+            </label>
+            <label class="inline-flex items-center space-x-3 rounded-lg border border-gray-300 px-4 py-2 cursor-pointer hover:bg-indigo-50 transition">
+              <input type="checkbox" name="dataTypes" value="payment" class="form-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2 rounded transition" />
+              <span class="text-gray-700 select-none">Payment Information</span>
+            </label>
+            <label class="inline-flex items-center space-x-3 rounded-lg border border-gray-300 px-4 py-2 cursor-pointer hover:bg-indigo-50 transition">
+              <input type="checkbox" name="dataTypes" value="location" class="form-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2 rounded transition" />
+              <span class="text-gray-700 select-none">Location</span>
+            </label>
+            <label class="inline-flex items-center space-x-3 rounded-lg border border-gray-300 px-4 py-2 cursor-pointer hover:bg-indigo-50 transition">
+              <input type="checkbox" name="dataTypes" value="usage" class="form-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2 rounded transition" />
+              <span class="text-gray-700 select-none">Usage Data</span>
+            </label>
+            <label class="inline-flex items-center space-x-3 rounded-lg border border-gray-300 px-4 py-2 cursor-pointer hover:bg-indigo-50 transition">
+              <input type="checkbox" name="dataTypes" value="other" class="form-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 focus:ring-2 rounded transition" />
+              <span class="text-gray-700 select-none">Other</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-5">
+          <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 transition w-full md:w-auto">Generate Policy</button>
+          <button type="button" id="resetBtn" class="text-indigo-600 font-semibold hover:underline focus:outline-none w-full md:w-auto">Reset</button>
+        </div>
+      </form>
+
+      <section id="result" class="mt-14 bg-white rounded-2xl soft-shadow p-8 max-h-[420px] overflow-auto hidden scroll-p-6">
+        <h3 class="text-2xl font-semibold mb-6 text-indigo-600 tracking-wide">Your Generated Policy Preview</h3>
+        <pre class="whitespace-pre-wrap text-gray-800 text-base leading-relaxed" id="policyOutput" tabindex="0" role="region" aria-live="polite" aria-label="Policy preview"></pre>
+      </section>
+    </div>
+  </section>
+
+  <!-- Feature Section -->
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-6 md:px-12">
+      <h2 class="text-4xl font-extrabold text-center text-gray-900 mb-16 tracking-wide">Why Choose QuickPolicy?</h2>
+      <div class="grid md:grid-cols-3 gap-12">
+        <article class="bg-gray-50 soft-shadow rounded-3xl p-10 flex flex-col items-center text-center space-y-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6h6v6m-6 0h6l-1.5 1.5M7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 14v5a2 2 0 01-2 2h-3.5a1.5 1.5 0 01-1.5-1.5V14" />
+          </svg>
+          <h3 class="text-2xl font-semibold text-gray-900 tracking-tight">Custom-fit Policies</h3>
+          <p class="text-gray-600 max-w-sm">Tailored policies based on your business type and data practices—no templates, no guesswork.</p>
+        </article>
+        <article class="bg-gray-50 soft-shadow rounded-3xl p-10 flex flex-col items-center text-center space-y-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16a2.25 2.25 0 11-1.5-2" />
+          </svg>
+          <h3 class="text-2xl font-semibold text-gray-900 tracking-tight">Always Up-to-date</h3>
+          <p class="text-gray-600 max-w-sm">Automatic updates to keep your policies compliant with evolving global privacy laws and regulations.</p>
+        </article>
+        <article class="bg-gray-50 soft-shadow rounded-3xl p-10 flex flex-col items-center text-center space-y-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 20h9" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20v-5a3 3 0 013-3h6" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12v-2a4 4 0 014-4h4" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8h1" />
+          </svg>
+          <h3 class="text-2xl font-semibold text-gray-900 tracking-tight">Easy Integration</h3>
+          <p class="text-gray-600 max-w-sm">Connect with popular website builders &amp; ecommerce platforms to seamlessly embed policies and maintain compliance.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="bg-indigo-700 text-indigo-100 pt-20 pb-10 mt-20">
+    <div class="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div>
+        <h4 class="text-2xl font-extrabold mb-5 tracking-wide">QuickPolicy</h4>
+        <p class="text-indigo-300 max-w-md leading-relaxed">Helping startups &amp; small businesses generate and maintain legally compliant privacy policies and terms of service — quickly and simply.</p>
+      </div>
+      <div>
+        <h4 class="text-xl font-semibold mb-5 tracking-wide">Product</h4>
+        <ul class="space-y-3">
+          <li><a href="#tool" class="hover:underline focus:underline focus:outline-none transition">Policy Generator</a></li>
+          <li><a href="#features" class="hover:underline focus:underline focus:outline-none transition">Features</a></li>
+          <li><a href="#pricing" class="hover:underline focus:underline focus:outline-none transition">Pricing</a></li>
+          <li><a href="#contact" class="hover:underline focus:underline focus:outline-none transition">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-xl font-semibold mb-5 tracking-wide">Contact</h4>
+        <address class="not-italic space-y-2 text-indigo-300 leading-relaxed">
+          <p>Email: <a href="mailto:support@quickpolicy.com" class="hover:underline focus:outline-none">support@quickpolicy.com</a></p>
+          <p>Twitter: <a href="https://twitter.com/quickpolicy" target="_blank" rel="noopener" class="hover:underline focus:outline-none">@quickpolicy</a></p>
+          <p>Phone: <a href="tel:+1234567890" class="hover:underline focus:outline-none">+1 (234) 567-890</a></p>
+        </address>
+      </div>
+    </div>
+    <div class="mt-14 text-center text-indigo-300 text-sm select-none tracking-wide">&copy; 2024 QuickPolicy. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menu-btn');
+    const menu = document.getElementById('menu');
+    menuBtn.addEventListener('click', () => {
+      const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', !expanded);
+      menu.classList.toggle('hidden');
+    });
+
+    // Show/hide data types checkboxes when collecting data is yes
+    const collectDataRadios = document.querySelectorAll('input[name="collectData"]');
+    const dataTypesWrapper = document.getElementById('dataTypesWrapper');
+    const dataTypeCheckboxes = dataTypesWrapper.querySelectorAll('input[type="checkbox"]');
+
+    function toggleDataTypes() {
+      const selected = Array.from(collectDataRadios).find(r => r.checked);
+      if (selected && selected.value === 'yes') {
+        dataTypesWrapper.classList.remove('hidden');
+        dataTypeCheckboxes.forEach(checkbox => checkbox.required = true);
+      } else {
+        dataTypesWrapper.classList.add('hidden');
+        dataTypeCheckboxes.forEach(checkbox => {
+          checkbox.checked = false;
+          checkbox.required = false;
+        });
+      }
+    }
+
+    collectDataRadios.forEach(radio => radio.addEventListener('change', toggleDataTypes));
+
+    // Form submission logic
+    const form = document.getElementById('policy-form');
+    const resultSection = document.getElementById('result');
+    const policyOutput = document.getElementById('policyOutput');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Simple policy template generator (placeholder logic)
+    function generatePolicy(formData) {
+      const businessName = formData.get('businessName').trim();
+      const websiteURL = formData.get('websiteURL').trim();
+      const businessType = formData.get('businessType');
+      const collectsData = formData.get('collectData') === 'yes';
+      const dataTypes = formData.getAll('dataTypes');
+
+      const dateString = new Date().toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'});
+
+      let policy = `${businessName}\nPrivacy Policy & Terms of Service\nLast updated: ${dateString}\n\n`;
+
+      policy += `Welcome to ${businessName} (${websiteURL}). This policy outlines how we collect, use, and protect your personal information when you use our services.\n\n`;
+
+      const bizTypeNotes = {
+        ecommerce: "Our ecommerce platform securely processes your orders and payments.",
+        startup: "As a cutting-edge SaaS startup, we prioritize your privacy and data security.",
+        blog: "We operate a content-driven website, focusing on respecting your personal data.",
+        service: "Our service-based business is committed to transparency about your information.",
+        app: "Our mobile/web app collects minimal data necessary to optimize your experience.",
+        other: "We tailor our policies to fit the unique aspects of your business."
+      };
+      if (bizTypeNotes[businessType]) policy += bizTypeNotes[businessType] + "\n\n";
+
+      if (collectsData) {
+        policy += "### Data Collection\n";
+        policy += `${businessName} collects the following types of personal data:\n`;
+        dataTypes.forEach(type => {
+          switch(type) {
+            case 'name': 
+              policy += "- Your name to personalize our services.\n";
+              break;
+            case 'email':
+              policy += "- Your email address for communication and updates.\n";
+              break;
+            case 'payment':
+              policy += "- Payment information to process transactions securely.\n";
+              break;
+            case 'location':
+              policy += "- Location data to enhance user experience and analytics.\n";
+              break;
+            case 'usage':
+              policy += "- Usage data to improve our website and app performance.\n";
+              break;
+            case 'other':
+              policy += "- Other personal data as voluntarily provided by you.\n";
+              break;
+          }
+        });
+        policy += `\nWe implement strong security measures to protect your data and comply with all relevant data protection regulations such as GDPR and CCPA.\n\n`;
+      } else {
+        policy += "### No Personal Data Collection\n";
+        policy += `${businessName} does not collect any personal data from users. We are committed to respecting your privacy.\n\n`;
+      }
+
+      policy += "### Updates\n";
+      policy += `This policy is regularly updated to comply with new regulations and maintain best privacy practices.\n\n`;
+
+      policy += "### Integration\n";
+      policy += `QuickPolicy integrates easily with popular website builders and ecommerce platforms to embed and maintain your policy effortlessly.\n\n`;
+
+      policy += "If you have any questions or concerns about this policy, please contact us at support@quickpolicy.com.\n";
+
+      return policy;
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const formData = new FormData(form);
+      if (formData.get('collectData') === 'yes') {
+        const selectedDataTypes = formData.getAll('dataTypes');
+        if (selectedDataTypes.length === 0) {
+          alert("Please select at least one type of personal data collected.");
+          return;
+        }
+      }
+      const policyText = generatePolicy(formData);
+
+      policyOutput.textContent = policyText;
+      resultSection.classList.remove('hidden');
+
+      // Smooth scroll to result with some offset for fixed navbar
+      const yOffset = -100;
+      const y = resultSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({top: y, behavior: 'smooth'});
+    });
+
+    resetBtn.addEventListener('click', () => {
+      form.reset();
+      dataTypesWrapper.classList.add('hidden');
+      policyOutput.textContent = "";
+      resultSection.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>
+```

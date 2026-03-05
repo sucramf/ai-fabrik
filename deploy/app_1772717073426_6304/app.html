@@ -1,0 +1,398 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daily Affirmations Generator | Uplift Your Day</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* subtle background pattern for hero */
+    .pattern-bg {
+      background-image:
+        radial-gradient(rgba(255 255 255 / 0.05) 1px, transparent 1px),
+        radial-gradient(rgba(255 255 255 / 0.05) 1px, transparent 1px);
+      background-position: 0 0, 25px 25px;
+      background-size: 50px 50px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 text-gray-900 flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white bg-opacity-90 backdrop-blur sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="flex items-center space-x-2 text-indigo-700 font-extrabold text-2xl select-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8" />
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+        </svg>
+        <span>Affirmify</span>
+      </a>
+      <nav class="hidden md:flex space-x-8 font-semibold text-indigo-700">
+        <a href="#features" class="hover:text-indigo-900 transition">Features</a>
+        <a href="#generator" class="hover:text-indigo-900 transition">Generate</a>
+        <a href="#footer" class="hover:text-indigo-900 transition">Contact</a>
+      </nav>
+      <button class="md:hidden text-indigo-700" aria-label="Menu" id="menu-toggle">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <nav id="mobile-menu" class="md:hidden bg-white bg-opacity-90 backdrop-blur max-w-7xl mx-auto px-6 space-y-1 shadow-inner hidden">
+      <a href="#features" class="block py-2 text-indigo-700 font-medium border-l-4 border-indigo-700 pl-4">Features</a>
+      <a href="#generator" class="block py-2 text-indigo-700 font-medium border-l-4 border-transparent hover:border-indigo-700 pl-4">Generate</a>
+      <a href="#footer" class="block py-2 text-indigo-700 font-medium border-l-4 border-transparent hover:border-indigo-700 pl-4">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section id="hero" class="pattern-bg flex-grow flex flex-col justify-center max-w-7xl mx-auto px-6 py-24 text-center">
+    <h1 class="text-white text-5xl md:text-6xl font-extrabold drop-shadow-lg max-w-4xl mx-auto leading-tight">
+      Start Your Day with Positive, <span class="text-yellow-300">Personalized Daily Affirmations</span>
+    </h1>
+    <p class="mt-6 text-indigo-200 text-lg max-w-3xl mx-auto font-semibold drop-shadow-md">
+      Tell us how you feel and what you want to focus on, and we'll craft a daily affirmation just for you.
+    </p>
+    <a href="#generator" class="mt-10 inline-block bg-yellow-300 hover:bg-yellow-400 text-indigo-900 font-semibold px-8 py-3 rounded-lg shadow-lg transition shadow-yellow-400/40">
+      Get Started
+    </a>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="max-w-7xl mx-auto px-6 py-20 bg-white rounded-t-3xl shadow-lg">
+    <h2 class="text-indigo-900 text-4xl font-extrabold text-center mb-12">Why Choose Affirmify?</h2>
+    <div class="grid md:grid-cols-3 gap-12">
+      <div class="flex flex-col items-center text-center px-6">
+        <div class="bg-indigo-100 text-indigo-700 p-4 rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 12h12M6 8h12M6 16h8" />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold mb-2 text-indigo-900">Personalized Experience</h3>
+        <p class="text-indigo-700 font-medium">Affirmations tailored specifically to your mood and goals.</p>
+      </div>
+      <div class="flex flex-col items-center text-center px-6">
+        <div class="bg-indigo-100 text-indigo-700 p-4 rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold mb-2 text-indigo-900">Simple & Fast</h3>
+        <p class="text-indigo-700 font-medium">Generate affirmations with just a few clicks in seconds.</p>
+      </div>
+      <div class="flex flex-col items-center text-center px-6">
+        <div class="bg-indigo-100 text-indigo-700 p-4 rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 14l9-5-9-5-9 5 9 5z" />
+            <path d="M12 14l6.16-3.422a12 12 0 01.84 6.566L12 21l-7-3.856a12 12 0 01.84-6.566L12 14z" />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold mb-2 text-indigo-900">Daily Motivation</h3>
+        <p class="text-indigo-700 font-medium">Build positive habits and start every day inspired.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Generator -->
+  <section id="generator" class="bg-indigo-50 py-20 px-6 max-w-4xl mx-auto rounded-b-3xl shadow-lg mt-16 mb-24">
+    <h2 class="text-indigo-900 text-4xl font-extrabold mb-8 text-center">Generate Your Personalized Affirmation</h2>
+    <form id="affForm" class="space-y-8 bg-white p-8 rounded-lg shadow-md">
+      <div>
+        <label for="mood" class="block text-indigo-900 font-semibold mb-3">How do you feel right now?</label>
+        <select id="mood" name="mood" required
+          class="w-full border border-indigo-300 rounded-md px-4 py-3 text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition">
+          <option value="" disabled selected>Choose your mood</option>
+          <option value="happy">Happy</option>
+          <option value="anxious">Anxious</option>
+          <option value="tired">Tired</option>
+          <option value="confident">Confident</option>
+          <option value="stressed">Stressed</option>
+          <option value="motivated">Motivated</option>
+          <option value="neutral">Neutral</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="focus" class="block text-indigo-900 font-semibold mb-3">What would you like to focus on today?</label>
+        <select id="focus" name="focus" required
+          class="w-full border border-indigo-300 rounded-md px-4 py-3 text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition">
+          <option value="" disabled selected>Choose your focus</option>
+          <option value="confidence">Confidence</option>
+          <option value="productivity">Productivity</option>
+          <option value="calmness">Calmness</option>
+          <option value="gratitude">Gratitude</option>
+          <option value="self-love">Self-Love</option>
+          <option value="growth">Personal Growth</option>
+          <option value="positivity">Positivity</option>
+        </select>
+      </div>
+
+      <button type="submit"
+        class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-6 py-3 rounded-md w-full transition shadow-lg shadow-indigo-500/40">
+        Generate Affirmation
+      </button>
+    </form>
+
+    <div id="result" class="mt-12 bg-yellow-50 border border-yellow-300 rounded-lg p-8 text-indigo-900 text-center text-xl font-semibold hidden select-text shadow">
+      <!-- Affirmation Result Here -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-indigo-900 text-indigo-200 py-10 text-center select-none">
+    <p class="max-w-3xl mx-auto px-6">&copy; 2024 Affirmify. All rights reserved. Made with 💜 for your daily positivity.</p>
+  </footer>
+
+<script>
+  const affirmations = {
+    happy: {
+      confidence: [
+        "Your happiness empowers your unstoppable confidence today.",
+        "Joy fuels your self-belief; shine boldly and confidently."
+      ],
+      productivity: [
+        "Your cheerful spirit boosts your productivity to new heights.",
+        "Happiness energizes your focus; achieve great things today."
+      ],
+      calmness: [
+        "Your joyful soul is calm & steady, perfectly balanced today.",
+        "Happiness brings you peace; remain calm throughout the day."
+      ],
+      gratitude: [
+        "Happy heart expands gratitude, attracting abundance.",
+        "Your happiness deepens appreciation for life's blessings."
+      ],
+      self-love: [
+        "Your joyful nature is the foundation of your self-love.",
+        "Happiness magnifies your love for yourself beautifully."
+      ],
+      growth: [
+        "Joy inspires your growth; embrace new opportunities confidently.",
+        "Happiness fuels your journey of personal growth today."
+      ],
+      positivity: [
+        "Your happiness radiates positivity to everyone you meet.",
+        "Joy fills your heart; spread positivity all day long."
+      ],
+    },
+    anxious: {
+      confidence: [
+        "Your courage shines brightest even amidst anxiety; believe in yourself.",
+        "Anxiety is temporary; your confidence is enduring and real."
+      ],
+      productivity: [
+        "Small steps forward overcome anxious doubts; your productivity grows.",
+        "Focus gently and steadily; your work blossoms despite anxiety."
+      ],
+      calmness: [
+        "Breathe deep—the calm within grows stronger than your worry.",
+        "Calmness is your anchor; anxiety is just passing waves."
+      ],
+      gratitude: [
+        "Find gratitude in small moments; it soothes anxious thoughts.",
+        "Gratefulness lightens your mind and calms anxious feelings."
+      ],
+      self-love: [
+        "You are enough exactly as you are; love yourself through anxiety.",
+        "Self-love heals anxious moments and empowers your spirit."
+      ],
+      growth: [
+        "Anxiety challenges you, but growth and strength are your true path.",
+        "Every anxious moment is a step toward growth and resilience."
+      ],
+      positivity: [
+        "Positivity shines despite anxiety; your bright light remains.",
+        "Your positive spirit outshines anxious shadows; keep shining."
+      ],
+    },
+    tired: {
+      confidence: [
+        "Rested or not, your confidence is steady and true.",
+        "Even tired, your inner strength and confidence blaze bright."
+      ],
+      productivity: [
+        "Gentle persistence turns tiredness into meaningful productivity.",
+        "Pace yourself – productivity comes in steady, mindful moments."
+      ],
+      calmness: [
+        "Let calm soothe your tired mind and renew your spirit.",
+        "Calm rest restores your energy; you are balanced and whole."
+      ],
+      gratitude: [
+        "Be grateful for rest; it recharges your power and peace.",
+        "Thankfulness for rest empowers your body and mind today."
+      ],
+      self-love: [
+        "Loving yourself means honoring your need to rest and recharge.",
+        "Self-love honors your tiredness; you deserve gentle care."
+      ],
+      growth: [
+        "Growth includes patience; tired moments are part of the journey.",
+        "Rest fuels your growth; take gentle steps forward today."
+      ],
+      positivity: [
+        "Even tired, your positive heart lights the way ahead.",
+        "Your positivity shines softly, comforting and inspiring."
+      ],
+    },
+    confident: {
+      confidence: [
+        "Your confidence grows stronger with each positive thought.",
+        "Bold and fearless, your confidence shapes an amazing day."
+      ],
+      productivity: [
+        "Confidence powers your productivity; achieve your best now.",
+        "Your assured mindset transforms goals into achievements."
+      ],
+      calmness: [
+        "Confident and calm, you navigate your day with ease and grace.",
+        "Calm confidence is your powerful foundation today."
+      ],
+      gratitude: [
+        "Gratitude strengthens your confident and joyful spirit.",
+        "You confidently appreciate and attract life's blessings."
+      ],
+      self-love: [
+        "Your confidence blossoms from deep self-love and respect.",
+        "Self-love fuels your confident steps toward greatness."
+      ],
+      growth: [
+        "Confident growth accelerates your personal and professional path.",
+        "Your inner confidence drives new, exciting growth today."
+      ],
+      positivity: [
+        "Positive confidence radiates from your heart to inspire others.",
+        "Your confident positivity makes today extraordinary."
+      ],
+    },
+    stressed: {
+      confidence: [
+        "Even under stress, your confidence stands strong and steady.",
+        "Stress fades as your confident spirit takes the lead."
+      ],
+      productivity: [
+        "Focus through stress; your productive energy is persistent.",
+        "You turn stress into fuel for meaningful progress today."
+      ],
+      calmness: [
+        "Calmness is your safe space in stressful moments; breathe deeply.",
+        "Stress cannot shake your calm core; you are grounded."
+      ],
+      gratitude: [
+        "Gratitude shields you from stress and invites peace.",
+        "Stress less and be grateful for your strength and resilience."
+      ],
+      self-love: [
+        "In stress, self-love is your refuge; be kind to yourself today.",
+        "Stress is temporary; your self-love is forever strong."
+      ],
+      growth: [
+        "Stress challenges foster your greatest personal growth.",
+        "You grow stronger and wiser through today's challenges."
+      ],
+      positivity: [
+        "Stay positive amidst stress; brighter moments await you.",
+        "Stress passes; your positivity remains unbreakable."
+      ],
+    },
+    motivated: {
+      confidence: [
+        "Your motivation fuels unstoppable confidence today.",
+        "Confident and motivated, you conquer every challenge."
+      ],
+      productivity: [
+        "Energized and focused, your productivity soars high.",
+        "Motivation and productivity combine to bring success."
+      ],
+      calmness: [
+        "Motivated with calm resolve, you balance drive with peace.",
+        "Calm motivation guides your steps toward achievement."
+      ],
+      gratitude: [
+        "Grateful motivation propels you into an abundant day.",
+        "Motivation and gratitude open doors to wonderful possibilities."
+      ],
+      self-love: [
+        "Loving yourself amplifies your motivated mindset.",
+        "Self-love inspires every motivated action you take."
+      ],
+      growth: [
+        "Driven by motivation, you embrace every growth opportunity.",
+        "Motivated growth leads you to your highest potential."
+      ],
+      positivity: [
+        "Positive motivation radiates, lifting you and those around you.",
+        "Your motivating positivity creates ripple effects of joy."
+      ],
+    },
+    neutral: {
+      confidence: [
+        "A balanced mind builds steady confidence each day.",
+        "Neutral feelings clear the way for confident choices."
+      ],
+      productivity: [
+        "Neutral focus primes you for calm and steady productivity.",
+        "You create productive habits through centered calmness."
+      ],
+      calmness: [
+        "Neutral is your peaceful state; embrace the calm within.",
+        "Balance in neutrality brings a calm, refreshing day."
+      ],
+      gratitude: [
+        "Neutral heart opens gently to gratitude's gentle power.",
+        "Even in neutrality, there is much to appreciate."
+      ],
+      self-love: [
+        "Self-love holds steady in neutral moments and beyond.",
+        "Be kind to yourself whether high or neutral–you matter."
+      ],
+      growth: [
+        "Growth sprouts quietly in neutral times; nurture it gently.",
+        "Neutral ground is fertile soil for new personal growth."
+      ],
+      positivity: [
+        "Positive thoughts can emerge from quiet neutral moments.",
+        "Neutral feelings welcome new waves of positivity today."
+      ],
+    },
+  };
+
+  function generateAffirmation(mood, focus) {
+    if (affirmations[mood] && affirmations[mood][focus]) {
+      const arr = affirmations[mood][focus];
+      const index = Math.floor(Math.random() * arr.length);
+      return arr[index];
+    }
+    return "Every day is a new chance to shine your light.";
+  }
+
+  document.getElementById("affForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const mood = e.target.mood.value;
+    const focus = e.target.focus.value;
+
+    if (!mood || !focus) return;
+
+    const affirmation = generateAffirmation(mood, focus);
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.textContent = affirmation;
+    resultDiv.classList.remove("hidden");
+    // Scroll result into view smoothly
+    resultDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  // Mobile menu toggle
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  menuToggle.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+</script>
+
+</body>
+</html>
+```

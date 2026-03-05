@@ -1,0 +1,1 @@
+A web tool that instantly generates personalized, polite email templates for common situations (e.g., meeting requests, follow-ups, thank-yous) based on a few user inputs like purpose, recipient type, and tone. Users save time crafting professional emails without sounding robotic.

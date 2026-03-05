@@ -1,0 +1,1 @@
+A web tool that generates personalized daily hydration reminders based on your weight, activity level, and local weather, sending gentle notifications to help you stay optimally hydrated throughout the day.

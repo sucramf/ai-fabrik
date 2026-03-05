@@ -1,0 +1,1 @@
+A simple SaaS tool called "ScheduleSnap" that helps small businesses and freelancers easily create and share professional, customizable appointment booking pages—integrating with their existing calendars and sending automated reminders—saving time and reducing no-shows. Subscription includes custom branding, multiple calendar integrations, SMS reminders, and priority support.

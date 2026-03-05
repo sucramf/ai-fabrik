@@ -1,0 +1,5 @@
+Name: MeetPrep
+
+Description: A SaaS tool that helps busy professionals quickly prepare for upcoming meetings by automatically summarizing relevant information. Users connect their calendar and email; before each meeting, MeetPrep generates concise briefs including key topics, attendee bios, recent related emails/documents, and suggested questions or talking points—all in one place.
+
+Target users: Busy professionals, consultants, salespeople, and managers who attend multiple meetings daily and want to save prep time while being well-informed.

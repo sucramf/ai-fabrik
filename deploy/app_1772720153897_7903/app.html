@@ -1,0 +1,291 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MeetingMinder - Automated Meeting Summaries & Task Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    /* Scrollbar for task list with modern style */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e0e7ff; /* Indigo-100 */
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #6366f1; /* Indigo-500 */
+      border-radius: 9999px;
+      border: 2px solid #e0e7ff; /* Indigo-100 */
+    }
+  </style>
+</head>
+<body class="bg-indigo-50 text-indigo-900 font-sans leading-relaxed">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-extrabold tracking-tight text-indigo-700 select-none hover:text-indigo-900 transition duration-300">MeetingMinder</a>
+      <ul class="hidden md:flex space-x-10 text-sm font-semibold text-indigo-700">
+        <li><a href="#hero" class="hover:text-indigo-900 transition duration-300">Home</a></li>
+        <li><a href="#tools" class="hover:text-indigo-900 transition duration-300">Tool</a></li>
+        <li><a href="#features" class="hover:text-indigo-900 transition duration-300">Features</a></li>
+        <li><a href="#footer" class="hover:text-indigo-900 transition duration-300">Contact</a></li>
+      </ul>
+      <a href="#tool-upload" class="hidden md:inline-block bg-indigo-700 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-indigo-800 transition duration-300 font-semibold tracking-wide">
+        Try Demo
+      </a>
+      <button id="mobile-menu-btn" aria-label="Toggle menu" class="md:hidden text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" >
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden border-t border-indigo-200 bg-white px-6 pb-6 space-y-4">
+      <a href="#hero" class="block text-indigo-700 font-semibold hover:text-indigo-900 transition duration-300">Home</a>
+      <a href="#tools" class="block text-indigo-700 font-semibold hover:text-indigo-900 transition duration-300">Tool</a>
+      <a href="#features" class="block text-indigo-700 font-semibold hover:text-indigo-900 transition duration-300">Features</a>
+      <a href="#footer" class="block text-indigo-700 font-semibold hover:text-indigo-900 transition duration-300">Contact</a>
+      <a href="#tool-upload" class="block bg-indigo-700 text-white text-center rounded-lg py-2 font-semibold shadow-lg hover:bg-indigo-800 transition duration-300">
+        Try Demo
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero" class="max-w-7xl mx-auto px-6 py-24 md:py-32 flex flex-col md:flex-row items-center gap-16 md:gap-28">
+    <div class="md:flex-1 max-w-xl space-y-8">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-indigo-900">
+        MeetingMinder<br />
+        <span class="block text-indigo-600">Automated Meeting Summaries &amp; Task Management</span>
+      </h1>
+      <p class="text-lg text-indigo-700 tracking-wide sm:max-w-lg leading-relaxed">
+        Stop wasting time on manual notes. Upload or integrate your calls, then get concise, actionable summaries and task lists—boosting your remote team’s productivity effortlessly.
+      </p>
+      <a href="#tool-upload" class="inline-block bg-indigo-700 text-white rounded-xl px-8 py-4 font-semibold text-lg shadow-xl hover:bg-indigo-800 transition duration-300">
+        Try Demo - Upload Your Recording
+      </a>
+      <div class="flex items-center gap-3 text-indigo-600 text-sm sm:text-base mt-5 select-none">
+        <svg class="w-7 h-7 shrink-0 stroke-indigo-600" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 13l4 4L19 7" />
+        </svg>
+        <span>Supports Zoom, Microsoft Teams &amp; more integrations coming soon</span>
+      </div>
+    </div>
+    <div class="md:flex-1 max-w-lg rounded-3xl overflow-hidden shadow-2xl bg-white ring-1 ring-indigo-100">
+      <img src="https://images.unsplash.com/photo-1560264350-f2fefe0890f0?auto=format&fit=crop&w=800&q=80" alt="Remote meeting illustration" class="w-full object-cover aspect-[4/3]" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- Tool Section -->
+  <section id="tools" class="bg-white py-20 px-6 max-w-7xl mx-auto rounded-3xl shadow-2xl ring-1 ring-indigo-100">
+    <h2 class="text-center text-4xl font-extrabold text-indigo-900 mb-14 tracking-tight max-w-4xl mx-auto">The MeetingMinder Tool</h2>
+    <div id="tool-upload" class="max-w-3xl mx-auto bg-indigo-50 rounded-2xl p-10 shadow-inner ring-1 ring-indigo-200 space-y-8">
+      <p class="text-indigo-800 text-center text-lg leading-relaxed">
+        Upload your recorded meeting audio or video, and get instant, clear, actionable meeting summaries with task assignments.
+      </p>
+      <form id="uploadForm" class="flex flex-col sm:flex-row sm:items-center gap-6 justify-center" action="javascript:void(0);" enctype="multipart/form-data" autocomplete="off">
+        <label for="fileInput" 
+          class="flex-1 min-w-[230px] cursor-pointer border-2 border-dashed border-indigo-400 rounded-2xl p-5 flex items-center justify-center text-indigo-700 font-semibold text-base transition hover:border-indigo-600 hover:bg-indigo-100 focus-within:outline-none focus-within:ring-4 focus-within:ring-indigo-300 select-none">
+          <svg aria-hidden="true" class="mr-3 w-6 h-6 stroke-indigo-600" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" >
+            <path d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Choose audio/video file</span>
+          <input 
+            type="file" accept="audio/*,video/*" id="fileInput" required 
+            class="hidden" 
+          />
+        </label>
+        <button type="submit" 
+          class="px-8 py-3 bg-indigo-700 hover:bg-indigo-800 text-white font-semibold rounded-2xl shadow-lg transition duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-400">
+          Generate Summary
+        </button>
+      </form>
+      <div id="loading" class="hidden text-indigo-700 text-center font-semibold text-lg" role="alert" aria-live="polite">
+        Generating summary, please wait…
+      </div>
+      <div id="result" class="hidden mt-10 rounded-2xl bg-white p-8 shadow-lg space-y-10 ring-1 ring-indigo-200">
+        <section>
+          <h3 class="text-2xl font-bold text-indigo-900 border-b border-indigo-300 pb-3 mb-5 tracking-wide">Meeting Summary</h3>
+          <p id="summaryText" class="whitespace-pre-wrap text-indigo-800 leading-relaxed text-lg"></p>
+        </section>
+        <section>
+          <h3 class="text-2xl font-bold text-indigo-900 border-b border-indigo-300 pb-3 mb-5 tracking-wide">Task List</h3>
+          <ul id="taskList" class="max-h-52 overflow-y-auto px-3 space-y-4 scrollbar-thin scrollbar-thumb-indigo-600 scrollbar-track-indigo-200">
+            <!-- Tasks will appear here -->
+          </ul>
+        </section>
+      </div>
+    </div>
+    <p class="max-w-3xl mx-auto mt-8 text-center text-indigo-500 text-xs select-none font-mono">
+      *This demo simulates AI summarization and speech-to-text using sample content for illustration purposes only.
+    </p>
+  </section>
+
+  <!-- Feature Section -->
+  <section id="features" class="bg-indigo-50 py-24 px-6 max-w-7xl mx-auto rounded-3xl shadow-inner ring-1 ring-indigo-100">
+    <h2 class="text-center text-4xl font-extrabold text-indigo-900 mb-16 tracking-tight">Why Choose MeetingMinder?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto px-4">
+
+      <article class="bg-white rounded-3xl shadow-lg p-8 flex flex-col items-start space-y-6 hover:shadow-2xl transition duration-300 ring-1 ring-indigo-50">
+        <div class="text-indigo-600 bg-indigo-100 p-4 rounded-full">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-2" />
+            <circle cx="7" cy="7" r="4" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-indigo-900">Seamless Integrations</h3>
+        <p class="text-indigo-700 leading-relaxed text-base">
+          Connect with Zoom, Microsoft Teams, or simply upload files — MeetingMinder works with your workflow.
+        </p>
+      </article>
+
+      <article class="bg-white rounded-3xl shadow-lg p-8 flex flex-col items-start space-y-6 hover:shadow-2xl transition duration-300 ring-1 ring-indigo-50">
+        <div class="text-indigo-600 bg-indigo-100 p-4 rounded-full">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M10 14l2-2m0 0l2-2m-2 2v6m4-2v6M7 20v-6m-4 2v-6" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-indigo-900">AI-Powered Summarization</h3>
+        <p class="text-indigo-700 leading-relaxed text-base">
+          Get concise, easy-to-understand meeting notes and prioritized task lists without lifting a finger.
+        </p>
+      </article>
+
+      <article class="bg-white rounded-3xl shadow-lg p-8 flex flex-col items-start space-y-6 hover:shadow-2xl transition duration-300 ring-1 ring-indigo-50">
+        <div class="text-indigo-600 bg-indigo-100 p-4 rounded-full">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 20h6M12 4v16m-5-5h10" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-indigo-900">Task Tracking Made Easy</h3>
+        <p class="text-indigo-700 leading-relaxed text-base">
+          Assign tasks, track statuses, and follow up – all within a clean, intuitive dashboard.
+        </p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-white shadow-inner mt-24">
+    <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 text-indigo-600 text-sm select-none">
+      <p>&copy; 2024 MeetingMinder. All rights reserved.</p>
+      <div class="flex space-x-8">
+        <a href="#" class="hover:text-indigo-700 transition duration-300" aria-label="Twitter" title="Twitter" target="_blank" rel="noopener">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 19c7.547 0 11.675-6.155 11.675-11.49 0-.175 0-.349-.012-.522A8.18 8.18 0 0 0 21 6.148a8.414 8.414 0 0 1-2.357.636 4.076 4.076 0 0 0 1.798-2.22 8.17 8.17 0 0 1-2.605.977A4.052 4.052 0 0 0 14.27 4c-2.263 0-4.096 1.82-4.096 4.06 0 .318.038.627.104.923A11.527 11.527 0 0 1 3.202 5.146a4.015 4.015 0 0 0-.555 2.042 4.04 4.04 0 0 0 1.81 3.337 4.05 4.05 0 0 1-1.855-.505v.048C3.202 13.874 5.447 16 8.714 16.108a4.09 4.09 0 0 1-1.848.064 4.07 4.07 0 0 0 3.81 2.8A8.134 8.134 0 0 1 5 19.541 8.35 8.35 0 0 1 3 19.383 11.53 11.53 0 0 0 8 19z"></path></svg>
+        </a>
+        <a href="#" class="hover:text-indigo-700 transition duration-300" aria-label="GitHub" title="GitHub" target="_blank" rel="noopener">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.022c0 4.424 2.865 8.183 6.839 9.504.5.093.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.164-1.11-1.474-1.11-1.474-.907-.62.069-.608.069-.608 1.004.069 1.532 1.034 1.532 1.034.892 1.53 2.341 1.088 2.91.832.092-.647.349-1.088.635-1.339-2.22-.252-4.555-1.112-4.555-4.948 0-1.092.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.27 2.75 1.026A9.562 9.562 0 0 1 12 6.844c.85.004 1.706.114 2.505.335 1.908-1.296 2.747-1.026 2.747-1.026.546 1.377.203 2.394.1 2.647.64.699 1.028 1.591 1.028 2.683 0 3.846-2.338 4.693-4.566 4.94.358.31.678.92.678 1.855 0 1.338-.013 2.419-.013 2.75 0 .267.18.58.688.48A10.025 10.025 0 0 0 22 12.022C22 6.484 17.523 2 12 2z" clip-rule="evenodd"/></svg>
+        </a>
+        <a href="#" class="hover:text-indigo-700 transition duration-300" aria-label="LinkedIn" title="LinkedIn" target="_blank" rel="noopener">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM6 9h4v12H6zM4 5a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Simple JS for demo functionality -->
+  <script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    const uploadForm = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const loadingEl = document.getElementById('loading');
+    const resultEl = document.getElementById('result');
+    const summaryText = document.getElementById('summaryText');
+    const taskList = document.getElementById('taskList');
+
+    // Sample mock data simulating speech-to-text and AI summarization result
+    const sampleSummary = `MeetingMinder Summary:
+- Reviewed project milestones and deadlines.
+- Discussed budget adjustments and resource allocation.
+- Identified potential risks and mitigation strategies.
+
+Next Steps:
+- Alice to update project timeline by Friday.
+- Bob to prepare budget revision report.
+- Carol to set up risk assessment meeting next week.`;
+
+    const sampleTasks = [
+      { id: 1, text: 'Update project timeline by Friday', done: false },
+      { id: 2, text: 'Prepare budget revision report', done: false },
+      { id: 3, text: 'Set up risk assessment meeting next week', done: false },
+    ];
+
+    // Render tasks with modern classes and accessibility
+    function renderTasks(tasks) {
+      taskList.innerHTML = '';
+      if (tasks.length === 0) {
+        taskList.innerHTML = '<li class="text-indigo-400 italic select-none">No tasks assigned.</li>';
+        return;
+      }
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center space-x-4';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `task-${task.id}`;
+        checkbox.checked = task.done;
+        checkbox.className = 'form-checkbox h-6 w-6 text-indigo-600 rounded transition duration-150 ease-in-out cursor-pointer';
+        checkbox.setAttribute('aria-label', task.text);
+        checkbox.addEventListener('change', () => {
+          task.done = checkbox.checked;
+          if (checkbox.checked) {
+            taskLabel.classList.add('line-through', 'text-indigo-400');
+          } else {
+            taskLabel.classList.remove('line-through', 'text-indigo-400');
+          }
+        });
+
+        const taskLabel = document.createElement('label');
+        taskLabel.htmlFor = `task-${task.id}`;
+        taskLabel.textContent = task.text;
+        taskLabel.className = task.done ? 'text-indigo-400 line-through select-none cursor-pointer' : 'select-none cursor-pointer text-indigo-900 font-medium';
+        taskLabel.tabIndex = 0;
+        taskLabel.addEventListener("keydown", (e) => {
+          if(e.key === " " || e.key === "Enter") {
+            e.preventDefault();
+            checkbox.checked = !checkbox.checked;
+            checkbox.dispatchEvent(new Event('change'));
+          }
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(taskLabel);
+        taskList.appendChild(li);
+      });
+    }
+
+    uploadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (!fileInput.files.length) return;
+
+      loadingEl.classList.remove('hidden');
+      resultEl.classList.add('hidden');
+
+      // Simulate async processing (speech-to-text + AI summary)
+      setTimeout(() => {
+        loadingEl.classList.add('hidden');
+        summaryText.textContent = sampleSummary;
+        renderTasks(sampleTasks);
+        resultEl.classList.remove('hidden');
+
+        // Scroll result into view smoothly
+        resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
+```

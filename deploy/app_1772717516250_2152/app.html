@@ -1,0 +1,213 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GratiGen – Personalized Daily Gratitude Prompts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans selection:bg-indigo-400 selection:text-white">
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 flex items-center justify-between h-16">
+      <a href="#" class="text-indigo-600 font-extrabold text-2xl tracking-tight">GratiGen</a>
+      <nav class="space-x-8 text-gray-600 font-medium hidden md:flex">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Generate Prompt</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button id="mobile-menu-button" class="md:hidden focus:outline-none" aria-label="Toggle menu">
+        <svg class="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  
+          viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <nav id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4 space-y-2">
+      <a href="#features" class="block py-2 text-gray-700 hover:text-indigo-600 font-medium">Features</a>
+      <a href="#tool" class="block py-2 text-gray-700 hover:text-indigo-600 font-medium">Generate Prompt</a>
+      <a href="#footer" class="block py-2 text-gray-700 hover:text-indigo-600 font-medium">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 text-white">
+    <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-24 text-center md:text-left flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-20">
+      <div class="md:w-1/2">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-wide drop-shadow-lg">
+          Cultivate Positivity <br class="hidden sm:inline" /> with Personalized Gratitude Prompts
+        </h1>
+        <p class="mt-6 text-lg sm:text-xl max-w-xl drop-shadow">
+          Instantly generate daily gratitude reflections tailored to your mood and recent experiences. Boost your mental well-being and foster a habit of positivity.
+        </p>
+        <a href="#tool" class="inline-block mt-8 px-8 py-3 bg-white text-indigo-700 font-semibold rounded-lg shadow-lg hover:bg-indigo-50 transition">
+          Try It Now
+        </a>
+      </div>
+      <div class="md:w-1/2 max-w-md w-full">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Woman holding gratitude journal" class="rounded-3xl shadow-lg object-cover w-full h-72 md:h-96" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-20">
+    <h2 class="text-3xl font-extrabold text-center text-gray-900 mb-14">Why Choose GratiGen?</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+      <div class="bg-white rounded-2xl p-6 shadow hover:shadow-indigo-300 transition">
+        <svg class="mx-auto mb-4 h-12 w-12 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l2-2 4 4m0-10H5a2 2 0 000 4h7" />
+        </svg>
+        <h3 class="font-semibold text-lg mb-2">Instantly Personalized</h3>
+        <p class="text-gray-600">Get custom gratitude prompts tailored to how you feel and what you did recently.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow hover:shadow-indigo-300 transition">
+        <svg class="mx-auto mb-4 h-12 w-12 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h4l3 7 2-6 4 6h4" />
+        </svg>
+        <h3 class="font-semibold text-lg mb-2">Encourages Reflection</h3>
+        <p class="text-gray-600">Daily prompts gently guide you to focus on positive experiences and growth.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow hover:shadow-indigo-300 transition">
+        <svg class="mx-auto mb-4 h-12 w-12 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <h3 class="font-semibold text-lg mb-2">Improve Well-Being</h3>
+        <p class="text-gray-600">Use gratitude as a tool to boost your mood and mental health consistently.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow hover:shadow-indigo-300 transition">
+        <svg class="mx-auto mb-4 h-12 w-12 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3m0 0h3m-3 0v3m0-6V9m6-9v18M3 12h.01" />
+        </svg>
+        <h3 class="font-semibold text-lg mb-2">Easy & Convenient</h3>
+        <p class="text-gray-600">No sign-up or extra steps — just fill your mood and activities, and get inspired.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool Section -->
+  <section id="tool" class="bg-white border-t border-gray-200">
+    <div class="max-w-3xl mx-auto px-6 sm:px-12 lg:px-16 py-20">
+      <h2 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">Generate Your Daily Gratitude Prompt</h2>
+      <form id="gratitude-form" class="space-y-6 bg-gray-50 rounded-xl shadow p-8">
+        <div>
+          <label for="mood" class="block text-sm font-medium text-gray-700 mb-1">How are you feeling today?</label>
+          <select id="mood" name="mood" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <option value="" disabled selected>Select your mood</option>
+            <option value="happy">Happy</option>
+            <option value="content">Content</option>
+            <option value="anxious">Anxious</option>
+            <option value="stressed">Stressed</option>
+            <option value="tired">Tired</option>
+            <option value="excited">Excited</option>
+            <option value="grateful">Grateful</option>
+            <option value="neutral">Neutral</option>
+          </select>
+        </div>
+        <div>
+          <label for="activities" class="block text-sm font-medium text-gray-700 mb-1">What have you done recently?</label>
+          <textarea id="activities" name="activities" rows="3" placeholder="e.g., Went for a walk, worked on a project, talked with a friend..." required
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 resize-y"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition">
+          Generate Prompt
+        </button>
+      </form>
+      <div id="result" class="mt-12 p-8 bg-indigo-50 border border-indigo-200 rounded-xl min-h-[120px] text-indigo-900 text-lg italic flex items-center justify-center select-text"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-indigo-900 text-indigo-200 py-12">
+    <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+      <p class="text-center md:text-left text-sm">&copy; 2024 GratiGen. All rights reserved.</p>
+      <div class="space-x-6 text-sm">
+        <a href="mailto:support@gratigen.app" class="hover:text-indigo-300 transition">support@gratigen.app</a>
+        <a href="https://github.com/yourgithub/gratigen" target="_blank" rel="noopener" class="hover:text-indigo-300 transition">GitHub</a>
+        <a href="#hero" class="hover:text-indigo-300 transition">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Gratitude prompt generation logic
+    const form = document.getElementById('gratitude-form');
+    const result = document.getElementById('result');
+
+    // Mapping moods to adjectives/tones for prompt personalization
+    const moodTones = {
+      happy: 'joyful and lighthearted',
+      content: 'peaceful and satisfied',
+      anxious: 'hopeful and calming',
+      stressed: 'grounded and relaxed',
+      tired: 'restful and gentle',
+      excited: 'energetic and optimistic',
+      grateful: 'thankful and reflective',
+      neutral: 'balanced and open-minded',
+    };
+
+    // Helper: sanitize text input to avoid runaway spaces/newlines
+    function sanitizeInput(text) {
+      return text.trim().replace(/\s+/g, ' ');
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const mood = form.mood.value;
+      const activitiesRaw = form.activities.value;
+      const activities = sanitizeInput(activitiesRaw);
+
+      if (!mood || !activities) {
+        result.textContent = 'Please fill in all fields.';
+        result.classList.remove('text-indigo-900');
+        result.classList.add('text-red-600');
+        return;
+      }
+      result.classList.remove('text-red-600');
+      result.classList.add('text-indigo-900');
+      result.textContent = 'Generating your gratitude prompt...';
+
+      // Simple prompt generation triggered after a short delay to simulate "thinking"
+      setTimeout(() => {
+        const tone = moodTones[mood] || 'positive';
+        // Extract a couple key activities for variation (split by commas/periods)
+        const separator = /[,.\n]/;
+        const activityList = activities.split(separator).map(a => a.trim()).filter(a => a.length > 0);
+
+        // Pick up to 2 activities for referencing
+        const refActivities = activityList.slice(0, 2).join(' and ');
+
+        // Construct prompt templates
+        const templates = [
+          `Reflect on the ${tone} moments from today, especially when you ${refActivities}. What about these made you feel grateful?`,
+          `In your ${tone} mood, consider the times you ${refActivities}. How did these experiences enrich your day?`,
+          `Despite your mood being ${tone}, take a moment to appreciate the joy that came from ${refActivities}. What stands out most?`,
+          `Think about how your recent activity of ${refActivities} has positively impacted you. What are you most thankful for?`,
+          `Today, while feeling ${tone}, what about ${refActivities} can you celebrate and feel grateful for?`,
+        ];
+
+        // Randomly select a template
+        const prompt = templates[Math.floor(Math.random() * templates.length)];
+
+        result.textContent = prompt;
+      }, 700);
+    });
+  </script>
+</body>
+</html>
+```

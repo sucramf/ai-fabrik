@@ -1,0 +1,1 @@
+A web tool that quickly converts any text into a clean, ad-free, printable PDF with customizable fonts and margins—perfect for saving articles, recipes, or notes for offline reading or sharing.

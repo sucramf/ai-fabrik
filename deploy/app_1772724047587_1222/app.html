@@ -1,0 +1,492 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FeedBackly - Customizable Customer Feedback Widget</title>
+  <meta name="description" content="Create and customize your own customer feedback widget seamlessly." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold text-indigo-600">FeedBackly</a>
+      <nav class="space-x-6 hidden md:flex text-gray-600 font-medium">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#builder" class="hover:text-indigo-600 transition">Build Widget</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button id="open-builder-mobile" class="md:hidden text-indigo-600 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-600 px-3 py-1 rounded-lg hover:bg-indigo-50">Build Widget</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-indigo-600 text-white py-20 px-6 text-center">
+    <div class="container mx-auto max-w-4xl">
+      <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-6">
+        Collect Customer Feedback Effortlessly
+      </h1>
+      <p class="text-lg md:text-xl max-w-3xl mx-auto mb-8 opacity-90">
+        Create a fully customizable feedback widget you can embed on your website in seconds. Improve user experience & grow your business.
+      </p>
+      <a href="#builder" class="inline-block bg-white text-indigo-600 font-semibold px-8 py-3 rounded-lg shadow-md hover:bg-indigo-50 transition">
+        Start Building Your Widget
+      </a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="container mx-auto px-6 py-20 max-w-6xl">
+    <h2 class="text-3xl font-bold text-center mb-12">Why Choose FeedBackly?</h2>
+    <div class="grid gap-y-12 md:grid-cols-3 md:gap-x-12 text-center text-gray-700">
+      <div class="space-y-4">
+        <svg class="mx-auto h-12 w-12 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+          viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/></svg>
+        <h3 class="text-xl font-semibold">Customizable Design</h3>
+        <p>Adjust colors, shape, position and feedback questions to match your brand perfectly.</p>
+      </div>
+      <div class="space-y-4">
+        <svg class="mx-auto h-12 w-12 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+          viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <h3 class="text-xl font-semibold">Instant Preview</h3>
+        <p>See changes in real-time as you customize your feedback widget before embedding.</p>
+      </div>
+      <div class="space-y-4">
+        <svg class="mx-auto h-12 w-12 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+          viewBox="0 0 24 24"><path d="M12 20h9" /><path d="M12 4v16" /><path d="M4 12h16" /></svg>
+        <h3 class="text-xl font-semibold">Easy Embed</h3>
+        <p>Copy a simple code snippet and paste it on your site. No coding needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Working Tool UI - Builder Section -->
+  <section id="builder" class="bg-white border-t border-gray-300 py-20 px-6">
+    <div class="container mx-auto max-w-6xl grid md:grid-cols-2 gap-16">
+      <!-- Builder Form -->
+      <form id="widgetBuilderForm" class="space-y-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Build Your Feedback Widget</h2>
+
+        <!-- Position -->
+        <div>
+          <label for="position" class="block font-semibold mb-2 text-gray-700">Widget Position</label>
+          <select id="position" name="position" class="w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="bottom-right" selected>Bottom Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="top-right">Top Right</option>
+            <option value="top-left">Top Left</option>
+          </select>
+        </div>
+
+        <!-- Widget Color -->
+        <div>
+          <label for="widgetColor" class="block font-semibold mb-2 text-gray-700">Widget Color</label>
+          <input id="widgetColor" name="widgetColor" type="color" value="#6366f1" aria-label="Widget color picker" 
+            class="w-20 h-10 rounded cursor-pointer border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+
+        <!-- Feedback Questions -->
+        <div>
+          <label for="questions" class="block font-semibold mb-2 text-gray-700">
+            Feedback Questions <small class="text-gray-400">(One per line)</small>
+          </label>
+          <textarea id="questions" name="questions" rows="4" placeholder="How was your experience?\nWhat can we improve?" 
+            class="w-full rounded border border-gray-300 px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required>How was your experience?
+What can we improve?</textarea>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition w-full md:w-auto">
+          Generate Widget Code
+        </button>
+
+        <!-- Embed code output -->
+        <div id="embedContainer" class="mt-6 hidden">
+          <label for="embedCode" class="block font-semibold mb-2 text-gray-700">Copy & Paste This Code into Your Website</label>
+          <textarea id="embedCode" readonly rows="6" class="w-full rounded border border-gray-300 px-3 py-2 font-mono text-sm text-gray-700 select-all" aria-label="Embed code snippet"></textarea>
+        </div>
+      </form>
+
+      <!-- Live Preview -->
+      <div>
+        <h3 class="text-2xl font-bold mb-4 text-gray-900">Live Widget Preview</h3>
+        <div id="widgetPreviewContainer" class="relative min-h-[300px] bg-gray-50 border border-gray-300 rounded-lg p-6 flex justify-center items-center">
+          <!-- The widget preview will be appended here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-gray-800 text-gray-300">
+    <div class="container mx-auto px-6 py-12 max-w-6xl flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+      <p class="text-sm">&copy; 2024 FeedBackly. All rights reserved.</p>
+      <nav class="space-x-6 text-sm">
+        <a href="#features" class="hover:text-white transition">Features</a>
+        <a href="#builder" class="hover:text-white transition">Build Widget</a>
+        <a href="mailto:support@feedbackly.com" class="hover:text-white transition">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const form = document.getElementById('widgetBuilderForm');
+      const previewContainer = document.getElementById('widgetPreviewContainer');
+      const embedContainer = document.getElementById('embedContainer');
+      const embedCodeEl = document.getElementById('embedCode');
+      const openBuilderMobile = document.getElementById('open-builder-mobile');
+
+      // Positions map for CSS classes
+      const positionClasses = {
+        "bottom-right": "bottom-4 right-4",
+        "bottom-left": "bottom-4 left-4",
+        "top-right": "top-4 right-4",
+        "top-left": "top-4 left-4",
+      };
+
+      // Create the widget DOM element (returns element)
+      function createWidget({ position, widgetColor, questions }) {
+        const widget = document.createElement('div');
+        widget.setAttribute('aria-label', 'Customer feedback widget');
+        widget.setAttribute('role', 'region');
+        widget.className = `fixed max-w-[300px] w-full bg-white shadow-lg rounded-xl border border-gray-300 flex flex-col z-50 
+          ${positionClasses[position]} 
+          flex-col`;
+
+        widget.style.fontFamily = "'Inter', sans-serif";
+
+        // Widget Header (Button to toggle)
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'flex items-center justify-center bg-[color:var(--widget-color)] text-white font-semibold rounded-t-xl px-4 py-2 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-indigo-500';
+        header.style.backgroundColor = widgetColor;
+
+        header.textContent = 'Feedback';
+
+        // Optional arrow icon
+        const arrow = document.createElement('span');
+        arrow.innerHTML = '&#x25BC;';
+        arrow.className = 'ml-2 transition-transform duration-200';
+        header.appendChild(arrow);
+
+        widget.appendChild(header);
+
+        // Feedback Form Container - hidden initially
+        const formContainer = document.createElement('form');
+        formContainer.className = 'flex flex-col p-4 space-y-4 border-t border-gray-200 bg-gray-50 rounded-b-xl';
+        formContainer.style.display = 'none';
+        formContainer.setAttribute('aria-hidden', 'true');
+
+        // Accessibility: Label for the form
+        formContainer.setAttribute('aria-label', 'Customer feedback form');
+
+        // Dynamically create inputs for all questions
+        questions.forEach((q, idx) => {
+          const fieldWrapper = document.createElement('div');
+          fieldWrapper.className = 'flex flex-col';
+
+          const label = document.createElement('label');
+          label.setAttribute('for', `feedback-q${idx}`);
+          label.className = 'text-sm font-medium text-gray-700 mb-1';
+          label.textContent = q;
+
+          let input;
+          // If question looks like yes/no or scale, but we keep all text inputs for simplicity
+          input = document.createElement('textarea');
+          input.id = `feedback-q${idx}`;
+          input.name = `q${idx}`;
+          input.rows = 2;
+          input.required = true;
+          input.className = 'rounded border border-gray-300 p-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500';
+
+          fieldWrapper.appendChild(label);
+          fieldWrapper.appendChild(input);
+          formContainer.appendChild(fieldWrapper);
+        });
+
+        // Submit button
+        const submitBtn = document.createElement('button');
+        submitBtn.type = 'submit';
+        submitBtn.className = 'bg-[color:var(--widget-color)] text-white font-semibold rounded px-4 py-2 hover:bg-indigo-800 transition';
+        submitBtn.style.backgroundColor = widgetColor;
+        submitBtn.textContent = 'Send Feedback';
+
+        formContainer.appendChild(submitBtn);
+
+        // Success message container
+        const successMsg = document.createElement('p');
+        successMsg.className = 'text-sm text-green-600 font-semibold mt-2 hidden';
+        successMsg.setAttribute('aria-live', 'polite');
+        formContainer.appendChild(successMsg);
+
+        widget.appendChild(formContainer);
+
+        // Toggle form open/close
+        let open = false;
+        header.addEventListener('click', () => {
+          open = !open;
+          formContainer.style.display = open ? 'flex' : 'none';
+          formContainer.setAttribute('aria-hidden', open ? 'false' : 'true');
+          arrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
+
+        // Handle form submission (fake async)
+        formContainer.addEventListener('submit', e => {
+          e.preventDefault();
+          // Validate inputs
+          const inputs = formContainer.querySelectorAll('textarea');
+          let valid = true;
+          inputs.forEach(input => {
+            if (!input.value.trim()) {
+              valid = false;
+              input.classList.add('border-red-500');
+            } else {
+              input.classList.remove('border-red-500');
+            }
+          });
+
+          if (!valid) return;
+
+          // Disable inputs and button
+          inputs.forEach(i => i.disabled = true);
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Sending...';
+
+          // Simulate send delay
+          setTimeout(() => {
+            successMsg.textContent = 'Thank you for your feedback!';
+            successMsg.classList.remove('hidden');
+
+            submitBtn.textContent = 'Send Feedback';
+
+            // Reset form after delay
+            setTimeout(() => {
+              formContainer.reset();
+              successMsg.classList.add('hidden');
+              inputs.forEach(i => i.disabled = false);
+              submitBtn.disabled = false;
+              open = false;
+              formContainer.style.display = 'none';
+              formContainer.setAttribute('aria-hidden', 'true');
+              arrow.style.transform = 'rotate(0deg)';
+            }, 3500);
+          }, 1200);
+        });
+
+        // Set CSS variable --widget-color for styles inside widget
+        widget.style.setProperty('--widget-color', widgetColor);
+
+        return widget;
+      }
+
+      // Render preview widget inside preview container
+      function renderPreview({ position, widgetColor, questions }) {
+        previewContainer.innerHTML = '';
+        const widget = createWidget({ position, widgetColor, questions });
+        // For preview, override content so it doesn't float fixed on screen:
+        widget.classList.remove('fixed');
+        widget.style.position = 'relative';
+        widget.style.maxWidth = '100%';
+
+        previewContainer.appendChild(widget);
+      }
+
+      // Generate embeddable JS snippet with minified code
+      function generateEmbedCode({ position, widgetColor, questions }) {
+        // Escape questions for JS string
+        const escapedQuestions = questions.map(q => q.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')).map(q => q.trim());
+        // Returns a minified JS snippet that creates same widget on any site
+
+        return `<div id="feedbackly-widget-root"></div>
+<script>
+(function(){
+  const position = "${position}";
+  const widgetColor = "${widgetColor}";
+  const questions = ${JSON.stringify(escapedQuestions)};
+  const positionClasses = {
+    "bottom-right":"bottom:1rem;right:1rem;",
+    "bottom-left":"bottom:1rem;left:1rem;",
+    "top-right":"top:1rem;right:1rem;",
+    "top-left":"top:1rem;left:1rem;"
+  };
+  const root = document.getElementById("feedbackly-widget-root");
+  if(!root)return;
+  const w=document.createElement("div");
+  w.style.cssText="position:fixed;max-width:300px;z-index:99999;border-radius:0.75rem;box-shadow:0 1px 3px rgb(0 0 0 / 0.1);border:1px solid #d1d5db;background:#fff;display:flex;flex-direction:column;"+positionClasses[position];
+  w.style.fontFamily="'Inter', sans-serif";
+  let open=false;
+  // Header
+  const h=document.createElement("button");
+  h.type="button";
+  h.style.cssText="background:"+widgetColor+";color:#fff;font-weight:600;padding:0.5rem 1rem;border-top-left-radius:0.75rem;border-top-right-radius:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none";
+  h.textContent="Feedback";
+  const arrow=document.createElement("span");
+  arrow.textContent="▼";
+  arrow.style.marginLeft="0.25rem";
+  arrow.style.transition="transform 0.2s";
+  h.appendChild(arrow);
+  w.appendChild(h);
+  // Form container
+  const fc=document.createElement("form");
+  fc.style.cssText="display:none;flex-direction:column;padding:1rem;gap:1rem;background:#f9fafb;border-top:1px solid #e5e7eb;border-bottom-left-radius:0.75rem;border-bottom-right-radius:0.75rem";
+  fc.setAttribute("aria-label","Customer feedback form");
+  questions.forEach((q,i)=>{
+    const d=document.createElement("div");
+    d.style.display="flex";
+    d.style.flexDirection="column";
+    const label=document.createElement("label");
+    label.htmlFor="fb-q"+i;
+    label.style.fontWeight="500";
+    label.style.fontSize="0.875rem";
+    label.style.marginBottom="0.25rem";
+    label.style.color="#374151";
+    label.textContent=q;
+    const ta=document.createElement("textarea");
+    ta.id="fb-q"+i;
+    ta.name="q"+i;
+    ta.rows=2;
+    ta.required=true;
+    ta.style.cssText="border:1px solid #d1d5db;border-radius:0.375rem;padding:0.5rem;resize:none;outline:none;font-size:0.875rem;font-family:inherit";
+    ta.addEventListener('input',()=>{ta.style.borderColor="#d1d5db"});
+    d.appendChild(label);
+    d.appendChild(ta);
+    fc.appendChild(d);
+  });
+  const sb=document.createElement("button");
+  sb.type="submit";
+  sb.style.cssText="background:"+widgetColor+";color:#fff;font-weight:600;padding:0.5rem 1rem;border-radius:0.375rem;cursor:pointer;border:none;transition:background-color 0.3s";
+  sb.textContent="Send Feedback";
+  sb.addEventListener("mouseover",()=>{sb.style.backgroundColor=shadeColor(widgetColor,-10)});
+  sb.addEventListener("mouseout",()=>{sb.style.backgroundColor=widgetColor});
+  fc.appendChild(sb);
+  const sm=document.createElement("p");
+  sm.style.cssText="color:#22c55e;font-weight:600;margin-top:0.5rem;display:none;font-size:0.875rem";
+  sm.setAttribute("aria-live","polite");
+  fc.appendChild(sm);
+  w.appendChild(fc);
+
+  // Toggle function
+  h.addEventListener("click",()=>{
+    open=!open;
+    fc.style.display=open?"flex":"none";
+    fc.setAttribute("aria-hidden",open?"false":"true");
+    arrow.style.transform=open?"rotate(180deg)":"rotate(0deg)";
+  });
+
+  fc.addEventListener("submit",e=>{
+    e.preventDefault();
+    const inputs=fc.querySelectorAll("textarea");
+    let valid=true;
+    inputs.forEach(inp=>{
+      if(!inp.value.trim()){
+        valid=false;
+        inp.style.borderColor="#ef4444";
+      } else {
+        inp.style.borderColor="#d1d5db";
+      }
+    });
+    if(!valid)return;
+    inputs.forEach(inp=>inp.disabled=true);
+    sb.disabled=true;
+    sb.textContent="Sending...";
+    setTimeout(()=>{
+      sm.textContent="Thank you for your feedback!";
+      sm.style.display="block";
+      sb.textContent="Send Feedback";
+      setTimeout(()=>{
+        fc.reset();
+        sm.style.display="none";
+        inputs.forEach(inp=>inp.disabled=false);
+        sb.disabled=false;
+        open=false;
+        fc.style.display="none";
+        fc.setAttribute("aria-hidden","true");
+        arrow.style.transform="rotate(0deg)";
+      },3500);
+    },1200);
+  });
+
+  // Shade color helper
+  function shadeColor(color, percent) {
+    let f=parseInt(color.slice(1),16),
+    t=percent<0?0:255,
+    p=percent<0?percent*-1:percent,
+    R=f>>16,
+    G=f>>8&0x00FF,
+    B=f&0x0000FF;
+    return "#" + (0x1000000 + (Math.round((t-R)*p/100)+R)*0x10000 + (Math.round((t-G)*p/100)+G)*0x100 + (Math.round((t-B)*p/100)+B)).toString(16).slice(1);
+  }
+
+  root.appendChild(w);
+})();
+</script>`;
+      }
+
+      // Parse form fields to configuration object
+      function parseForm() {
+        const position = form.position.value;
+        const widgetColor = form.widgetColor.value;
+        const questionsRaw = form.questions.value.trim();
+        const questions = questionsRaw.split('\n').map(q => q.trim()).filter(Boolean);
+        return { position, widgetColor, questions };
+      }
+
+      // On form submit: generate embed code and show preview
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const config = parseForm();
+
+        // Minimal validation questions - at least 1 question
+        if (config.questions.length === 0) {
+          alert('Please enter at least one feedback question.');
+          return;
+        }
+
+        // Render preview
+        renderPreview(config);
+
+        // Generate embed code
+        embedCodeEl.value = generateEmbedCode(config);
+        embedContainer.classList.remove('hidden');
+
+        // Scroll embed output into view on desktop
+        embedContainer.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // Update preview live as user changes inputs (debounced)
+      function debounce(fn, delay) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function updatePreview() {
+        const config = parseForm();
+        renderPreview(config);
+        embedContainer.classList.add('hidden');
+        embedCodeEl.value = '';
+      }
+
+      form.position.addEventListener('change', updatePreview);
+      form.widgetColor.addEventListener('input', updatePreview);
+      form.questions.addEventListener('input', debounce(updatePreview, 500));
+
+      // Initial preview render on load
+      updatePreview();
+
+      // Mobile "Build Widget" button scrolls to builder section
+      openBuilderMobile.addEventListener('click', () => {
+        document.getElementById('builder').scrollIntoView({ behavior: 'smooth' });
+      });
+    })();
+  </script>
+</body>
+</html>
+```

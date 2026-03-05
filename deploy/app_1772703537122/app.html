@@ -1,0 +1,247 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CleanList - Instant Text to Neat List Converter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Hide number input spinner for Chrome, Safari, Edge, Opera */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <h1 class="text-2xl font-extrabold text-indigo-600 select-none">CleanList</h1>
+      <nav class="text-gray-600 font-medium text-sm space-x-6 hidden sm:flex">
+        <a href="#input" class="hover:text-indigo-600 transition">Input</a>
+        <a href="#output" class="hover:text-indigo-600 transition">Output</a>
+        <a href="#about" class="hover:text-indigo-600 transition">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-5xl mx-auto p-6 sm:p-12 w-full flex flex-col gap-8">
+    <section id="intro" class="text-center max-w-3xl mx-auto">
+      <h2 class="text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
+        Instantly Convert Messy Text into Clean, Editable Lists
+      </h2>
+      <p class="text-lg text-gray-600">
+        Paste your text from emails, PDFs, or documents below. CleanList will detect bullets, numbers, and indentation to create a neat outline – perfect for organizing tasks, meeting notes, or key points.
+      </p>
+    </section>
+
+    <section id="input" class="flex flex-col sm:flex-row gap-6 sm:gap-12 items-start">
+      <div class="flex-1 flex flex-col gap-3">
+        <label for="inputText" class="font-semibold text-gray-700">Paste your messy text here</label>
+        <textarea id="inputText" rows="15" placeholder="Paste your text here..." class="w-full p-4 rounded-lg border border-gray-300 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm bg-white shadow-sm"></textarea>
+        <div class="flex items-center gap-4 flex-wrap sm:flex-nowrap">
+          <button id="convertBtn" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg px-5 py-3 text-sm transition">
+            Convert to List
+          </button>
+          <button id="clearBtn" type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm transition" title="Clear input and output">
+            Clear All
+          </button>
+          <div class="text-gray-600 text-xs select-none sm:ml-auto">
+            Developed for SaaS style productivity
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 flex flex-col gap-3 w-full max-w-2xl">
+        <label for="outputArea" class="font-semibold text-gray-700 flex justify-between items-center">
+          Clean, Editable List Output
+          <button id="copyBtn" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold transition select-none" title="Copy output">
+            Copy
+          </button>
+        </label>
+        <textarea id="outputArea" rows="15" readonly class="w-full p-4 rounded-lg border border-gray-300 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm bg-gray-50 shadow-inner cursor-text"></textarea>
+      </div>
+    </section>
+
+    <section id="about" class="prose prose-indigo max-w-3xl mx-auto text-gray-700 mt-16">
+      <h3>About CleanList</h3>
+      <p>
+        CleanList helps you transform cluttered text from emails, scanned documents, or long paragraphs into structured, clean lists or outlines automatically. It recognizes common bullet points, numbered lists, and indentation levels to give you an organized format that's easy to edit, copy, or export.
+      </p>
+      <p>
+        Whether you're organizing tasks, meeting notes, or important points, CleanList saves time by cleaning the mess for you.
+      </p>
+      <p class="text-sm text-gray-500 italic select-none mt-8">
+        Created with ❤️ using HTML, Tailwind CSS, and simple JavaScript.
+      </p>
+    </section>
+  </main>
+
+  <footer class="bg-white border-t border-gray-200 py-6 mt-auto">
+    <div class="max-w-7xl mx-auto px-6 text-center text-gray-500 text-sm select-none">
+      &copy; 2024 CleanList. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const inputEl = document.getElementById('inputText');
+      const outputEl = document.getElementById('outputArea');
+      const convertBtn = document.getElementById('convertBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const copyBtn = document.getElementById('copyBtn');
+
+      /**
+       * Parses messy text into a clean outline/list format.
+       * - Detects bullets: -, *, •, –, —, etc.
+       * - Detects numbers (1., 1), letters (a), roman numerals optionally.
+       * - Preserves indentation and converts to consistent 2-space indentation.
+       * - Outputs plain text list with uniform bullet styles.
+       */
+      function parseToCleanList(text) {
+        if (!text.trim()) return '';
+
+        const lines = text.replace(/\r\n/g, '\n').split('\n');
+
+        // Regex patterns to detect list markers:
+        // Ordered: 1., 1), a), A), i), I)
+        // Unordered: -, *, •, –, —
+        // We detect leading whitespace for indentation level
+
+        // For indentation, count spaces (or tabs treated as 4 spaces)
+        // We'll use 2 spaces per indent level, normalize indentation.
+
+        // Helper regexes:
+        const bulletPattern = /^[\s]*([-*•–—])[\s]+(.*)/;
+        const numberPattern = /^[\s]*((\d+|[a-zA-Z]|[ivxlcdmIVXLCDM]+)[.)])[\s]+(.*)/;
+
+        // Normalize tabs to 4 spaces
+        const tabExpandedLines = lines.map(line => line.replace(/\t/g, '    '));
+
+        // We'll build a tree structure for nesting by indentation
+        // But for simplicity, we just normalize indentation into 2 spaces per level
+        // and remove bullet markers but keep a standardized bullet (-) or numbering
+
+        // Detect indentation by counting leading spaces
+        // Then decide if line is bullet or number, otherwise just plain text
+
+        // We'll output a plain text list with indentation and a uniform style:
+        // For unordered lines: use "-"
+        // For ordered lines: keep numbering but normalize format to "1." or "a." etc.
+
+        // To preserve user numbering, keep as is but add a dot if missing.
+        // For letter ordering, add dot if missing.
+        // For unordered lines, replace bullet with "-"
+
+        // Function to detect list marker type and normalized marker
+        function detectMarker(line) {
+          // returns {type: 'unordered'|'ordered'|null, marker, content, indent}
+          // indent: number of spaces leading
+          const indent = line.search(/\S|$/);
+          const trimmed = line.trimStart();
+
+          // unordered bullet
+          let m = bulletPattern.exec(line);
+          if (m) {
+            return { type: 'unordered', marker: '-', content: m[2].trim(), indent };
+          }
+
+          // ordered number or letter
+          m = numberPattern.exec(line);
+          if (m) {
+            let mark = m[1];
+            // Normalize trailing dot
+            if (!mark.endsWith('.')) mark = mark.replace(/[.)]$/, '.') ;
+            return { type: 'ordered', marker: mark, content: m[3].trim(), indent };
+          }
+
+          // no marker
+          return { type: null, marker: null, content: line.trimStart(), indent };
+        }
+
+        // We'll use 2 spaces per indent level
+        // Determine indent level by floor(indent / 4) or floor(indent / 2)
+        // We'll use floor(indent/4) for robustness
+
+        const processedLines = [];
+        for (const line of tabExpandedLines) {
+          if (!line.trim()) {
+            processedLines.push(''); // preserve empty lines
+            continue;
+          }
+          const { type, marker, content, indent } = detectMarker(line);
+
+          // indent level (0-based)
+          const lvl = Math.floor(indent / 4);
+
+          const indentString = '  '.repeat(lvl);
+
+          if (type === 'unordered') {
+            processedLines.push(`${indentString}- ${content}`);
+          } else if (type === 'ordered') {
+            processedLines.push(`${indentString}${marker} ${content}`);
+          } else {
+            // No marker, treat as paragraph, indent with same level but no marker
+            // If it's continuation of prior list, indent more if empty lines before are trimmed
+            processedLines.push(`${indentString}${content}`);
+          }
+        }
+
+        // Join preserving blank lines, producing a neat output
+        return processedLines.join('\n').replace(/\s+$/gm,'');
+      }
+
+      function convert() {
+        const text = inputEl.value;
+        const clean = parseToCleanList(text);
+        outputEl.value = clean;
+        if (!clean) {
+          outputEl.placeholder = "No list detected. Paste text and press Convert.";
+        } else {
+          outputEl.placeholder = "";
+        }
+      }
+
+      function clearAll() {
+        inputEl.value = '';
+        outputEl.value = '';
+        outputEl.placeholder = 'Clean, Editable List Output';
+        inputEl.focus();
+      }
+
+      function copyOutput() {
+        if (!outputEl.value.trim()) {
+          alert("Nothing to copy. Please convert some text first.");
+          return;
+        }
+        navigator.clipboard.writeText(outputEl.value).then(() => {
+          copyBtn.textContent = 'Copied ✓';
+          setTimeout(() => {
+            copyBtn.textContent = 'Copy';
+          }, 1500);
+        }).catch(() => {
+          alert("Failed to copy. Please select and copy manually.");
+        });
+      }
+
+      convertBtn.addEventListener('click', convert);
+      clearBtn.addEventListener('click', clearAll);
+      copyBtn.addEventListener('click', copyOutput);
+
+      // Optional: convert as user pastes or types? No - only on Convert click for performance.
+
+      // Keyboard shortcut: Ctrl+Enter converts
+      inputEl.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          convert();
+          outputEl.focus();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
+```

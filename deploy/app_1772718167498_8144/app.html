@@ -1,0 +1,385 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daily Affirmations Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Scrollbar for textarea */
+    textarea::-webkit-scrollbar {
+      width: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background-color: rgba(139, 92, 246, var(--tw-bg-opacity));
+      border-radius: 9999px;
+    }
+
+    /* Custom focus ring for accessibility */
+    #darkModeToggle:focus-visible {
+      outline: 2px solid #8b5cf6;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans selection:bg-indigo-400 selection:text-white min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-8 py-5 flex items-center justify-between">
+      <a href="#" class="text-indigo-600 font-extrabold text-3xl select-none tracking-tight">Affirmly</a>
+      <nav class="hidden md:flex space-x-10 text-gray-700 font-semibold text-lg">
+        <a href="#features" class="hover:text-indigo-600 transition-colors duration-300 ease-in-out">Features</a>
+        <a href="#generator" class="hover:text-indigo-600 transition-colors duration-300 ease-in-out">Generate</a>
+        <a href="#footer" class="hover:text-indigo-600 transition-colors duration-300 ease-in-out">About</a>
+      </nav>
+      <button id="darkModeToggle" aria-label="Toggle dark mode" class="ml-6 p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">
+        <svg xmlns="http://www.w3.org/2000/svg" id="iconLight" class="h-7 w-7 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.485-11.485l-.707.707M5.636 18.364l-.707.707M21 12h-1M4 12H3m15.364 5.364l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" id="iconDark" class="h-7 w-7 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M17.293 13.293a8 8 0 01-11.22-11.22 7 7 0 1011.22 11.22z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main class="flex-grow">
+    <section class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 text-white">
+      <div class="max-w-7xl mx-auto px-8 py-24 flex flex-col-reverse md:flex-row md:items-center md:justify-between md:gap-20">
+        <div class="md:flex-1 max-w-xl text-center md:text-left">
+          <h1 class="text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-md tracking-tight">
+            Start Every Day With Positivity
+          </h1>
+          <p class="mt-6 text-indigo-200 text-lg md:text-xl max-w-md drop-shadow-sm">
+            Personalized daily affirmations generated from your mood — boost your mental wellness and embrace optimism.
+          </p>
+          <a href="#generator" class="inline-block mt-10 bg-white text-indigo-700 font-semibold rounded-2xl px-8 py-4 shadow-lg hover:bg-indigo-50 transition duration-300 ease-in-out uppercase tracking-wider focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500">
+            Generate Your Affirmation
+          </a>
+        </div>
+        <div class="md:flex-1 flex justify-center md:justify-end">
+          <div class="overflow-hidden rounded-3xl shadow-2xl max-w-lg w-full aspect-[4/5]">
+            <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Person feeling positive" class="w-full h-full object-cover" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Section -->
+    <section id="features" class="max-w-7xl mx-auto px-8 py-24">
+      <h2 class="text-center text-4xl font-extrabold text-gray-900 mb-16 tracking-tight">Why Choose Affirmly?</h2>
+      <div class="grid gap-16 md:grid-cols-3">
+        <article class="bg-white rounded-3xl shadow-xl p-10 flex flex-col items-center text-center border border-gray-200 hover:shadow-2xl transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L15 12m0 0l-5.25-5M15 12H3" />
+          </svg>
+          <h3 class="text-2xl font-semibold mb-3">Simple & Fast</h3>
+          <p class="text-gray-600 dark:text-gray-300 leading-relaxed">Get your personalized affirmation in seconds with intuitive input and instant results.</p>
+        </article>
+        <article class="bg-white rounded-3xl shadow-xl p-10 flex flex-col items-center text-center border border-gray-200 hover:shadow-2xl transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.343-3 3 0 .827.334 1.577.879 2.121A2.995 2.995 0 0112 14c.827 0 1.577-.333 2.121-.879A2.995 2.995 0 0115 11c0-1.657-1.343-3-3-3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14v6m0 0H7m5 0h5" />
+          </svg>
+          <h3 class="text-2xl font-semibold mb-3">Personalized</h3>
+          <p class="text-gray-600 dark:text-gray-300 leading-relaxed">Affirmations tailored to how you feel, empowering you to tackle your day positively.</p>
+        </article>
+        <article class="bg-white rounded-3xl shadow-xl p-10 flex flex-col items-center text-center border border-gray-200 hover:shadow-2xl transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9" />
+          </svg>
+          <h3 class="text-2xl font-semibold mb-3">Save or Share</h3>
+          <p class="text-gray-600 dark:text-gray-300 leading-relaxed">Copy, print, or save your affirmations easily—carry positivity wherever you go.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Generator Tool -->
+    <section id="generator" class="max-w-3xl mx-auto px-8 py-20 bg-white rounded-3xl shadow-2xl border border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+      <h2 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-10 text-center tracking-tight">Generate Your Daily Affirmation</h2>
+      <form id="moodForm" class="space-y-8">
+        <label for="mood" class="block text-xl font-semibold text-gray-700 dark:text-gray-300">
+          How are you feeling this morning?
+        </label>
+        <select id="mood" name="mood" required aria-required="true" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 px-5 py-3 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 shadow-sm focus:outline-none transition duration-300">
+          <option value="" disabled selected>Select your mood</option>
+          <option value="happy">Happy</option>
+          <option value="anxious">Anxious</option>
+          <option value="sad">Sad</option>
+          <option value="motivated">Motivated</option>
+          <option value="tired">Tired</option>
+          <option value="stressed">Stressed</option>
+          <option value="excited">Excited</option>
+          <option value="calm">Calm</option>
+        </select>
+        <button type="submit" class="w-full bg-indigo-600 text-white text-xl font-extrabold rounded-xl px-8 py-4 hover:bg-indigo-700 transition duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 shadow-lg select-none">
+          Generate Affirmation
+        </button>
+      </form>
+
+      <div id="resultSection" class="mt-12 hidden">
+        <h3 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-400 tracking-tight">Your Affirmation</h3>
+        <textarea id="affirmationOutput" rows="5" readonly aria-live="polite" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-5 py-4 text-gray-900 dark:text-gray-100 resize-none shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 hover:shadow-md transition duration-300"></textarea>
+        <div class="flex flex-wrap justify-end gap-5 mt-6">
+          <button id="copyBtn" class="flex-1 sm:flex-none px-7 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition duration-300 select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" aria-label="Copy affirmation to clipboard" type="button">
+            Copy
+          </button>
+          <button id="printBtn" class="flex-1 sm:flex-none px-7 py-3 bg-gray-100 border border-gray-300 rounded-xl hover:bg-gray-200 transition duration-300 select-none dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" aria-label="Print affirmation" type="button">
+            Print
+          </button>
+          <button id="downloadBtn" class="flex-1 sm:flex-none px-7 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition duration-300 select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500" aria-label="Download affirmation as text file" type="button">
+            Save
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-gray-100 text-gray-600 text-center py-12 mt-32 select-none dark:bg-gray-900 dark:text-gray-400">
+    <p class="max-w-7xl mx-auto px-8 text-sm sm:text-base">&copy; 2024 Affirmly &ndash; Brighten Your Day With Words</p>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const affirmations = {
+        happy: [
+          "Your joy lights up every room you enter today.",
+          "Keep riding this wave of happiness—it’s your superpower.",
+          "Smile and let the world match your cheerful spirit.",
+          "Today, happiness flows through you, inspiring those around you."
+        ],
+        anxious: [
+          "You have the strength to overcome any challenge today.",
+          "Breathe deeply; calmness is within your reach.",
+          "Your mind is clearer and your heart steadier with each moment.",
+          "You are capable of facing your fears with courage."
+        ],
+        sad: [
+          "It’s okay to feel down; brighter moments are ahead.",
+          "You are loved and valued just as you are right now.",
+          "Every new day brings a fresh start and new possibilities.",
+          "Your resilience grows stronger with each step you take."
+        ],
+        motivated: [
+          "Your drive is unstoppable, and success is in your future.",
+          "Harness this motivation to turn dreams into reality.",
+          "Every action you take today brings you closer to your goals.",
+          "You are a force of nature when focused and determined."
+        ],
+        tired: [
+          "Listen to your body; rest renews your spirit.",
+          "Taking a pause now empowers your productivity later.",
+          "You deserve kindness from yourself as much as others.",
+          "Today, honor your limits and recharge with grace."
+        ],
+        stressed: [
+          "You can handle whatever comes your way today with calm.",
+          "Let go of what you cannot control, and focus on your breath.",
+          "Stress is temporary — your peace is permanent.",
+          "Choose calm, one deep breath at a time."
+        ],
+        excited: [
+          "Your enthusiasm is contagious — spread it far and wide.",
+          "Embrace this excitement; it fuels your amazing journey.",
+          "Today is full of endless opportunities waiting for you.",
+          "Let your energy open doors to wonderful experiences."
+        ],
+        calm: [
+          "Your peace creates a ripple of calm in the world today.",
+          "Stay centered and grounded no matter what unfolds.",
+          "Calm waters reveal the clearest reflections — embrace them.",
+          "Your serenity is a powerful gift to yourself and others."
+        ]
+      };
+
+      const form = document.getElementById("moodForm");
+      const moodSelect = document.getElementById("mood");
+      const resultSection = document.getElementById("resultSection");
+      const output = document.getElementById("affirmationOutput");
+      const copyBtn = document.getElementById("copyBtn");
+      const printBtn = document.getElementById("printBtn");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        const mood = moodSelect.value;
+        if (!mood || !affirmations[mood]) {
+          alert("Please select a valid mood.");
+          return;
+        }
+        // Randomly pick an affirmation from the mood array
+        const choices = affirmations[mood];
+        const affirmation = choices[Math.floor(Math.random() * choices.length)];
+        output.value = affirmation;
+        resultSection.classList.remove("hidden");
+        output.focus();
+      });
+
+      copyBtn.addEventListener("click", () => {
+        if (!output.value) return;
+        navigator.clipboard.writeText(output.value).then(() => {
+          copyBtn.textContent = "Copied!";
+          setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+        }).catch(() => {
+          alert("Failed to copy. Please copy manually.");
+        });
+      });
+
+      printBtn.addEventListener("click", () => {
+        if (!output.value) return;
+        const printWindow = window.open("", "_blank", "width=600,height=400");
+        if (!printWindow) {
+          alert("Popup blocked. Please allow popups for this site.");
+          return;
+        }
+        printWindow.document.write(`
+          <html>
+          <head>
+            <title>Print Affirmation</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; margin: 2rem; font-size: 1.25rem; color: #4B5563; }
+              pre { white-space: pre-wrap; }
+            </style>
+          </head>
+          <body>
+            <pre>${output.value}</pre>
+            <script>
+              window.onload = () => { window.print(); window.close(); }
+            <\/script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        if (!output.value) return;
+        const blob = new Blob([output.value], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "daily-affirmation.txt";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 0);
+      });
+
+      // Dark mode toggle
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      const iconLight = document.getElementById("iconLight");
+      const iconDark = document.getElementById("iconDark");
+
+      function updateDarkModeIcon() {
+        if (document.documentElement.classList.contains("dark")) {
+          iconLight.classList.add("hidden");
+          iconDark.classList.remove("hidden");
+        } else {
+          iconLight.classList.remove("hidden");
+          iconDark.classList.add("hidden");
+        }
+      }
+
+      darkModeToggle.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+        if (document.documentElement.classList.contains("dark")) {
+          localStorage.setItem("darkMode", "true");
+        } else {
+          localStorage.removeItem("darkMode");
+        }
+        updateDarkModeIcon();
+      });
+
+      // Initialize dark mode based on saved preference or OS preference
+      (function initDarkMode() {
+        const saved = localStorage.getItem("darkMode");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (saved === "true" || (!saved && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+        updateDarkModeIcon();
+      })();
+
+    })();
+  </script>
+
+  <style>
+    /* Dark mode overrides */
+    .dark body {
+      background-color: #1f2937;
+      color: #d1d5db;
+    }
+    .dark header {
+      background-color: #111827;
+    }
+    .dark nav a:hover {
+      color: #a78bfa;
+    }
+    .dark main section#features > div > article {
+      background-color: #374151;
+      border-color: #4b5563;
+      color: #d1d5db;
+    }
+    .dark main section#generator {
+      background-color: #374151;
+      border-color: #4b5563;
+      color: #d1d5db;
+    }
+    .dark textarea {
+      background-color: #4b5563;
+      color: #d1d5db;
+      border-color: #6b7280;
+    }
+    .dark textarea:hover {
+      box-shadow: 0 0 10px 2px #a78bfa;
+    }
+    .dark textarea:focus {
+      box-shadow: 0 0 10px 3px #a78bfa;
+      border-color: #a78bfa;
+      outline: none;
+    }
+    .dark button {
+      color: inherit;
+    }
+    .dark button#copyBtn {
+      background-color: #7c3aed;
+    }
+    .dark button#copyBtn:hover,
+    .dark button#copyBtn:focus-visible {
+      background-color: #6d28d9;
+    }
+    .dark button#downloadBtn {
+      background-color: #15803d;
+    }
+    .dark button#downloadBtn:hover,
+    .dark button#downloadBtn:focus-visible {
+      background-color: #166534;
+    }
+    .dark button#printBtn {
+      background-color: #374151;
+      border-color: #6b7280;
+      color: #d1d5db;
+    }
+    .dark button#printBtn:hover,
+    .dark button#printBtn:focus-visible {
+      background-color: #4b5563;
+    }
+    .dark footer {
+      background-color: #111827;
+      color: #6b7280;
+    }
+  </style>
+</body>
+</html>
+```

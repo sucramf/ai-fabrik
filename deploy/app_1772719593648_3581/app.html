@@ -1,0 +1,516 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReceiptSnap - Smart Expense Tracking SaaS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for receipt list */
+    #receipt-list::-webkit-scrollbar {
+      width: 8px;
+    }
+    #receipt-list::-webkit-scrollbar-thumb {
+      background-color: #4b5563; /* gray-700 */
+      border-radius: 4px;
+    }
+    /* Focus-visible for accessibility */
+    .user-is-tabbing button:focus,
+    .user-is-tabbing a:focus,
+    .user-is-tabbing input:focus {
+      outline: 2px solid #6366f1; /* indigo-500 */
+      outline-offset: 2px;
+    }
+    /* Remove focus outline when not tabbing */
+    button:focus,
+    a:focus,
+    input:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+  <!-- Navbar -->
+  <nav class="bg-white shadow fixed w-full z-30">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      <div class="flex justify-between h-16 items-center">
+        <a href="#" class="flex items-center space-x-3 text-indigo-600 font-extrabold text-2xl select-none tracking-tight">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 17a2 2 0 002 2h4a2 2 0 002-2v-6a2 2 0 00-2-2h-1l-3-3-3 3H9a2 2 0 00-2 2v6a2 2 0 002 2h2z" />
+          </svg>
+          <span class="tracking-wide">ReceiptSnap</span>
+        </a>
+        <div class="hidden md:flex space-x-10 font-semibold text-gray-700">
+          <a href="#tool" class="relative group px-3 py-2 rounded-md hover:text-indigo-600 transition focus-visible:ring-2 focus-visible:ring-indigo-500">
+            Use Tool
+            <span class="absolute left-0 -bottom-0.5 w-full h-0.5 bg-indigo-600 scale-x-0 origin-left group-hover:scale-x-100 transition-transform rounded"></span>
+          </a>
+          <a href="#pricing" class="relative group px-3 py-2 rounded-md hover:text-indigo-600 transition focus-visible:ring-2 focus-visible:ring-indigo-500">
+            Pricing
+            <span class="absolute left-0 -bottom-0.5 w-full h-0.5 bg-indigo-600 scale-x-0 origin-left group-hover:scale-x-100 transition-transform rounded"></span>
+          </a>
+          <a href="#footer" class="relative group px-3 py-2 rounded-md hover:text-indigo-600 transition focus-visible:ring-2 focus-visible:ring-indigo-500">
+            Contact
+            <span class="absolute left-0 -bottom-0.5 w-full h-0.5 bg-indigo-600 scale-x-0 origin-left group-hover:scale-x-100 transition-transform rounded"></span>
+          </a>
+        </div>
+        <div class="hidden md:flex">
+          <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-md font-semibold shadow-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+            Sign In
+          </button>
+        </div>
+        <div class="md:hidden">
+          <button id="menu-btn" aria-label="Toggle Menu" class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden px-6 pt-3 pb-5 space-y-2 bg-white border-t border-gray-200 shadow-md">
+      <a href="#tool" class="block rounded-lg px-4 py-2 text-indigo-600 font-semibold hover:bg-indigo-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+        Use Tool
+      </a>
+      <a href="#pricing" class="block rounded-lg px-4 py-2 text-indigo-600 font-semibold hover:bg-indigo-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+        Pricing
+      </a>
+      <a href="#footer" class="block rounded-lg px-4 py-2 text-indigo-600 font-semibold hover:bg-indigo-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+        Contact
+      </a>
+      <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md font-semibold shadow-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+        Sign In
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main content wrapper -->
+  <main class="flex-grow pt-20">
+    <!-- Hero -->
+    <section class="bg-gradient-to-br from-indigo-700 to-indigo-600 text-white">
+      <div class="max-w-7xl mx-auto px-6 py-24 sm:px-8 lg:px-12 text-center">
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight drop-shadow-lg leading-tight sm:leading-snug">
+          Snap, Digitize & Track Your Receipts Effortlessly
+        </h1>
+        <p class="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-indigo-200 drop-shadow-md leading-relaxed">
+          ReceiptSnap automatically organizes your business and personal expenses by simply snapping photos. Sync bank accounts, export reports, and get tax reminders — all in one smart app.
+        </p>
+        <a href="#tool" class="inline-block mt-10 px-10 py-4 bg-white text-indigo-600 font-semibold rounded-lg shadow-lg hover:bg-indigo-50 transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300">
+          Try ReceiptSnap Now
+        </a>
+      </div>
+    </section>
+
+    <!-- Tool UI -->
+    <section id="tool" class="max-w-7xl mx-auto px-6 py-16 sm:px-8 lg:px-12">
+      <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-900 tracking-tight">ReceiptSnap Tool</h2>
+      <p class="text-center max-w-xl mx-auto text-gray-600 mb-12 sm:text-lg">
+        Upload receipt photos below. ReceiptSnap will instantly read, categorize, and track your expenses.
+      </p>
+      <div class="space-y-10 max-w-4xl mx-auto">
+        <!-- Upload and clear -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-center sm:space-x-8 gap-y-6">
+          <label for="receipt-file" class="cursor-pointer group flex justify-center items-center rounded-2xl border-2 border-dashed border-indigo-400 p-8 w-full sm:w-80 text-indigo-600 hover:border-indigo-600 transition shadow-sm hover:shadow-md focus-within:ring-4 focus-within:ring-indigo-300 select-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mr-4 group-hover:text-indigo-700 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v-4a2 2 0 012-2h4m6 6V8a2 2 0 00-2-2h-4m2 2l5 5M9 13l2 2 4-4" />
+            </svg>
+            <span class="text-lg font-medium select-none">Select Receipt Image</span>
+            <input id="receipt-file" type="file" accept="image/*" class="hidden" capture="environment" multiple aria-label="Upload receipt images"/>
+          </label>
+
+          <button id="clear-btn" class="mt-0 sm:mt-0 self-center bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-lg font-semibold shadow-md transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-400 disabled:bg-red-400 disabled:hover:bg-red-400" title="Clear all receipts" aria-disabled="false">
+            Clear All
+          </button>
+        </div>
+
+        <!-- Receipt list -->
+        <div class="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto h-[440px] overflow-y-auto border border-gray-200" aria-live="polite" aria-label="Uploaded receipt list">
+          <h3 class="text-2xl font-semibold mb-6 text-gray-900 border-b border-gray-200 pb-3">Uploaded Receipts</h3>
+          <ul id="receipt-list" class="space-y-5 text-gray-700">
+            <li class="text-center text-gray-400 select-none text-base">No receipts uploaded yet.</li>
+          </ul>
+        </div>
+
+        <!-- Reports & export -->
+        <div class="max-w-4xl mx-auto bg-indigo-50 rounded-xl p-8 text-center text-gray-700 shadow-inner">
+          <h3 class="text-2xl font-bold mb-3 text-indigo-600 tracking-tight">Monthly Expense Summary</h3>
+          <pre id="summary" class="mb-6 text-lg font-mono tracking-wide select-text whitespace-pre-wrap leading-relaxed">Upload receipts to see statistics here.</pre>
+          <button id="export-btn" class="disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition font-semibold shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-400" disabled>
+            Export as CSV
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="bg-white py-20 px-6 sm:px-8 lg:px-12">
+      <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-4xl font-extrabold mb-6 text-gray-900 tracking-tight">Simple Pricing Plans</h2>
+        <p class="text-gray-600 mb-16 max-w-xl mx-auto text-lg leading-relaxed">
+          All plans include unlimited receipt uploads, export options, and tax filing reminders.
+        </p>
+        <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3 max-w-4xl mx-auto">
+          <article class="border border-gray-200 rounded-2xl p-8 flex flex-col shadow-sm hover:shadow-lg transition duration-300">
+            <h3 class="text-xl font-bold mb-5 text-indigo-600 tracking-wide">Free</h3>
+            <p class="text-gray-800 text-5xl font-extrabold mb-6 leading-none">$0<span class="text-base font-normal ml-1">/ month</span></p>
+            <ul class="mb-8 space-y-3 text-gray-600 flex-grow">
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>Up to 30 receipts/month</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>Basic categorization</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>Export CSV</span>
+              </li>
+              <li class="flex items-center space-x-3 opacity-50 line-through">
+                <span>Bank sync</span>
+              </li>
+              <li class="flex items-center space-x-3 opacity-50 line-through">
+                <span>Tax reminders</span>
+              </li>
+            </ul>
+            <button class="mt-auto bg-indigo-100 text-indigo-600 py-3 rounded-lg font-semibold cursor-not-allowed opacity-60" disabled aria-current="true">
+              Current Plan
+            </button>
+          </article>
+
+          <article class="border-2 border-indigo-600 rounded-2xl p-8 flex flex-col shadow-lg bg-indigo-50 hover:bg-indigo-100 transition duration-300">
+            <h3 class="text-xl font-bold mb-5 text-indigo-700 tracking-wide">Pro</h3>
+            <p class="text-gray-900 text-5xl font-extrabold mb-6 leading-none">$19<span class="text-base font-normal ml-1">/ month</span></p>
+            <ul class="mb-8 space-y-3 text-gray-700 flex-grow">
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-700">✓</span>
+                <span>Unlimited receipts</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-700">✓</span>
+                <span>Advanced categorization</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-700">✓</span>
+                <span>Export CSV & PDF</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-700">✓</span>
+                <span>Bank sync</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-700">✓</span>
+                <span>Basic tax reminders</span>
+              </li>
+            </ul>
+            <button class="mt-auto bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold shadow-md transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-400">
+              Choose Pro
+            </button>
+          </article>
+
+          <article class="border border-gray-200 rounded-2xl p-8 flex flex-col shadow-sm hover:shadow-lg transition duration-300">
+            <h3 class="text-xl font-bold mb-5 text-indigo-600 tracking-wide">Enterprise</h3>
+            <p class="text-gray-800 text-3xl font-extrabold mb-6 leading-snug">Contact Us</p>
+            <ul class="mb-8 space-y-3 text-gray-600 flex-grow">
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>All Pro features</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>Custom integrations</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>Priority support</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>Dedicated account manager</span>
+              </li>
+              <li class="flex items-center space-x-3">
+                <span class="inline-block text-indigo-600">✓</span>
+                <span>Advanced tax filing reminders</span>
+              </li>
+            </ul>
+            <button class="mt-auto bg-indigo-100 text-indigo-600 py-3 rounded-lg font-semibold hover:bg-indigo-200 transition shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300">
+              Contact Sales
+            </button>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-gray-900 text-gray-300 py-14 px-8 sm:px-16">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-y-6">
+      <a href="#" class="flex items-center space-x-3 text-indigo-400 font-extrabold text-xl select-none tracking-wide">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 17a2 2 0 002 2h4a2 2 0 002-2v-6a2 2 0 00-2-2h-1l-3-3-3 3H9a2 2 0 00-2 2v6a2 2 0 002 2h2z" />
+        </svg>
+        <span>ReceiptSnap</span>
+      </a>
+      <nav class="flex space-x-8 text-sm md:text-base">
+        <a href="#" class="hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded">Privacy Policy</a>
+        <a href="#" class="hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded">Terms of Service</a>
+        <a href="mailto:support@receiptsnap.com" class="hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded">Contact Support</a>
+      </nav>
+    </div>
+    <p class="mt-10 text-center text-gray-500 text-sm font-mono select-text tracking-wide">
+      &copy; 2024 ReceiptSnap. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    // Navbar mobile menu toggle
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // ReceiptSnap Tool functionality
+    const receiptFileInput = document.getElementById('receipt-file');
+    const receiptList = document.getElementById('receipt-list');
+    const summaryEl = document.getElementById('summary');
+    const exportBtn = document.getElementById('export-btn');
+    const clearBtn = document.getElementById('clear-btn');
+
+    // In-memory data store for receipts
+    const receipts = [];
+
+    // Categories for automatic categorization - simple keyword based
+    const categoryKeywords = {
+      "Office Supplies": ["pen", "paper", "notebook", "office", "stationery", "printer", "ink", "envelope", "folder"],
+      "Food & Beverage": ["coffee", "tea", "restaurant", "cafe", "bar", "diner", "pizza", "lunch", "dinner", "meal", "snack", "groceries"],
+      "Travel": ["taxi", "uber", "cab", "flight", "airline", "hotel", "motel", "booking", "transport", "bus", "train", "car rental"],
+      "Utilities": ["electricity", "water", "internet", "gas", "phone", "utility"],
+      "Miscellaneous": []
+    };
+
+    // Helpers
+    function parseReceiptText(text) {
+      const lowerText = text.toLowerCase();
+      const amountRegex = /\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g;
+      const dateRegex1 = /\b(\d{4}-\d{2}-\d{2})\b/;
+      const dateRegex2 = /\b(\d{1,2}\/\d{1,2}\/\d{2,4})\b/;
+
+      let amounts = [];
+      let m;
+      while ((m = amountRegex.exec(lowerText)) !== null) {
+        let v = parseFloat(m[1].replace(/,/g, ''));
+        if (!isNaN(v)) amounts.push(v);
+      }
+      const total = amounts.length ? Math.max(...amounts) : 0;
+
+      let date = null;
+      let dMatch = lowerText.match(dateRegex1) || lowerText.match(dateRegex2);
+      if (dMatch) {
+        date = dMatch[1];
+        let dt = new Date(date);
+        if (!isNaN(dt)) {
+          date = dt.toISOString().slice(0, 10);
+        }
+      }
+
+      let vendor = "Unknown Vendor";
+      const lines = text.trim().split(/\r?\n/);
+      for (const line of lines) {
+        if (line.trim().length > 2 && /[a-z]/i.test(line)) {
+          vendor = line.trim();
+          break;
+        }
+      }
+
+      let category = "Miscellaneous";
+      for (const [cat, keywords] of Object.entries(categoryKeywords)) {
+        for (const kw of keywords) {
+          if (lowerText.includes(kw)) {
+            category = cat;
+            break;
+          }
+        }
+        if (category !== "Miscellaneous") break;
+      }
+
+      return { total, date, vendor, category };
+    }
+
+    function formatCurrency(value) {
+      return value.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+    }
+
+    function addReceipt(file, textData = null) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageSrc = e.target.result;
+
+        let simulatedOCRText = textData;
+        if (!simulatedOCRText) {
+          let nameFromFile = file.name.replace(/\.[^/.]+$/, "");
+          simulatedOCRText = `${nameFromFile}\n$${(Math.random()*90 + 10).toFixed(2)}\n2024-04-30\nThank you for your purchase`;
+        }
+        const parsed = parseReceiptText(simulatedOCRText);
+
+        const receipt = {
+          id: crypto.randomUUID(),
+          imageSrc,
+          vendor: parsed.vendor,
+          amount: parsed.total,
+          date: parsed.date || new Date().toISOString().slice(0,10),
+          category: parsed.category,
+          rawText: simulatedOCRText
+        };
+
+        receipts.push(receipt);
+        updateReceiptList();
+        updateSummary();
+        exportBtn.disabled = false;
+        clearBtn.disabled = false;
+        clearBtn.setAttribute('aria-disabled', 'false');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateReceiptList() {
+      receiptList.innerHTML = '';
+      if (receipts.length === 0) {
+        receiptList.innerHTML = '<li class="text-center text-gray-400 select-none text-base">No receipts uploaded yet.</li>';
+        exportBtn.disabled = true;
+        clearBtn.disabled = true;
+        clearBtn.setAttribute('aria-disabled', 'true');
+        summaryEl.textContent = 'Upload receipts to see statistics here.';
+        return;
+      }
+      for (const r of receipts) {
+        const li = document.createElement('li');
+        li.className = 'flex items-center space-x-6 border border-gray-200 rounded-xl p-4 bg-gray-50 shadow-sm hover:shadow-md transition';
+
+        const img = document.createElement('img');
+        img.src = r.imageSrc;
+        img.alt = `Receipt image of ${r.vendor}`;
+        img.className = 'w-24 h-24 object-cover rounded-lg flex-shrink-0 border border-gray-300 shadow';
+        li.appendChild(img);
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'flex-grow min-w-0';
+
+        const vendorDate = document.createElement('p');
+        vendorDate.className = 'font-semibold text-gray-900 truncate';
+        vendorDate.title = `${r.vendor}${r.date ? ` — ${r.date}` : ''}`;
+        vendorDate.textContent = r.vendor + (r.date ? ` — ${r.date}` : '');
+        infoDiv.appendChild(vendorDate);
+
+        const categoryAmount = document.createElement('p');
+        categoryAmount.className = 'text-indigo-600 font-mono text-lg truncate';
+        categoryAmount.title = `${r.category} • ${formatCurrency(r.amount)}`;
+        categoryAmount.textContent = `${r.category} • ${formatCurrency(r.amount)}`;
+        infoDiv.appendChild(categoryAmount);
+
+        li.appendChild(infoDiv);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'ml-4 flex-shrink-0 text-red-600 hover:text-red-800 p-2 rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400';
+        removeBtn.title = "Remove receipt";
+        removeBtn.setAttribute('aria-label', `Remove receipt from ${r.vendor} dated ${r.date}`);
+        removeBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
+          viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>`;
+        removeBtn.onclick = () => {
+          const idx = receipts.findIndex(x => x.id === r.id);
+          if (idx > -1) {
+            receipts.splice(idx, 1);
+            updateReceiptList();
+            updateSummary();
+          }
+          if(receipts.length === 0) {
+            exportBtn.disabled = true;
+            clearBtn.disabled = true;
+            clearBtn.setAttribute('aria-disabled', 'true');
+          }
+        };
+        li.appendChild(removeBtn);
+
+        receiptList.appendChild(li);
+      }
+    }
+
+    function updateSummary() {
+      if (receipts.length === 0) {
+        summaryEl.textContent = 'Upload receipts to see statistics here.';
+        exportBtn.disabled = true;
+        return;
+      }
+      const totals = {};
+      let grandTotal = 0;
+      for (const r of receipts) {
+        const cat = r.category;
+        totals[cat] = (totals[cat] || 0) + r.amount;
+        grandTotal += r.amount;
+      }
+
+      let summaryText = `Total Spent: ${formatCurrency(grandTotal)}\n`;
+      for (const [cat, val] of Object.entries(totals)) {
+        summaryText += `• ${cat}: ${formatCurrency(val)}\n`;
+      }
+      summaryEl.textContent = summaryText.trim();
+    }
+
+    receiptFileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+
+      for(const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        addReceipt(file);
+      }
+      receiptFileInput.value = '';
+    });
+
+    exportBtn.addEventListener('click', () => {
+      if (receipts.length === 0) return;
+
+      const header = ['Vendor,Date,Category,Amount,Raw Text'];
+      const csvRows = receipts.map(r =>
+        `"${r.vendor.replace(/"/g, '""')}","${r.date}","${r.category}",${r.amount.toFixed(2)},"${r.rawText.replace(/"/g, '""')}"`
+      );
+
+      const csvContent = header.concat(csvRows).join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `receipts_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if (receipts.length === 0) return;
+      if (!confirm('Clear all uploaded receipts? This cannot be undone.')) return;
+      receipts.splice(0, receipts.length);
+      updateReceiptList();
+      updateSummary();
+      exportBtn.disabled = true;
+      clearBtn.disabled = true;
+      clearBtn.setAttribute('aria-disabled', 'true');
+    });
+
+    // Focus visible outlines toggle for accessibility
+    (() => {
+      function handleFirstTab(e) {
+        if (e.key === 'Tab') {
+          document.body.classList.add('user-is-tabbing');
+          window.removeEventListener('keydown', handleFirstTab);
+        }
+      }
+      window.addEventListener('keydown', handleFirstTab);
+    })();
+  </script>
+</body>
+</html>
+```

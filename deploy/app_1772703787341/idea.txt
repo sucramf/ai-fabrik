@@ -1,0 +1,1 @@
+A web app that converts everyday cooking measurements (cups, tablespoons, ounces, grams) instantly and accurately with ingredient-specific density adjustments—helping home cooks follow recipes from any source without guesswork.

@@ -1,0 +1,395 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskPriority - Organize & Prioritize Your Tasks Effortlessly</title>
+  <meta name="description" content="TaskPriority helps you instantly prioritize your daily tasks using Eisenhower Matrix. Focus on what really matters." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="text-xl sm:text-2xl font-extrabold text-indigo-600 hover:text-indigo-700">
+        TaskPriority
+      </a>
+      <nav class="hidden md:flex space-x-8 text-gray-600 font-semibold">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Try it</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button id="mobileMenuButton" aria-label="Toggle menu" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <nav id="mobileMenu" class="md:hidden bg-white border-t border-gray-200 hidden">
+      <div class="flex flex-col space-y-1 px-6 py-3 font-semibold text-gray-700">
+        <a href="#features" class="hover:text-indigo-600 transition py-1">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition py-1">Try it</a>
+        <a href="#footer" class="hover:text-indigo-600 transition py-1">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-indigo-600 text-white pt-20 pb-20 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center gap-12 md:gap-20">
+      <div class="max-w-xl text-center md:text-left">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight">Focus on What Matters Most</h1>
+        <p class="mt-6 text-lg sm:text-xl font-light max-w-lg leading-relaxed text-indigo-100">
+          Organize, prioritize, and conquer your tasks with TaskPriority’s intuitive Eisenhower Matrix tool. Get clear, get productive.
+        </p>
+        <a href="#tool" class="inline-block mt-8 bg-white text-indigo-600 font-semibold px-8 py-3 rounded shadow-lg hover:bg-indigo-50 transition">
+          Try it Now — Free
+        </a>
+      </div>
+      <div class="w-full max-w-md">
+        <img src="https://cdn-icons-png.flaticon.com/512/2611/2611139.png" alt="Task Priority Eisenhower Matrix Illustration" class="w-full" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="max-w-7xl mx-auto px-6 py-20">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-900 mb-12">Why TaskPriority?</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+        <svg class="w-12 h-12 text-indigo-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 8v8m-4-4h8" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Eisenhower Matrix</h3>
+        <p class="text-gray-600">Sort tasks by urgency and importance for optimal focus.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+        <svg class="w-12 h-12 text-indigo-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Quick Setup</h3>
+        <p class="text-gray-600">Add and prioritize tasks within seconds, no signup required.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+        <svg class="w-12 h-12 text-indigo-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 3h18v18H3z" />
+          <path d="M7 7h10v10H7z" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Responsive Design</h3>
+        <p class="text-gray-600">Use it on any device, desktop or mobile, without hassle.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+        <svg class="w-12 h-12 text-indigo-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h16v16H4z" />
+          <path d="M4 12h16" />
+          <path d="M12 4v16" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Clear Visualization</h3>
+        <p class="text-gray-600">Tasks clearly divided into four actionable quadrants.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Working Tool UI -->
+  <section id="tool" class="bg-white py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-extrabold text-center mb-10 text-gray-900">Your TaskPriority Eisenhower Matrix</h2>
+
+      <!-- Input panel -->
+      <form id="taskForm" class="max-w-xl mx-auto mb-10 flex flex-col sm:flex-row gap-4">
+        <input
+          type="text"
+          id="taskInput"
+          aria-label="Task description"
+          placeholder="Enter your task description..."
+          required
+          class="flex-grow px-4 py-3 rounded border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+        />
+        <select
+          id="importanceSelect"
+          aria-label="Select importance"
+          class="w-40 px-4 py-3 rounded border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+          required
+        >
+          <option value="" disabled selected>Importance</option>
+          <option value="important">Important</option>
+          <option value="not-important">Not Important</option>
+        </select>
+        <select
+          id="urgencySelect"
+          aria-label="Select urgency"
+          class="w-40 px-4 py-3 rounded border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+          required
+        >
+          <option value="" disabled selected>Urgency</option>
+          <option value="urgent">Urgent</option>
+          <option value="not-urgent">Not Urgent</option>
+        </select>
+        <button
+          type="submit"
+          aria-label="Add task"
+          class="bg-indigo-600 text-white font-semibold px-6 rounded shadow hover:bg-indigo-700 transition"
+        >
+          Add Task
+        </button>
+      </form>
+
+      <!-- Matrix -->
+      <div
+        class="max-w-5xl mx-auto grid grid-cols-2 gap-6 md:gap-10 border border-gray-300 rounded-lg shadow-sm overflow-hidden md:grid-rows-2 md:grid-cols-2"
+        role="region"
+        aria-label="Eisenhower matrix task list"
+      >
+        <!-- Quadrant 1: Important & Urgent -->
+        <section
+          aria-labelledby="q1-title"
+          class="bg-indigo-50 p-6 flex flex-col"
+        >
+          <h3 id="q1-title" class="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+            <svg class="w-6 h-6 stroke-indigo-700" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8v8m-4-4h8" />
+            </svg>
+            Important & Urgent
+          </h3>
+          <ul id="q1-tasks" class="flex-grow overflow-y-auto space-y-2 max-h-60" aria-live="polite" aria-relevant="additions removals"></ul>
+          <p class="mt-3 text-sm text-indigo-600 font-light italic select-none">Do first</p>
+        </section>
+
+        <!-- Quadrant 2: Important & Not Urgent -->
+        <section
+          aria-labelledby="q2-title"
+          class="bg-indigo-50 p-6 flex flex-col"
+        >
+          <h3 id="q2-title" class="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+            <svg class="w-6 h-6 stroke-indigo-700" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            Important & Not Urgent
+          </h3>
+          <ul id="q2-tasks" class="flex-grow overflow-y-auto space-y-2 max-h-60" aria-live="polite" aria-relevant="additions removals"></ul>
+          <p class="mt-3 text-sm text-indigo-600 font-light italic select-none">Schedule</p>
+        </section>
+
+        <!-- Quadrant 3: Not Important & Urgent -->
+        <section
+          aria-labelledby="q3-title"
+          class="bg-indigo-50 p-6 flex flex-col"
+        >
+          <h3 id="q3-title" class="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+            <svg class="w-6 h-6 stroke-indigo-700" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3h18v18H3z" />
+              <path d="M7 7h10v10H7z" />
+            </svg>
+            Not Important & Urgent
+          </h3>
+          <ul id="q3-tasks" class="flex-grow overflow-y-auto space-y-2 max-h-60" aria-live="polite" aria-relevant="additions removals"></ul>
+          <p class="mt-3 text-sm text-indigo-600 font-light italic select-none">Delegate</p>
+        </section>
+
+        <!-- Quadrant 4: Not Important & Not Urgent -->
+        <section
+          aria-labelledby="q4-title"
+          class="bg-indigo-50 p-6 flex flex-col"
+        >
+          <h3 id="q4-title" class="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+            <svg class="w-6 h-6 stroke-indigo-700" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16v16H4z" />
+              <path d="M4 12h16" />
+              <path d="M12 4v16" />
+            </svg>
+            Not Important & Not Urgent
+          </h3>
+          <ul id="q4-tasks" class="flex-grow overflow-y-auto space-y-2 max-h-60" aria-live="polite" aria-relevant="additions removals"></ul>
+          <p class="mt-3 text-sm text-indigo-600 font-light italic select-none">Eliminate</p>
+        </section>
+      </div>
+
+      <p class="mt-6 text-center text-gray-600 text-sm">Your tasks are saved in your browser's local storage.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-indigo-600 text-indigo-100 py-12 px-6 mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+      <p class="text-center md:text-left text-sm">&copy; 2024 TaskPriority. All rights reserved.</p>
+      <nav class="flex space-x-6">
+        <a href="mailto:support@taskpriority.app" class="hover:underline" aria-label="Contact support">Support</a>
+        <a href="https://github.com/taskpriority" target="_blank" rel="noopener" class="hover:underline" aria-label="GitHub repository">GitHub</a>
+        <a href="https://twitter.com/taskpriority" target="_blank" rel="noopener" class="hover:underline" aria-label="Twitter profile">Twitter</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const taskForm = document.getElementById('taskForm');
+      const taskInput = document.getElementById('taskInput');
+      const importanceSelect = document.getElementById('importanceSelect');
+      const urgencySelect = document.getElementById('urgencySelect');
+
+      // Quadrant task lists
+      const q1List = document.getElementById('q1-tasks'); // Important & Urgent
+      const q2List = document.getElementById('q2-tasks'); // Important & Not Urgent
+      const q3List = document.getElementById('q3-tasks'); // Not Important & Urgent
+      const q4List = document.getElementById('q4-tasks'); // Not Important & Not Urgent
+
+      // Storage key
+      const STORAGE_KEY = 'taskpriority_tasks';
+
+      // Tasks data structure:
+      // Array of objects: {id, description, importance, urgency}
+      let tasks = [];
+
+      // Create a task list item element
+      function createTaskListItem(task) {
+        const li = document.createElement('li');
+        li.className = 'bg-white rounded shadow px-4 py-2 flex justify-between items-center';
+
+        const span = document.createElement('span');
+        span.textContent = task.description;
+        span.className = 'break-words flex-grow';
+        span.title = 'Task description';
+
+        const delBtn = document.createElement('button');
+        delBtn.setAttribute('aria-label', `Delete task: ${task.description}`);
+        delBtn.className = 'ml-4 text-red-500 hover:text-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-400 rounded';
+        delBtn.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        `;
+        delBtn.addEventListener('click', () => {
+          deleteTask(task.id);
+        });
+
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        return li;
+      }
+
+      // Render tasks into the matrix
+      function renderTasks() {
+        // Clear all lists first
+        [q1List, q2List, q3List, q4List].forEach(list => (list.textContent = ''));
+        if (tasks.length === 0) {
+          [q1List, q2List, q3List, q4List].forEach(list => {
+            const p = document.createElement('p');
+            p.className = 'text-gray-400 italic select-none';
+            p.textContent = 'No tasks yet.';
+            list.appendChild(p);
+          });
+          return;
+        }
+
+        // Filter and render tasks for each quadrant
+        const q1Tasks = tasks.filter(t => t.importance === 'important' && t.urgency === 'urgent');
+        const q2Tasks = tasks.filter(t => t.importance === 'important' && t.urgency === 'not-urgent');
+        const q3Tasks = tasks.filter(t => t.importance === 'not-important' && t.urgency === 'urgent');
+        const q4Tasks = tasks.filter(t => t.importance === 'not-important' && t.urgency === 'not-urgent');
+
+        function appendTasks(taskArray, container) {
+          if (taskArray.length === 0) {
+            const p = document.createElement('p');
+            p.className = 'text-gray-400 italic select-none';
+            p.textContent = 'No tasks.';
+            container.appendChild(p);
+            return;
+          }
+          taskArray.forEach(task => {
+            container.appendChild(createTaskListItem(task));
+          });
+        }
+
+        appendTasks(q1Tasks, q1List);
+        appendTasks(q2Tasks, q2List);
+        appendTasks(q3Tasks, q3List);
+        appendTasks(q4Tasks, q4List);
+      }
+
+      // Add new task
+      function addTask(description, importance, urgency) {
+        const newTask = {
+          id: Date.now().toString(),
+          description: description.trim(),
+          importance,
+          urgency
+        };
+        tasks.push(newTask);
+        saveTasks();
+        renderTasks();
+      }
+
+      // Delete a task by id
+      function deleteTask(id) {
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
+        renderTasks();
+      }
+
+      // Save tasks to localStorage
+      function saveTasks() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        } catch (e) {
+          // Probably quota exceeded or private mode
+          console.warn('Could not save tasks in localStorage.', e);
+        }
+      }
+
+      // Load tasks from localStorage
+      function loadTasks() {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            tasks = JSON.parse(stored);
+          }
+        } catch {
+          tasks = [];
+        }
+        renderTasks();
+      }
+
+      // Handle form submission
+      taskForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const description = taskInput.value;
+        const importance = importanceSelect.value;
+        const urgency = urgencySelect.value;
+
+        if (!description.trim() || !importance || !urgency) {
+          // Should never happen because of required attributes, but just in case
+          alert('Please fill all fields.');
+          return;
+        }
+
+        addTask(description, importance, urgency);
+
+        // Reset inputs but retain the dropdowns selection (common UX)
+        taskInput.value = '';
+        taskInput.focus();
+      });
+
+      // Mobile menu toggle
+      const mobileMenuButton = document.getElementById('mobileMenuButton');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      mobileMenuButton.addEventListener('click', () => {
+        const expanded = mobileMenu.classList.toggle('hidden');
+      });
+
+      // Initialize app
+      loadTasks();
+
+    })();
+  </script>
+</body>
+</html>
+```

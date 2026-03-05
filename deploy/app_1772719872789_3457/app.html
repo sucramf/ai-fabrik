@@ -1,0 +1,244 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MeetPrep - Smart Meeting Preparation SaaS</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    /* Custom scrollbar for smooth UX */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #a3bffa;
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-40">
+    <div class="container mx-auto px-6 md:px-12 flex items-center justify-between h-16">
+      <a href="#hero" aria-label="MeetPrep" class="flex items-center space-x-3">
+        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 17l4-4 4 4m0-8h-8v8"></path>
+        </svg>
+        <span class="text-2xl font-extrabold text-indigo-600 select-none">MeetPrep</span>
+      </a>
+      <div class="hidden md:flex space-x-10 text-gray-700 font-semibold text-lg">
+        <a href="#tool" class="hover:text-indigo-600 transition duration-150 ease-in-out focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 rounded">Tool</a>
+        <a href="#features" class="hover:text-indigo-600 transition duration-150 ease-in-out focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 rounded">Features</a>
+        <a href="#footer" class="hover:text-indigo-600 transition duration-150 ease-in-out focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 rounded">Contact</a>
+      </div>
+      <button id="ctaNavbar" class="hidden md:inline bg-indigo-600 hover:bg-indigo-700 focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 text-white px-6 py-2 rounded-lg shadow-lg font-semibold transition duration-150 ease-in-out">
+        Get Started
+      </button>
+      <button id="mobileMenuButton" class="md:hidden focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded" aria-label="Open menu" aria-expanded="false">
+        <svg class="w-7 h-7 text-gray-700" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white shadow-inner border-t border-gray-200">
+      <a href="#tool" class="block px-6 py-4 hover:bg-indigo-50 text-indigo-700 font-semibold border-b border-gray-100 focus:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-t">Tool</a>
+      <a href="#features" class="block px-6 py-4 hover:bg-indigo-50 text-indigo-700 font-semibold border-b border-gray-100 focus:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">Features</a>
+      <a href="#footer" class="block px-6 py-4 hover:bg-indigo-50 text-indigo-700 font-semibold focus:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-b">Contact</a>
+      <div class="px-6 py-5">
+        <button id="ctaMobile" class="w-full bg-indigo-600 hover:bg-indigo-700 focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 text-white py-3 rounded-lg shadow-lg font-semibold transition duration-150 ease-in-out">
+          Get Started
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero" class="bg-gradient-to-tr from-indigo-600 to-indigo-400 text-white">
+    <div class="container mx-auto px-6 md:px-12 py-20 md:py-32 flex flex-col-reverse md:flex-row items-center gap-14 md:gap-20 max-w-7xl">
+      <div class="md:w-1/2 max-w-xl text-center md:text-left">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md">
+          Cut Meeting Prep Time.<br />
+          Stay Ahead with <span class="underline decoration-yellow-300 decoration-5">MeetPrep</span>.
+        </h1>
+        <p class="mt-6 text-lg sm:text-xl max-w-xl leading-relaxed drop-shadow">
+          Automatically summarize your calendar &amp; emails, get attendee bios, key topics, related docs, and smart talking points—all in one neat briefing before every meeting.
+        </p>
+        <div class="mt-10 flex justify-center md:justify-start gap-5 flex-wrap">
+          <button id="heroGetStarted" class="bg-yellow-400 hover:bg-yellow-300 text-indigo-900 font-semibold px-7 py-3 rounded-xl shadow-xl transition duration-200 ease-in-out focus-visible:outline-yellow-400 focus:outline focus:outline-2 focus:outline-offset-2">
+            Get Started Free
+          </button>
+          <a href="#features" class="inline-flex items-center justify-center px-7 py-3 border border-white/75 rounded-xl hover:border-white hover:bg-white/25 transition duration-200 ease-in-out font-semibold focus-visible:outline-white focus:outline focus:outline-2 focus:outline-offset-2">
+            Learn More
+            <svg class="ml-3 w-5 h-5 stroke-current" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M5 12h14M13 6l6 6-6 6"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="md:w-1/2 max-w-lg drop-shadow-xl">
+        <img src="https://user-images.githubusercontent.com/7264790/162496007-70e01e51-6f0a-4d3f-ae01-07e1ec7681c0.png" alt="MeetPrep dashboard preview" class="rounded-3xl border border-white/40 shadow-2xl mx-auto md:mx-0" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool Section -->
+  <section id="tool" class="container mx-auto px-6 md:px-12 py-16 md:py-24 max-w-7xl">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-14 text-center max-w-3xl mx-auto">How MeetPrep Works</h2>
+    <div class="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto px-2">
+      <article class="bg-white rounded-2xl shadow-lg p-10 flex flex-col items-center text-center space-y-6 hover:shadow-indigo-300 transition-shadow duration-300">
+        <div class="flex items-center justify-center w-20 h-20 rounded-full bg-indigo-100 text-indigo-600 font-bold text-2xl select-none">1</div>
+        <h3 class="text-xl font-semibold text-gray-900">Connect Your Tools</h3>
+        <p class="text-gray-600 max-w-xs">
+          Securely link your calendar and email accounts in one click so MeetPrep can gather relevant meeting data for you automatically.
+        </p>
+      </article>
+      <article class="bg-white rounded-2xl shadow-lg p-10 flex flex-col items-center text-center space-y-6 hover:shadow-indigo-300 transition-shadow duration-300">
+        <div class="flex items-center justify-center w-20 h-20 rounded-full bg-indigo-100 text-indigo-600 font-bold text-2xl select-none">2</div>
+        <h3 class="text-xl font-semibold text-gray-900">Automatic Brief Generation</h3>
+        <p class="text-gray-600 max-w-xs">
+          Before each meeting, MeetPrep instantly crafts a concise briefing with key topics, attendee bios, recent emails, and important documents all in one place.
+        </p>
+      </article>
+      <article class="bg-white rounded-2xl shadow-lg p-10 flex flex-col items-center text-center space-y-6 hover:shadow-indigo-300 transition-shadow duration-300">
+        <div class="flex items-center justify-center w-20 h-20 rounded-full bg-indigo-100 text-indigo-600 font-bold text-2xl select-none">3</div>
+        <h3 class="text-xl font-semibold text-gray-900">Be Prepared &amp; Confident</h3>
+        <p class="text-gray-600 max-w-xs">
+          Use MeetPrep’s suggested questions and talking points to steer conversations confidently and make every meeting productive.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Feature Section -->
+  <section id="features" class="bg-indigo-50 py-20">
+    <div class="container mx-auto px-6 md:px-12 max-w-6xl">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-indigo-900 mb-14 text-center max-w-3xl mx-auto">Features Designed for Busy Professionals</h2>
+      <div class="grid md:grid-cols-2 gap-12">
+        <article class="bg-white rounded-2xl shadow-lg p-8 flex space-x-6 items-start hover:shadow-indigo-300 transition-shadow duration-300 max-w-xl mx-auto md:mx-0">
+          <div class="flex-shrink-0 text-indigo-600 mt-1">
+            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 8c-1.104 0-2 .564-2 1.5S10.896 11 12 11s2-.564 2-1.5S13.104 8 12 8zM5 21v-1c0-2.21 3.582-4 8-4s8 1.79 8 4v1"></path>
+              <path d="M12 4c-2 0-6 1-6 6v2h12v-2c0-5-4-6-6-6z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-900">Smart Calendar &amp; Email Sync</h3>
+            <p class="mt-2 text-indigo-800 leading-relaxed">
+              Connect popular platforms like Google Calendar and Outlook seamlessly. Your meetings, contacts, and emails get automatically synced and analyzed.
+            </p>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl shadow-lg p-8 flex space-x-6 items-start hover:shadow-indigo-300 transition-shadow duration-300 max-w-xl mx-auto md:mx-0">
+          <div class="flex-shrink-0 text-indigo-600 mt-1">
+            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 12h6M9 16h6M9 8h6M12 20c5 0 8-4 8-8s-3-8-8-8-8 4-8 8 3 8 8 8z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-900">Concise Meeting Briefs</h3>
+            <p class="mt-2 text-indigo-800 leading-relaxed">
+              Before the meeting, get key topics, attendee introductions, recent related emails, documents, and a quick agenda summary generated just for you.
+            </p>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl shadow-lg p-8 flex space-x-6 items-start hover:shadow-indigo-300 transition-shadow duration-300 max-w-xl mx-auto md:mx-0">
+          <div class="flex-shrink-0 text-indigo-600 mt-1">
+            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-900">Suggested Questions &amp; Talking Points</h3>
+            <p class="mt-2 text-indigo-800 leading-relaxed">
+              Stay engaged and confident with AI-generated questions and conversation starters to make your meetings meaningful and productive.
+            </p>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl shadow-lg p-8 flex space-x-6 items-start hover:shadow-indigo-300 transition-shadow duration-300 max-w-xl mx-auto md:mx-0">
+          <div class="flex-shrink-0 text-indigo-600 mt-1">
+            <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16M20 6v12a1 1 0 01-1 1H5a1 1 0 01-1-1V6"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-indigo-900">Privacy &amp; Security First</h3>
+            <p class="mt-2 text-indigo-800 leading-relaxed">
+              We follow best practices with encrypted connections and never share your data. Your information is yours — meet prep just makes it easier.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-white border-t border-gray-200 py-12 mt-24">
+    <div class="container mx-auto px-6 md:px-12 max-w-6xl flex flex-col md:flex-row justify-between items-center gap-8 md:gap-0">
+      <div class="flex items-center space-x-4">
+        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 17l4-4 4 4m0-8h-8v8"></path>
+        </svg>
+        <span class="font-extrabold text-indigo-600 text-2xl select-none">MeetPrep</span>
+      </div>
+      <p class="text-gray-600 text-center md:text-left max-w-xl text-sm sm:text-base">
+        © 2024 MeetPrep, Inc. All rights reserved.
+      </p>
+      <nav class="flex flex-wrap justify-center md:justify-start gap-6 text-gray-500 text-sm font-medium">
+        <a href="mailto:support@meetprep.com" class="hover:text-indigo-600 transition duration-150 ease-in-out focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 rounded" aria-label="Email support">
+          Support
+        </a>
+        <a href="#" class="hover:text-indigo-600 transition duration-150 ease-in-out focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 rounded" aria-label="Privacy Policy">
+          Privacy
+        </a>
+        <a href="#" class="hover:text-indigo-600 transition duration-150 ease-in-out focus-visible:outline-indigo-600 focus:outline focus:outline-2 focus:outline-offset-2 rounded" aria-label="Terms of Service">
+          Terms
+        </a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle with aria-expanded update
+    const mobileMenuBtn = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.toggle('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', !isHidden);
+    });
+
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            mobileMenuBtn.setAttribute('aria-expanded', false);
+          }
+        }
+      });
+    });
+
+    // CTA buttons - simulate signup alert
+    const ctaButtons = [document.getElementById('ctaNavbar'), document.getElementById('heroGetStarted'), document.getElementById('ctaMobile')];
+    ctaButtons.forEach(btn => {
+      btn?.addEventListener('click', () => {
+        alert('Thanks for your interest in MeetPrep! Visit our website soon for signup.');
+      });
+    });
+  </script>
+</body>
+</html>
+```
