@@ -1,0 +1,279 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickPitch - Simple Pitch Deck Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #2f3e9e;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      flex: 1;
+      padding: 1rem;
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-bottom: 0.1rem;
+    }
+    .templates {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .template {
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      padding: 0.5rem;
+      flex: 1;
+      cursor: pointer;
+      user-select: none;
+      background: #fefefe;
+      transition: border-color 0.3s, background-color 0.3s;
+    }
+    .template.selected {
+      border-color: #2f3e9e;
+      background: #e6ecff;
+    }
+    label, textarea, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+    }
+    textarea {
+      min-height: 80px;
+      font-family: inherit;
+      padding: 0.5rem;
+      resize: vertical;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      transition: border-color 0.3s;
+    }
+    textarea:focus, input:focus {
+      border-color: #2f3e9e;
+      outline: none;
+    }
+    button {
+      background: #2f3e9e;
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background: #1f2a6a;
+    }
+    .deck-preview {
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 6px;
+      background: #fafafa;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .ai-suggestion {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #e0f0ff;
+      border-left: 4px solid #2f3e9e;
+      border-radius: 4px;
+      user-select: none;
+      font-style: italic;
+      color: #205aab;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>QuickPitch</h1>
+    <p>Create professional pitch decks fast with AI-assisted content</p>
+  </header>
+  <main>
+    <section>
+      <h2>Select Template</h2>
+      <div class="templates" id="templates">
+        <div class="template selected" data-template="basic">Basic</div>
+        <div class="template" data-template="modern">Modern</div>
+        <div class="template" data-template="creative">Creative</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Fill Pitch Deck Sections</h2>
+
+      <label for="companyOverview">Company Overview</label>
+      <textarea id="companyOverview" placeholder="Describe your company..."></textarea>
+      <button type="button" data-section="companyOverview">Suggest AI Content</button>
+
+      <label for="problemStatement">Problem Statement</label>
+      <textarea id="problemStatement" placeholder="Describe the problem your company solves..."></textarea>
+      <button type="button" data-section="problemStatement">Suggest AI Content</button>
+
+      <label for="solution">Solution</label>
+      <textarea id="solution" placeholder="Describe your solution..."></textarea>
+      <button type="button" data-section="solution">Suggest AI Content</button>
+
+      <label for="marketAnalysis">Market Analysis</label>
+      <textarea id="marketAnalysis" placeholder="Summarize your market analysis..."></textarea>
+      <button type="button" data-section="marketAnalysis">Suggest AI Content</button>
+
+      <label for="financials">Financials</label>
+      <textarea id="financials" placeholder="Outline your financial projections..."></textarea>
+      <button type="button" data-section="financials">Suggest AI Content</button>
+    </section>
+
+    <section>
+      <h2>Pitch Deck Preview</h2>
+      <pre class="deck-preview" id="deckPreview" aria-live="polite" aria-atomic="true"></pre>
+      <button id="exportPdfBtn" type="button" disabled>Export as PDF (simple)</button>
+    </section>
+  </main>
+
+  <script>
+    // Template data mockup
+    const templates = {
+      basic: {
+        title: "Basic",
+        style: "Simple & clean layout"
+      },
+      modern: {
+        title: "Modern",
+        style: "Sleek & professional with dark accents"
+      },
+      creative: {
+        title: "Creative",
+        style: "Colorful & dynamic style"
+      }
+    };
+
+    let selectedTemplate = 'basic';
+
+    const templateElements = document.querySelectorAll('.template');
+    templateElements.forEach(el => {
+      el.addEventListener('click', () => {
+        templateElements.forEach(t => t.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedTemplate = el.dataset.template;
+        updatePreview();
+      });
+    });
+
+    // Simple AI suggestions mock - just canned content for demo
+    const aiSuggestions = {
+      companyOverview: "We are a fast-growing startup focused on delivering outstanding freelance services worldwide.",
+      problemStatement: "Freelancers and small business owners find it time-consuming to create professional proposals.",
+      solution: "QuickPitch offers an intuitive pitch deck builder with AI-powered content suggestions, saving you time and increasing your win rate.",
+      marketAnalysis: "The freelance market is rapidly expanding, with millions seeking better tools to showcase their offerings professionally.",
+      financials: "Projected revenue growth of 30% annually over the next 3 years with sustainable subscription-based income."
+    };
+
+    // DOM refs
+    const sections = ['companyOverview','problemStatement','solution','marketAnalysis','financials'];
+    const previewEl = document.getElementById('deckPreview');
+
+    // Suggest AI content buttons
+    document.querySelectorAll('button[data-section]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const section = btn.dataset.section;
+        const textarea = document.getElementById(section);
+        // Insert canned suggestion if empty or confirm overwrite
+        if(textarea.value.trim()) {
+          if(!confirm('This field is not empty. Overwrite with AI suggestion?')) return;
+        }
+        textarea.value = aiSuggestions[section];
+        updatePreview();
+      });
+    });
+
+    // Update preview on textarea input
+    sections.forEach(sec => {
+      const ta = document.getElementById(sec);
+      ta.addEventListener('input', updatePreview);
+    });
+
+    function updatePreview() {
+      const title = `=== Pitch Deck (${templates[selectedTemplate].title} Template) ===`;
+      const styleNote = `Style: ${templates[selectedTemplate].style}\n\n`;
+      let content = '';
+      sections.forEach(sec => {
+        const label = sec.split(/(?=[A-Z])/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        const val = document.getElementById(sec).value.trim();
+        content += `${label}:\n${val || '[Empty]'}\n\n`;
+      });
+      previewEl.textContent = `${title}\n${styleNote}${content}`;
+      
+      // Enable export button if any content present
+      const anyContent = sections.some(sec => document.getElementById(sec).value.trim().length > 0);
+      document.getElementById('exportPdfBtn').disabled = !anyContent;
+    }
+
+    // Initial preview
+    updatePreview();
+
+    // Simple PDF export using browser print (demo only)
+    document.getElementById('exportPdfBtn').addEventListener('click', () => {
+      const printWindow = window.open('', '', 'width=800,height=600');
+      const htmlContent = `
+      <html>
+      <head><title>QuickPitch Export</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; }
+        h1 { color: #2f3e9e; }
+        section { margin-bottom: 2rem; }
+        h2 { border-bottom: 2px solid #2f3e9e; padding-bottom: 0.5rem; }
+        pre { white-space: pre-wrap; font-size: 14px; }
+      </style>
+      </head>
+      <body>
+        <h1>QuickPitch - Pitch Deck Export</h1>
+        <h2>Template:</h2>
+        <p>${templates[selectedTemplate].title} (${templates[selectedTemplate].style})</p>
+        ${sections.map(sec => {
+          const label = sec.split(/(?=[A-Z])/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+          const val = document.getElementById(sec).value.trim() || '[Empty]';
+          return `<section><h2>${label}</h2><pre>${val}</pre></section>`;
+        }).join('')}
+      </body>
+      </html>`;
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      // printWindow.close(); // Commented out so user can choose to save
+    });
+  </script>
+</body>
+</html>
+```
+  
+This web app named **QuickPitch** includes:
+- Three simple templates selectable via UI.
+- Textareas for each pitch deck section.
+- Buttons next to each section to fill with simple canned AI suggestions.
+- Live preview of the full pitch deck content with template info.
+- Simple PDF export via a print preview.
+  
+This is a very basic front end but can be expanded with real drag-and-drop, collaboration, AI integration, and export formats later. Would you like me to build on this?

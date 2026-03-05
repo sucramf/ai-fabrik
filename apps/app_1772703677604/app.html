@@ -1,0 +1,288 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Email Template Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    textarea:focus, select:focus, input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px #2563ebaa;
+    }
+  </style>
+</head>
+<body class="bg-[#f9fafb] min-h-screen flex flex-col">
+  <header class="bg-white shadow flex items-center justify-center py-6">
+    <h1 class="text-3xl font-semibold text-blue-700 select-none">Polite Email Generator</h1>
+  </header>
+
+  <main class="grow max-w-4xl mx-auto p-6 w-full">
+    <form id="emailForm" class="bg-white rounded-lg shadow-md p-8 space-y-6">
+      <section>
+        <label for="purpose" class="block text-sm font-semibold text-gray-700 mb-1">Email Purpose</label>
+        <select id="purpose" name="purpose" required class="w-full rounded-md border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
+          <option value="" disabled selected>Select purpose</option>
+          <option value="meeting_request">Meeting Request</option>
+          <option value="follow_up">Follow-up</option>
+          <option value="thank_you">Thank You</option>
+          <option value="introduction">Introduction</option>
+          <option value="apology">Apology</option>
+          <option value="feedback_request">Feedback Request</option>
+        </select>
+      </section>
+
+      <section>
+        <label for="recipient" class="block text-sm font-semibold text-gray-700 mb-1">Recipient Type</label>
+        <select id="recipient" name="recipient" required class="w-full rounded-md border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
+          <option value="" disabled selected>Select recipient</option>
+          <option value="colleague">Colleague</option>
+          <option value="manager">Manager</option>
+          <option value="client">Client</option>
+          <option value="partner">Partner</option>
+          <option value="vendor">Vendor</option>
+          <option value="prospect">Prospect</option>
+        </select>
+      </section>
+
+      <section>
+        <label for="tone" class="block text-sm font-semibold text-gray-700 mb-1">Tone</label>
+        <select id="tone" name="tone" required class="w-full rounded-md border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500">
+          <option value="" disabled selected>Select tone</option>
+          <option value="formal">Formal</option>
+          <option value="friendly">Friendly</option>
+          <option value="corporate">Corporate</option>
+          <option value="warm">Warm</option>
+          <option value="concise">Concise</option>
+          <option value="enthusiastic">Enthusiastic</option>
+        </select>
+      </section>
+
+      <section>
+        <label for="details" class="block text-sm font-semibold text-gray-700 mb-1">
+          Additional Details / Context <span class="text-gray-400 text-xs">(Optional)</span>
+        </label>
+        <textarea id="details" name="details" rows="3" placeholder="E.g., meeting subject, product name, date preferences..." class="w-full rounded-md border border-gray-300 px-4 py-2 resize-y focus:ring-2 focus:ring-blue-500 text-gray-800"></textarea>
+      </section>
+
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold py-3 rounded-md shadow-md focus:ring-4 focus:ring-blue-400">
+        Generate Email
+      </button>
+    </form>
+
+    <section id="outputSection" class="mt-10 hidden">
+      <h2 class="text-xl font-semibold text-gray-800 mb-3 select-none">Generated Email Template</h2>
+      <div class="relative">
+        <textarea id="generatedEmail" readonly rows="10" class="w-full rounded-md border border-gray-300 px-4 py-3 resize-none bg-gray-50 text-gray-900 font-mono text-sm shadow-inner"></textarea>
+        <button id="copyBtn" title="Copy to clipboard" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm inline-flex items-center gap-1 focus:ring-2 focus:ring-blue-400 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 16h8M8 12h8m-6 8h6a2 2 0 002-2v-5m-2-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v5"/>
+            <rect x="6" y="8" width="8" height="12" rx="2" ry="2" stroke="none"/>
+          </svg>
+          Copy
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-500 text-sm py-6 select-none">
+    © 2024 Polite Email Generator • Crafted with Tailwind & ❤️
+  </footer>
+
+  <script>
+    const form = document.getElementById('emailForm');
+    const outputSection = document.getElementById('outputSection');
+    const generatedEmail = document.getElementById('generatedEmail');
+    const copyBtn = document.getElementById('copyBtn');
+
+    const emailTemplates = {
+      meeting_request: {
+        subject: {
+          colleague: "Meeting Request: Let's Catch Up",
+          manager: "Request for Meeting",
+          client: "Meeting Request to Discuss Our Collaboration",
+          partner: "Scheduling a Meeting to Discuss Partnership",
+          vendor: "Meeting Request Regarding Services",
+          prospect: "Let's Schedule a Meeting",
+        },
+        body: {
+          formal: (details) => `Dear ${details.recipientName || 'Sir/Madam'},\n\nI hope this message finds you well. I would like to request a meeting to discuss ${details.context || 'the relevant matters at hand'}. Please let me know your availability.\n\nThank you for your time and consideration.\n\nBest regards,\n${details.senderName || 'Your Name'}`,
+          friendly: (details) => `Hi ${details.recipientName || ''}!\n\nI wanted to see if we could set up a time to chat about ${details.context || 'some things'}. Let me know what works for you!\n\nCheers,\n${details.senderName || 'Your Name'}`,
+          corporate: (details) => `Hello ${details.recipientName || ''},\n\nI am reaching out to schedule a meeting regarding ${details.context || 'our upcoming project'}. Please advise your available dates and times.\n\nLooking forward to your response.\n\nSincerely,\n${details.senderName || 'Your Name'}`,
+          warm: (details) => `Dear ${details.recipientName || ''},\n\nI hope you're doing well. I would love to arrange a meeting to talk about ${details.context || 'our collaboration'}. Kindly let me know when you are available.\n\nWarm regards,\n${details.senderName || 'Your Name'}`,
+          concise: (details) => `Hello,\n\nCan we meet to discuss ${details.context || 'this matter'}? Please share your availability.\n\nThanks,\n${details.senderName || 'Your Name'}`,
+          enthusiastic: (details) => `Hi ${details.recipientName || ''}!\n\nI'm excited to connect and discuss ${details.context || 'our next steps'}. Let me know when you're free to meet!\n\nBest,\n${details.senderName || 'Your Name'}`,
+        }
+      },
+      follow_up: {
+        subject: {
+          colleague: "Following Up on Our Conversation",
+          manager: "Follow-up on Previous Discussion",
+          client: "Checking In: Follow-up",
+          partner: "Follow-up on Partnership Discussion",
+          vendor: "Follow-up Regarding Services",
+          prospect: "Following Up on Our Interest",
+        },
+        body: {
+          formal: (details) => `Dear ${details.recipientName || 'Sir/Madam'},\n\nI hope you are well. I am following up on my previous message regarding ${details.context || 'our discussion'}. Please let me know if you need any additional information.\n\nThank you for your attention.\n\nBest regards,\n${details.senderName || 'Your Name'}`,
+          friendly: (details) => `Hi ${details.recipientName || ''},\n\nJust wanted to follow up on my last email about ${details.context || 'our chat'}. Let me know if you have any updates!\n\nCheers,\n${details.senderName || 'Your Name'}`,
+          corporate: (details) => `Hello ${details.recipientName || ''},\n\nI am writing to follow up on our previous correspondence concerning ${details.context || 'the matter discussed'}. Please advise the next steps at your convenience.\n\nRegards,\n${details.senderName || 'Your Name'}`,
+          warm: (details) => `Dear ${details.recipientName || ''},\n\nI hope all is well. I just wanted to kindly follow up about ${details.context || 'our recent talk'}. Looking forward to hearing from you.\n\nWarm regards,\n${details.senderName || 'Your Name'}`,
+          concise: (details) => `Hello,\n\nFollowing up on ${details.context || 'the topic'}. Please update me.\n\nThanks,\n${details.senderName || 'Your Name'}`,
+          enthusiastic: (details) => `Hi ${details.recipientName || ''}!\n\nFollowing up enthusiastically on ${details.context || 'our plans'}. Would love to hear from you soon!\n\nBest,\n${details.senderName || 'Your Name'}`,
+        }
+      },
+      thank_you: {
+        subject: {
+          colleague: "Thank You!",
+          manager: "Thank You for Your Support",
+          client: "Thank You for Your Business",
+          partner: "Thank You for the Partnership",
+          vendor: "Thank You for Your Services",
+          prospect: "Thank You for Your Time",
+        },
+        body: {
+          formal: (details) => `Dear ${details.recipientName || 'Sir/Madam'},\n\nI would like to sincerely thank you for ${details.context || 'your support and collaboration'}. It has been greatly appreciated.\n\nBest regards,\n${details.senderName || 'Your Name'}`,
+          friendly: (details) => `Hi ${details.recipientName || ''},\n\nThanks so much for ${details.context || 'helping out'}. I really appreciate it!\n\nCheers,\n${details.senderName || 'Your Name'}`,
+          corporate: (details) => `Hello ${details.recipientName || ''},\n\nThank you for ${details.context || 'your valued partnership'}. Looking forward to continuing our work together.\n\nSincerely,\n${details.senderName || 'Your Name'}`,
+          warm: (details) => `Dear ${details.recipientName || ''},\n\nWarm thanks for ${details.context || 'your kindness and support'}. I truly appreciate it.\n\nBest wishes,\n${details.senderName || 'Your Name'}`,
+          concise: (details) => `Hello,\n\nThank you for ${details.context || 'everything'}.\n\nBest,\n${details.senderName || 'Your Name'}`,
+          enthusiastic: (details) => `Hi ${details.recipientName || ''}!\n\nA big thank you for ${details.context || 'your amazing support'}! Truly grateful.\n\nBest,\n${details.senderName || 'Your Name'}`,
+        }
+      },
+      introduction: {
+        subject: {
+          colleague: "Introduction",
+          manager: "Introducing Myself",
+          client: "Introduction from [Your Company]",
+          partner: "Introducing Our Team",
+          vendor: "Introduction and Collaboration Opportunity",
+          prospect: "Nice to Meet You",
+        },
+        body: {
+          formal: (details) => `Dear ${details.recipientName || 'Sir/Madam'},\n\nMy name is ${details.senderName || 'Your Name'}, and I am reaching out to introduce myself regarding ${details.context || 'our mutual interests'}. I look forward to connecting.\n\nBest regards,\n${details.senderName || 'Your Name'}`,
+          friendly: (details) => `Hi ${details.recipientName || ''},\n\nI'm ${details.senderName || 'Your Name'} — nice to meet you! Just wanted to say hello and share a little about ${details.context || 'what I do'}.\n\nCheers,\n${details.senderName || 'Your Name'}`,
+          corporate: (details) => `Hello ${details.recipientName || ''},\n\nI am ${details.senderName || 'Your Name'} from ${details.context || 'our company'}. I would like to introduce myself and explore possible collaboration opportunities.\n\nRegards,\n${details.senderName || 'Your Name'}`,
+          warm: (details) => `Dear ${details.recipientName || ''},\n\nIt's a pleasure to introduce myself. I am ${details.senderName || 'Your Name'}, and I look forward to working with you on ${details.context || 'our shared goals'}.\n\nWarm regards,\n${details.senderName || 'Your Name'}`,
+          concise: (details) => `Hello,\n\nI'm ${details.senderName || 'Your Name'}. I wanted to introduce myself regarding ${details.context || 'our connection'}.\n\nThanks,\n${details.senderName || 'Your Name'}`,
+          enthusiastic: (details) => `Hi ${details.recipientName || ''}!\n\nI'm ${details.senderName || 'Your Name'} and excited to introduce myself and talk about ${details.context || 'our future collaboration'}.\n\nBest,\n${details.senderName || 'Your Name'}`,
+        }
+      },
+      apology: {
+        subject: {
+          colleague: "My Apologies",
+          manager: "Apology and Clarification",
+          client: "Apology for the Inconvenience",
+          partner: "Apologies and Next Steps",
+          vendor: "Apology Regarding Service Issues",
+          prospect: "Apology and Follow-up",
+        },
+        body: {
+          formal: (details) => `Dear ${details.recipientName || 'Sir/Madam'},\n\nI would like to apologize for ${details.context || 'the inconvenience caused'}. Please be assured I am taking steps to address this matter promptly.\n\nThank you for your understanding.\n\nBest regards,\n${details.senderName || 'Your Name'}`,
+          friendly: (details) => `Hi ${details.recipientName || ''},\n\nI'm sorry about ${details.context || 'what happened'}. I'm working to fix it and appreciate your patience.\n\nCheers,\n${details.senderName || 'Your Name'}`,
+          corporate: (details) => `Hello ${details.recipientName || ''},\n\nPlease accept my sincere apologies for ${details.context || 'the issue'}. We are committed to resolving it as quickly as possible.\n\nRegards,\n${details.senderName || 'Your Name'}`,
+          warm: (details) => `Dear ${details.recipientName || ''},\n\nI want to personally apologize for ${details.context || 'any trouble caused'}. Thank you for your kindness and patience.\n\nWarm regards,\n${details.senderName || 'Your Name'}`,
+          concise: (details) => `Hello,\n\nApologies for ${details.context || 'the issue'}. Working on it.\n\nThanks,\n${details.senderName || 'Your Name'}`,
+          enthusiastic: (details) => `Hi ${details.recipientName || ''}!\n\nSo sorry about ${details.context || 'the problem'}. I'm on it and will update you soon!\n\nBest,\n${details.senderName || 'Your Name'}`,
+        }
+      },
+      feedback_request: {
+        subject: {
+          colleague: "Requesting Your Feedback",
+          manager: "Seeking Feedback On...",
+          client: "Your Feedback is Appreciated",
+          partner: "Feedback Request",
+          vendor: "Request for Feedback",
+          prospect: "Would Love Your Feedback",
+        },
+        body: {
+          formal: (details) => `Dear ${details.recipientName || 'Sir/Madam'},\n\nI would appreciate your feedback on ${details.context || 'the recent project'}. Your insights are very valuable to me.\n\nThank you for your time.\n\nBest regards,\n${details.senderName || 'Your Name'}`,
+          friendly: (details) => `Hi ${details.recipientName || ''},\n\nCould you share your thoughts on ${details.context || 'this'?}. I'd love to hear your feedback!\n\nCheers,\n${details.senderName || 'Your Name'}`,
+          corporate: (details) => `Hello ${details.recipientName || ''},\n\nI am reaching out to request your feedback regarding ${details.context || 'our recent collaboration'}. Your input is important to us.\n\nRegards,\n${details.senderName || 'Your Name'}`,
+          warm: (details) => `Dear ${details.recipientName || ''},\n\nI hope you're well. I'd be grateful if you could provide feedback on ${details.context || 'our work together'}. Thank you.\n\nWarm regards,\n${details.senderName || 'Your Name'}`,
+          concise: (details) => `Hello,\n\nPlease share your feedback on ${details.context || 'the item'}.\n\nThanks,\n${details.senderName || 'Your Name'}`,
+          enthusiastic: (details) => `Hi ${details.recipientName || ''}!\n\nExcited to get your feedback on ${details.context || 'our recent efforts'}. Looking forward to hearing from you!\n\nBest,\n${details.senderName || 'Your Name'}`,
+        }
+      }
+    };
+
+    // Detect if user entered recipient or sender name in extra details for personalized usage
+    // For simplicity, we can parse lines like: "Recipient Name: John" or "Sender Name: Alice"
+    function parseNames(detailsText) {
+      const lines = detailsText.split('\n').map(l => l.trim());
+      let recipientName = '';
+      let senderName = '';
+      lines.forEach(line => {
+        const rMatch = line.match(/^Recipient Name:\s*(.+)$/i);
+        if (rMatch) recipientName = rMatch[1].trim();
+        const sMatch = line.match(/^Sender Name:\s*(.+)$/i);
+        if (sMatch) senderName = sMatch[1].trim();
+      });
+      return { recipientName, senderName };
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const purpose = form.purpose.value;
+      const recipient = form.recipient.value;
+      const tone = form.tone.value;
+      const detailsRaw = form.details.value.trim();
+
+      if (!purpose || !recipient || !tone) return;
+
+      const names = parseNames(detailsRaw);
+      let context = detailsRaw;
+
+      // Remove lines containing Recipient Name and Sender Name from context
+      context = context.split('\n').filter(l => !/^Recipient Name:/i.test(l) && !/^Sender Name:/i.test(l)).join(' ').trim();
+
+      const template = emailTemplates[purpose];
+      if (!template) return;
+
+      const subject = template.subject[recipient] || "Your Email";
+      const bodyFunc = template.body[tone];
+      if (!bodyFunc) return;
+
+      const emailBody = bodyFunc({
+        recipientName: names.recipientName || '',
+        senderName: names.senderName || 'Your Name',
+        context: context || ''
+      });
+
+      // Compose full email template output
+      const output = [
+        `Subject: ${subject}`,
+        ``,
+        emailBody
+      ].join('\n');
+
+      generatedEmail.value = output;
+      outputSection.classList.remove('hidden');
+      generatedEmail.focus();
+      generatedEmail.select();
+    });
+
+    copyBtn.addEventListener('click', () => {
+      if (!generatedEmail.value) return;
+      navigator.clipboard.writeText(generatedEmail.value).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 16h8M8 12h8m-6 8h6a2 2 0 002-2v-5m-2-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v5"/>
+              <rect x="6" y="8" width="8" height="12" rx="2" ry="2" stroke="none"/>
+            </svg>
+            Copy
+          `;
+        }, 1500);
+      });
+    });
+  </script>
+</body>
+</html>
+```

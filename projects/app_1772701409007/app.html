@@ -1,0 +1,1555 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickInvoice Lite</title>
+  <style>
+    :root {
+      --primary: #2a79ff;
+      --accent: #ff6b00;
+      --bg: #f9faff;
+      --text: #222;
+      --muted: #666;
+      --border: #ddd;
+      --success: #21ba45;
+      --danger: #db2828;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.5rem;
+      user-select: none;
+    }
+    header nav button {
+      background: transparent;
+      border: 1.5px solid white;
+      color: white;
+      padding: 0.3rem 0.9rem;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-left: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    header nav button:hover {
+      background: white;
+      color: var(--primary);
+    }
+    main {
+      flex: 1;
+      padding: 1rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    section {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.5rem;
+    }
+    h2 {
+      margin-top: 0;
+      font-weight: 700;
+      font-size: 1.25rem;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 0.2rem;
+      user-select: none;
+    }
+    button.primary {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 0.7rem;
+      transition: background-color 0.3s ease;
+    }
+    button.primary:disabled {
+      background: #a3bbff;
+      cursor: default;
+    }
+    button.primary:hover:not(:disabled) {
+      background: #195cd1;
+    }
+    button.danger {
+      background: var(--danger);
+      border: none;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: background-color 0.3s ease;
+    }
+    button.danger:hover {
+      background: #a70000;
+    }
+    input,
+    select,
+    textarea {
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.4rem 0.5rem;
+      margin: 0.3rem 0 0.8rem 0;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      transition: border-color 0.15s;
+    }
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 0.5rem;
+      display: block;
+      user-select: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0 0 0;
+    }
+    td,
+    th {
+      border: 1.2px solid var(--border);
+      padding: 0.5rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      user-select: none;
+    }
+    tr.paid td {
+      background: #d6f2d6;
+    }
+    tr.unpaid td {
+      background: #ffe2e0;
+    }
+    .flex-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .flex-grow {
+      flex-grow: 1;
+    }
+    .small-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      user-select: none;
+    }
+    .link-button {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0;
+    }
+    .link-button:hover {
+      color: #1a4ed5;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .centered {
+      text-align: center;
+      user-select: none;
+    }
+    /* Scroll containers */
+    .scroll-table {
+      overflow-x: auto;
+    }
+    /* Invoice preview */
+    .invoice-preview {
+      font-family: "Courier New", Courier, monospace;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      white-space: pre-wrap;
+      user-select: text;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    /* Login */
+    #login,
+    #app {
+      max-width: 900px;
+      margin: 2rem auto;
+      width: 95vw;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 1rem 0;
+      user-select: none;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+      }
+      main {
+        padding: 1rem 1rem;
+      }
+    }
+    /* Loader */
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Tooltip */
+    [data-tooltip] {
+      position: relative;
+      cursor: help;
+      border-bottom: 1px dotted var(--muted);
+    }
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 3px;
+      white-space: nowrap;
+      z-index: 10;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <header aria-label="Primary site header">
+    <h1>QuickInvoice Lite</h1>
+    <nav aria-label="Main navigation">
+      <button id="logoutBtn" hidden>Logout</button>
+      <button id="loginBtn">Log In / Sign Up</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Login Section -->
+    <section id="login" aria-label="User Login and Registration">
+      <h2>Welcome to QuickInvoice Lite</h2>
+      <form id="loginForm" aria-describedby="loginMessage" novalidate>
+        <label for="emailInput">Email address</label>
+        <input
+          type="email"
+          id="emailInput"
+          name="email"
+          placeholder="your.email@example.com"
+          autocomplete="username"
+          required
+          aria-required="true"
+          />
+        <label for="passwordInput">Password</label>
+        <input
+          type="password"
+          id="passwordInput"
+          name="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          minlength="6"
+          required
+          aria-required="true"
+          />
+        <button type="submit" class="primary" id="loginSubmitBtn">Log In</button>
+        <button type="button" id="switchToRegisterBtn" class="link-button" aria-label="Switch to registration form">New user? Register here</button>
+        <p id="loginMessage" role="alert" aria-live="polite" style="color:red;min-height:1.4rem;margin-top:0.2rem;"></p>
+      </form>
+      <form id="registerForm" aria-describedby="registerMessage" style="display:none" novalidate>
+        <label for="regEmailInput">Email address</label>
+        <input
+          type="email"
+          id="regEmailInput"
+          name="email"
+          placeholder="your.email@example.com"
+          autocomplete="username"
+          required
+          aria-required="true"
+          />
+        <label for="regPasswordInput">Password (min 6 chars)</label>
+        <input
+          type="password"
+          id="regPasswordInput"
+          name="password"
+          placeholder="Choose a password"
+          autocomplete="new-password"
+          minlength="6"
+          required
+          aria-required="true"
+          />
+        <button type="submit" class="primary" id="registerSubmitBtn">Register</button>
+        <button type="button" id="switchToLoginBtn" class="link-button" aria-label="Switch to login form">Already have an account? Log in here</button>
+        <p id="registerMessage" role="alert" aria-live="polite" style="color:red;min-height:1.4rem;margin-top:0.2rem;"></p>
+      </form>
+    </section>
+
+    <!-- App Section -->
+    <section id="app" hidden aria-label="Main application interface">
+      <div class="flex-row" style="justify-content: space-between; flex-wrap: wrap;">
+        <h2>Your Invoices</h2>
+        <button id="newInvoiceBtn" class="primary" aria-label="Create new invoice">+ New Invoice</button>
+      </div>
+
+      <div class="scroll-table" tabindex="0" aria-label="List of invoices">
+        <table id="invoiceTable" aria-live="polite" aria-relevant="all">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Client</th>
+              <th>Date</th>
+              <th>Due Date</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section: Client Management -->
+      <section aria-label="Client management" style="margin-top:1rem;">
+        <div class="flex-row" style="justify-content: space-between; align-items: center;">
+          <h2>Clients</h2>
+          <button id="newClientBtn" class="primary" aria-label="Add new client">+ Add Client</button>
+        </div>
+        <div class="scroll-table" tabindex="0" aria-label="List of clients">
+          <table id="clientTable" aria-live="polite" aria-relevant="all">
+            <thead>
+              <tr>
+                <th>Client Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section: Dashboard -->
+      <section aria-label="Reporting dashboard" style="margin-top:1rem;">
+        <h2>Dashboard</h2>
+        <p class="small-text">Total earnings per month</p>
+        <canvas id="earningsChart" width="800" height="250" aria-label="Bar chart showing total earnings per month"></canvas>
+      </section>
+    </section>
+
+    <!-- Invoice Editor Modal -->
+    <dialog id="invoiceDialog" aria-modal="true" aria-labelledby="invoiceDialogTitle">
+      <form method="dialog" id="invoiceForm" novalidate>
+        <h3 id="invoiceDialogTitle">New Invoice</h3>
+        <label for="invoiceClientSelect">Client</label>
+        <select id="invoiceClientSelect" name="client" required aria-required="true" aria-describedby="clientHelp">
+          <option value="" disabled selected>Select client</option>
+        </select>
+        <div id="clientHelp" class="small-text">Select existing client or add one below.</div>
+
+        <label for="invoiceDateInput">Invoice Date</label>
+        <input type="date" id="invoiceDateInput" name="invoiceDate" required aria-required="true" />
+
+        <label for="invoiceDueDateInput">Due Date</label>
+        <input type="date" id="invoiceDueDateInput" name="invoiceDueDate" required aria-required="true" />
+
+        <fieldset style="border:1px solid var(--border); border-radius:6px; padding:0.5rem;">
+          <legend style="font-weight:700;">Invoice Items</legend>
+          <table id="invoiceItemsTable" style="width:100%;border-collapse: collapse;" aria-describedby="itemsHelp">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th style="width:90px;">Quantity</th>
+                <th style="width:110px;">Unit Price</th>
+                <th style="width:110px;">Tax %</th>
+                <th style="width:90px;">Total</th>
+                <th style="width:40px;"> </th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Item rows dynamically added -->
+            </tbody>
+          </table>
+          <div id="itemsHelp" class="small-text" style="margin-bottom:0.8rem;">Add as many service or product items as needed.</div>
+          <button type="button" id="addItemBtn" class="primary" style="width:100%;">+ Add Item</button>
+        </fieldset>
+
+        <div style="margin-top:1rem; text-align:right; font-weight:700;">
+          <div>Subtotal: <span id="subtotalAmount">0.00</span></div>
+          <div>Total Tax: <span id="totalTaxAmount">0.00</span></div>
+          <div>Grand Total: <span id="grandTotalAmount">0.00</span></div>
+        </div>
+
+        <label for="paymentStatusSelect">Status</label>
+        <select id="paymentStatusSelect" name="status" required aria-required="true">
+          <option value="unpaid" selected>Unpaid</option>
+          <option value="paid">Paid</option>
+        </select>
+
+        <div style="margin-top:1rem; display:flex; justify-content: flex-end; gap:0.7rem;">
+          <button type="submit" class="primary" id="saveInvoiceBtn">Save Invoice</button>
+          <button type="button" id="cancelInvoiceBtn">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Client Editor Modal -->
+    <dialog id="clientDialog" aria-modal="true" aria-labelledby="clientDialogTitle">
+      <form method="dialog" id="clientForm" novalidate>
+        <h3 id="clientDialogTitle">New Client</h3>
+        <label for="clientNameInput">Client Name</label>
+        <input type="text" id="clientNameInput" name="name" required aria-required="true" />
+
+        <label for="clientEmailInput">Email</label>
+        <input type="email" id="clientEmailInput" name="email" required aria-required="true" />
+
+        <label for="clientPhoneInput">Phone</label>
+        <input type="tel" id="clientPhoneInput" name="phone" placeholder="+1234567890" />
+
+        <div style="margin-top:1rem; display:flex; justify-content: flex-end; gap: 0.7rem;">
+          <button type="submit" class="primary" id="saveClientBtn">Save Client</button>
+          <button type="button" id="cancelClientBtn">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Email Invoice Modal -->
+    <dialog id="emailDialog" aria-modal="true" aria-labelledby="emailDialogTitle">
+      <form method="dialog" id="emailForm" novalidate>
+        <h3 id="emailDialogTitle">Email Invoice</h3>
+        <label for="emailToInput">Send to (email address)</label>
+        <input type="email" id="emailToInput" name="emailTo" required aria-required="true" />
+
+        <label for="emailSubjectInput">Subject</label>
+        <input type="text" id="emailSubjectInput" name="emailSubject" required aria-required="true" />
+
+        <label for="emailBodyTextarea">Message</label>
+        <textarea id="emailBodyTextarea" name="emailBody" rows="6" required aria-required="true"></textarea>
+
+        <div style="margin-top:1rem; display:flex; justify-content: flex-end; gap: 0.7rem;">
+          <button type="submit" class="primary" id="sendEmailBtn">Send Email</button>
+          <button type="button" id="cancelEmailBtn">Cancel</button>
+        </div>
+        <p id="emailStatus" role="alert" aria-live="polite" style="margin-top:1rem; min-height:1.2em;"></p>
+      </form>
+    </dialog>
+
+    <!-- Invoice Preview Modal -->
+    <dialog id="previewDialog" aria-modal="true" aria-labelledby="previewDialogTitle">
+      <h3 id="previewDialogTitle">Invoice Preview</h3>
+      <pre class="invoice-preview" id="invoicePreviewContent" tabindex="0"></pre>
+      <div style="margin-top:1rem; display:flex; justify-content: flex-end; gap: 0.7rem;">
+        <button id="downloadInvoiceBtn" class="primary" aria-label="Download invoice as text file">Download</button>
+        <button id="closePreviewBtn">Close</button>
+      </div>
+    </dialog>
+  </main>
+
+  <footer>© 2024 QuickInvoice Lite — Simple invoicing for freelancers & small businesses</footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /*************
+       * STORAGE & UTILS
+       *************/
+      const STORAGE_USERS_KEY = "quickinvoice_users";
+      const STORAGE_CURRENT_USER_KEY = "quickinvoice_current_user";
+
+      // Simple ID generator for invoices and clients
+      function generateId(prefix = "") {
+        return (
+          prefix +
+          Date.now().toString(36) +
+          Math.random().toString(36).substr(2, 4)
+        );
+      }
+
+      function formatDateISOToDisplay(dateStr) {
+        if (!dateStr) return "";
+        try {
+          const date = new Date(dateStr);
+          return date.toLocaleDateString(undefined, {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        } catch {
+          return dateStr;
+        }
+      }
+
+      function formatMoney(num) {
+        return Number(num).toLocaleString(undefined, {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+
+      function saveUsers(users) {
+        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
+      }
+
+      function loadUsers() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_USERS_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function saveCurrentUser(email) {
+        if (email) localStorage.setItem(STORAGE_CURRENT_USER_KEY, email);
+        else localStorage.removeItem(STORAGE_CURRENT_USER_KEY);
+      }
+
+      function loadCurrentUser() {
+        return localStorage.getItem(STORAGE_CURRENT_USER_KEY);
+      }
+
+      // Sanitize input text for invoice preview display
+      function sanitizeText(text) {
+        return text.replace(/[<>&]/g, (c) => {
+          const map = { "<": "&lt;", ">": "&gt;", "&": "&amp;" };
+          return map[c] || c;
+        });
+      }
+
+      // Debounce helper
+      function debounce(fn, delay) {
+        let timeout;
+        return (...args) => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      /*************
+       * AUTH MODULE
+       *************/
+      const Auth = (() => {
+        let users = loadUsers();
+        let currentUserEmail = null;
+
+        // Passwords are stored in plain text for demo only, NEVER do this in production!
+        // Production apps must use backend and proper authentication systems.
+        function register(email, password) {
+          if (users[email]) {
+            throw new Error("This email is already registered.");
+          }
+          users[email] = {
+            password,
+            clients: {},
+            invoices: {},
+            settings: {
+              taxRateDefault: 0,
+              subscription: "free", // 'free' or 'subscribed'
+              invoicesThisMonth: 0,
+            },
+          };
+          saveUsers(users);
+          return true;
+        }
+
+        function login(email, password) {
+          let user = users[email];
+          if (!user) throw new Error("No account found with this email.");
+          if (user.password !== password) throw new Error("Incorrect password.");
+          currentUserEmail = email;
+          saveCurrentUser(email);
+          return true;
+        }
+
+        function logout() {
+          currentUserEmail = null;
+          saveCurrentUser(null);
+        }
+
+        function getCurrentUser() {
+          if (!currentUserEmail) return null;
+          return { email: currentUserEmail, data: users[currentUserEmail] };
+        }
+
+        function updateCurrentUserData(newData) {
+          if (!currentUserEmail) return;
+          users[currentUserEmail] = { ...users[currentUserEmail], ...newData };
+          saveUsers(users);
+        }
+
+        function updateClient(clientId, clientData) {
+          if (!currentUserEmail) return;
+          users[currentUserEmail].clients[clientId] = clientData;
+          saveUsers(users);
+        }
+
+        function deleteClient(clientId) {
+          if (!currentUserEmail) return;
+          delete users[currentUserEmail].clients[clientId];
+          saveUsers(users);
+        }
+
+        function updateInvoice(invoiceId, invoiceData) {
+          if (!currentUserEmail) return;
+          users[currentUserEmail].invoices[invoiceId] = invoiceData;
+          saveUsers(users);
+        }
+
+        function deleteInvoice(invoiceId) {
+          if (!currentUserEmail) return;
+          delete users[currentUserEmail].invoices[invoiceId];
+          saveUsers(users);
+        }
+
+        return {
+          register,
+          login,
+          logout,
+          getCurrentUser,
+          updateCurrentUserData,
+          updateClient,
+          deleteClient,
+          updateInvoice,
+          deleteInvoice,
+        };
+      })();
+
+      /*************
+       * UI ELEMENTS
+       *************/
+      // Login
+      const loginSection = document.getElementById("login");
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const loginMessage = document.getElementById("loginMessage");
+      const registerMessage = document.getElementById("registerMessage");
+      const loginBtn = document.getElementById("loginBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const switchToRegisterBtn = document.getElementById("switchToRegisterBtn");
+      const switchToLoginBtn = document.getElementById("switchToLoginBtn");
+
+      // App
+      const appSection = document.getElementById("app");
+      const newInvoiceBtn = document.getElementById("newInvoiceBtn");
+      const invoiceTableBody = document.querySelector("#invoiceTable tbody");
+      const clientTableBody = document.querySelector("#clientTable tbody");
+      const newClientBtn = document.getElementById("newClientBtn");
+      const earningsChartCanvas = document.getElementById("earningsChart");
+
+      // Invoice dialog & form
+      const invoiceDialog = document.getElementById("invoiceDialog");
+      const invoiceForm = document.getElementById("invoiceForm");
+      const invoiceClientSelect = document.getElementById("invoiceClientSelect");
+      const invoiceDateInput = document.getElementById("invoiceDateInput");
+      const invoiceDueDateInput = document.getElementById("invoiceDueDateInput");
+      const invoiceItemsTableBody = document.querySelector(
+        "#invoiceItemsTable tbody"
+      );
+      const addItemBtn = document.getElementById("addItemBtn");
+      const subtotalAmount = document.getElementById("subtotalAmount");
+      const totalTaxAmount = document.getElementById("totalTaxAmount");
+      const grandTotalAmount = document.getElementById("grandTotalAmount");
+      const paymentStatusSelect = document.getElementById("paymentStatusSelect");
+      const saveInvoiceBtn = document.getElementById("saveInvoiceBtn");
+      const cancelInvoiceBtn = document.getElementById("cancelInvoiceBtn");
+
+      // Client dialog & form
+      const clientDialog = document.getElementById("clientDialog");
+      const clientForm = document.getElementById("clientForm");
+      const clientNameInput = document.getElementById("clientNameInput");
+      const clientEmailInput = document.getElementById("clientEmailInput");
+      const clientPhoneInput = document.getElementById("clientPhoneInput");
+      const saveClientBtn = document.getElementById("saveClientBtn");
+      const cancelClientBtn = document.getElementById("cancelClientBtn");
+
+      // Email dialog & form
+      const emailDialog = document.getElementById("emailDialog");
+      const emailForm = document.getElementById("emailForm");
+      const emailToInput = document.getElementById("emailToInput");
+      const emailSubjectInput = document.getElementById("emailSubjectInput");
+      const emailBodyTextarea = document.getElementById("emailBodyTextarea");
+      const sendEmailBtn = document.getElementById("sendEmailBtn");
+      const cancelEmailBtn = document.getElementById("cancelEmailBtn");
+      const emailStatus = document.getElementById("emailStatus");
+
+      // Invoice preview dialog
+      const previewDialog = document.getElementById("previewDialog");
+      const invoicePreviewContent = document.getElementById("invoicePreviewContent");
+      const downloadInvoiceBtn = document.getElementById("downloadInvoiceBtn");
+      const closePreviewBtn = document.getElementById("closePreviewBtn");
+
+      /**************
+       * STATE
+       **************/
+      let state = {
+        invoices: {}, // invoiceId: invoiceData
+        clients: {}, // clientId: clientData
+        editingInvoiceId: null,
+        editingClientId: null,
+        currentUser: null,
+      };
+
+      /**************
+       * LOGIN & AUTH LOGIC
+       **************/
+
+      function showLogin() {
+        loginSection.hidden = false;
+        appSection.hidden = true;
+        logoutBtn.hidden = true;
+        loginBtn.hidden = false;
+        loginMessage.textContent = "";
+        registerMessage.textContent = "";
+        loginForm.reset();
+        registerForm.reset();
+        switchToRegisterBtn.hidden = false;
+        switchToLoginBtn.hidden = true;
+        loginForm.style.display = "block";
+        registerForm.style.display = "none";
+      }
+
+      function showRegister() {
+        loginSection.hidden = false;
+        appSection.hidden = true;
+        logoutBtn.hidden = true;
+        loginBtn.hidden = false;
+        loginMessage.textContent = "";
+        registerMessage.textContent = "";
+        loginForm.reset();
+        registerForm.reset();
+        switchToRegisterBtn.hidden = true;
+        switchToLoginBtn.hidden = false;
+        loginForm.style.display = "none";
+        registerForm.style.display = "block";
+      }
+
+      function showApp() {
+        loginSection.hidden = true;
+        appSection.hidden = false;
+        logoutBtn.hidden = false;
+        loginBtn.hidden = true;
+      }
+
+      // Load current user + data
+      function loadUserData() {
+        const user = Auth.getCurrentUser();
+        if (!user) return false;
+        state.currentUser = user.email;
+        state.clients = user.data.clients || {};
+        state.invoices = user.data.invoices || {};
+        return true;
+      }
+
+      function refreshUI() {
+        renderClients();
+        renderInvoices();
+        renderInvoiceClientOptions();
+        renderDashboard();
+      }
+
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        loginMessage.textContent = "";
+        const form = e.target;
+        const email = form.email.value.trim().toLowerCase();
+        const password = form.password.value;
+        if (!email || !password) {
+          loginMessage.textContent = "Please fill all fields.";
+          return;
+        }
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Logging in...";
+        try {
+          Auth.login(email, password);
+        } catch (err) {
+          loginMessage.textContent = err.message;
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Log In";
+          return;
+        }
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Log In";
+        if (loadUserData()) {
+          showApp();
+          refreshUI();
+        }
+      });
+
+      registerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        registerMessage.textContent = "";
+        const form = e.target;
+        const email = form.email.value.trim().toLowerCase();
+        const password = form.password.value;
+        if (!email || !password) {
+          registerMessage.textContent = "Please fill all fields.";
+          return;
+        }
+        if (password.length < 6) {
+          registerMessage.textContent = "Password must be at least 6 characters.";
+          return;
+        }
+        saveClientBtn.disabled = true;
+        try {
+          Auth.register(email, password);
+        } catch (err) {
+          registerMessage.textContent = err.message;
+          saveClientBtn.disabled = false;
+          return;
+        }
+        // Auto-login after registration
+        try {
+          Auth.login(email, password);
+        } catch {
+          // unlikely here
+        }
+        saveClientBtn.disabled = false;
+        if (loadUserData()) {
+          showApp();
+          refreshUI();
+        }
+      });
+
+      switchToRegisterBtn.addEventListener("click", () => {
+        showRegister();
+      });
+
+      switchToLoginBtn.addEventListener("click", () => {
+        showLogin();
+      });
+
+      logoutBtn.addEventListener("click", () => {
+        Auth.logout();
+        state.currentUser = null;
+        state.clients = {};
+        state.invoices = {};
+        showLogin();
+      });
+
+      loginBtn.addEventListener("click", () => {
+        showLogin();
+      });
+
+      /**************
+       * CLIENT MANAGEMENT
+       **************/
+
+      newClientBtn.addEventListener("click", () => {
+        state.editingClientId = null;
+        clientForm.reset();
+        clientDialog.showModal();
+      });
+
+      cancelClientBtn.addEventListener("click", () => {
+        clientDialog.close();
+      });
+
+      clientForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = clientNameInput.value.trim();
+        const email = clientEmailInput.value.trim().toLowerCase();
+        const phone = clientPhoneInput.value.trim();
+        if (!name || !email) {
+          alert("Client name and email are required.");
+          return;
+        }
+        const id = state.editingClientId || generateId("client_");
+        const clientData = { name, email, phone };
+        state.clients[id] = clientData;
+        Auth.updateClient(id, clientData);
+        clientDialog.close();
+        renderClients();
+        renderInvoiceClientOptions();
+      });
+
+      function renderClients() {
+        clientTableBody.innerHTML = "";
+        const entries = Object.entries(state.clients);
+        if (entries.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            '<td colspan="4" class="centered small-text">No clients added yet.</td>';
+          clientTableBody.appendChild(tr);
+          return;
+        }
+        for (const [id, client] of entries) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${sanitizeText(client.name)}</td>
+            <td><a href="mailto:${sanitizeText(client.email)}">${sanitizeText(
+            client.email
+          )}</a></td>
+            <td>${sanitizeText(client.phone || "")}</td>
+            <td>
+              <button class="link-button" data-action="edit" data-id="${id}" aria-label="Edit client ${sanitizeText(
+            client.name
+          )}">Edit</button>
+              <button class="danger" data-action="delete" data-id="${id}" aria-label="Delete client ${sanitizeText(
+            client.name
+          )}">Delete</button>
+            </td>
+          `;
+          clientTableBody.appendChild(tr);
+        }
+      }
+
+      clientTableBody.addEventListener("click", (e) => {
+        if (!e.target.matches("button[data-action]")) return;
+        const btn = e.target;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if (action === "edit") {
+          const client = state.clients[id];
+          if (!client) return;
+          state.editingClientId = id;
+          clientNameInput.value = client.name;
+          clientEmailInput.value = client.email;
+          clientPhoneInput.value = client.phone || "";
+          clientDialog.showModal();
+        } else if (action === "delete") {
+          const client = state.clients[id];
+          if (!client) return;
+          // Confirm any invoice dependencies:
+          const usedInvoices = Object.values(state.invoices).filter(
+            (inv) => inv.clientId === id
+          );
+          let confirmDel = true;
+          if (usedInvoices.length > 0) {
+            confirmDel = confirm(
+              `${client.name} is linked to ${usedInvoices.length} invoice(s). Deleting the client will not delete invoices. Are you sure?`
+            );
+          } else {
+            confirmDel = confirm(`Delete client "${client.name}"?`);
+          }
+          if (!confirmDel) return;
+          delete state.clients[id];
+          Auth.deleteClient(id);
+          renderClients();
+          renderInvoiceClientOptions();
+        }
+      });
+
+      function renderInvoiceClientOptions() {
+        invoiceClientSelect.innerHTML =
+          '<option value="" disabled selected>Select client</option>';
+        const sortedClients = Object.entries(state.clients).sort(
+          (a, b) => a[1].name.localeCompare(b[1].name)
+        );
+        for (const [id, client] of sortedClients) {
+          const opt = document.createElement("option");
+          opt.value = id;
+          opt.textContent = client.name;
+          invoiceClientSelect.appendChild(opt);
+        }
+      }
+
+      /**************
+       * INVOICE MANAGEMENT
+       **************/
+
+      newInvoiceBtn.addEventListener("click", () => {
+        openInvoiceEditor();
+      });
+
+      cancelInvoiceBtn.addEventListener("click", () => {
+        invoiceDialog.close();
+      });
+
+      function openInvoiceEditor(invoiceId) {
+        state.editingInvoiceId = invoiceId || null;
+        invoiceForm.reset();
+        invoiceItemsTableBody.innerHTML = "";
+        if (state.editingInvoiceId) {
+          // Edit mode
+          const inv = state.invoices[state.editingInvoiceId];
+          if (!inv) return;
+          invoiceDialog.querySelector("h3").textContent = "Edit Invoice";
+          invoiceClientSelect.value = inv.clientId;
+          invoiceDateInput.value = inv.invoiceDate;
+          invoiceDueDateInput.value = inv.dueDate;
+          paymentStatusSelect.value = inv.status || "unpaid";
+          for (const item of inv.items) {
+            addInvoiceItem(item);
+          }
+          updateTotals();
+        } else {
+          // New invoice - default one empty item
+          invoiceDialog.querySelector("h3").textContent = "New Invoice";
+          invoiceDateInput.value = new Date().toISOString().slice(0, 10);
+          invoiceDueDateInput.value = new Date(Date.now() + 7 * 864e5)
+            .toISOString()
+            .slice(0, 10);
+          paymentStatusSelect.value = "unpaid";
+          addInvoiceItem();
+          updateTotals();
+        }
+        invoiceDialog.showModal();
+      }
+
+      addItemBtn.addEventListener("click", () => {
+        addInvoiceItem();
+      });
+
+      function createInvoiceItemRow(item = {}) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+        <td><input type="text" class="desc" placeholder="Item description" required aria-label="Item description" /></td>
+        <td><input type="number" class="qty" min="0" step="1" value="1" required aria-label="Quantity" /></td>
+        <td><input type="number" class="price" min="0" step="0.01" value="0.00" required aria-label="Unit price" /></td>
+        <td><input type="number" class="tax" min="0" max="100" step="0.01" value="0" required aria-label="Tax percent" /></td>
+        <td class="line-total text-right" aria-live="polite" aria-atomic="true">0.00</td>
+        <td><button type="button" class="danger" title="Remove this item" aria-label="Remove invoice item">×</button></td>
+        `;
+        // Fill initial values
+        tr.querySelector(".desc").value = item.description || "";
+        tr.querySelector(".qty").value =
+          item.quantity !== undefined ? item.quantity : 1;
+        tr.querySelector(".price").value =
+          item.unitPrice !== undefined ? item.unitPrice : "0.00";
+        tr.querySelector(".tax").value =
+          item.taxPercent !== undefined ? item.taxPercent : 0;
+
+        // Input change handlers to update totals
+        ["desc", "qty", "price", "tax"].forEach((cls) => {
+          tr.querySelector("." + cls).addEventListener("input", updateTotalsDebounced);
+        });
+
+        // Remove button handler
+        tr.querySelector("button.danger").addEventListener("click", () => {
+          tr.remove();
+          updateTotals();
+        });
+
+        return tr;
+      }
+
+      function addInvoiceItem(item) {
+        const tr = createInvoiceItemRow(item);
+        invoiceItemsTableBody.appendChild(tr);
+      }
+
+      function updateTotals() {
+        const rows = [...invoiceItemsTableBody.querySelectorAll("tr")];
+        let subtotal = 0;
+        let totalTax = 0;
+        for (const tr of rows) {
+          const qty = Math.max(0, parseFloat(tr.querySelector(".qty").value) || 0);
+          const price = Math.max(0, parseFloat(tr.querySelector(".price").value) || 0);
+          const taxPercent = Math.max(
+            0,
+            Math.min(100, parseFloat(tr.querySelector(".tax").value) || 0)
+          );
+          const lineSubtotal = qty * price;
+          const lineTax = (lineSubtotal * taxPercent) / 100;
+          const lineTotal = lineSubtotal + lineTax;
+          subtotal += lineSubtotal;
+          totalTax += lineTax;
+          tr.querySelector(".line-total").textContent = formatMoney(lineTotal);
+        }
+        subtotalAmount.textContent = formatMoney(subtotal);
+        totalTaxAmount.textContent = formatMoney(totalTax);
+        grandTotalAmount.textContent = formatMoney(subtotal + totalTax);
+      }
+
+      const updateTotalsDebounced = debounce(updateTotals, 150);
+
+      invoiceForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const clientId = invoiceClientSelect.value;
+        const invoiceDate = invoiceDateInput.value;
+        const dueDate = invoiceDueDateInput.value;
+        const status = paymentStatusSelect.value;
+
+        if (!clientId) {
+          alert("Please select a client.");
+          invoiceClientSelect.focus();
+          return;
+        }
+        if (!invoiceDate) {
+          alert("Please select an invoice date.");
+          invoiceDateInput.focus();
+          return;
+        }
+        if (!dueDate) {
+          alert("Please select a due date.");
+          invoiceDueDateInput.focus();
+          return;
+        }
+
+        // Gather items
+        const items = [];
+        let validItemsCount = 0;
+        const rows = [...invoiceItemsTableBody.querySelectorAll("tr")];
+        for (const tr of rows) {
+          const description = tr.querySelector(".desc").value.trim();
+          const quantity = parseFloat(tr.querySelector(".qty").value);
+          const unitPrice = parseFloat(tr.querySelector(".price").value);
+          const taxPercent = parseFloat(tr.querySelector(".tax").value);
+          if (
+            description &&
+            quantity >= 0 &&
+            unitPrice >= 0 &&
+            taxPercent >= 0 &&
+            taxPercent <= 100
+          ) {
+            items.push({
+              description,
+              quantity,
+              unitPrice,
+              taxPercent,
+            });
+            validItemsCount++;
+          }
+        }
+        if (validItemsCount === 0) {
+          alert("Please add at least one valid invoice item.");
+          return;
+        }
+
+        // Compose invoice object
+        const invoiceId =
+          state.editingInvoiceId || generateId("inv_");
+        const invoice = {
+          id: invoiceId,
+          clientId,
+          invoiceDate,
+          dueDate,
+          status,
+          items,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        // Save invoice
+        state.invoices[invoiceId] = invoice;
+        Auth.updateInvoice(invoiceId, invoice);
+
+        invoiceDialog.close();
+        renderInvoices();
+        renderDashboard();
+      });
+
+      function renderInvoices() {
+        invoiceTableBody.innerHTML = "";
+        const invoicesArr = Object.values(state.invoices).sort((a, b) => {
+          // Sort most recent first by invoiceDate
+          return new Date(b.invoiceDate) - new Date(a.invoiceDate);
+        });
+        if (invoicesArr.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            '<td colspan="7" class="centered small-text">No invoices created yet.</td>';
+          invoiceTableBody.appendChild(tr);
+          return;
+        }
+        for (const inv of invoicesArr) {
+          const client = state.clients[inv.clientId];
+          const total = inv.items.reduce((acc, item) => {
+            const lineSubtotal = item.quantity * item.unitPrice;
+            const lineTax = (lineSubtotal * item.taxPercent) / 100;
+            return acc + lineSubtotal + lineTax;
+          }, 0);
+          const tr = document.createElement("tr");
+          tr.className = inv.status === "paid" ? "paid" : "unpaid";
+          tr.innerHTML = `
+            <td aria-label="Invoice number">${sanitizeText(inv.id)}</td>
+            <td>${client ? sanitizeText(client.name) : "[Deleted Client]"}</td>
+            <td aria-label="Invoice date">${formatDateISOToDisplay(inv.invoiceDate)}</td>
+            <td aria-label="Due date">${formatDateISOToDisplay(inv.dueDate)}</td>
+            <td class="text-right">${formatMoney(total)}</td>
+            <td aria-label="Payment status">${inv.status === "paid" ? "Paid" : "Unpaid"}</td>
+            <td>
+              <button class="link-button" data-action="preview" data-id="${inv.id}" aria-label="Preview invoice ${sanitizeText(inv.id)}">Preview</button>
+              <button class="link-button" data-action="edit" data-id="${inv.id}" aria-label="Edit invoice ${sanitizeText(inv.id)}">Edit</button>
+              <button class="link-button" data-action="email" data-id="${inv.id}" aria-label="Email invoice ${sanitizeText(inv.id)}">Email</button>
+              <button class="link-button" data-action="download" data-id="${inv.id}" aria-label="Download invoice ${sanitizeText(inv.id)}">Download</button>
+              <button class="danger" data-action="delete" data-id="${inv.id}" aria-label="Delete invoice ${sanitizeText(inv.id)}">Delete</button>
+            </td>
+          `;
+          invoiceTableBody.appendChild(tr);
+        }
+      }
+
+      invoiceTableBody.addEventListener("click", (e) => {
+        if (!e.target.matches("button[data-action]")) return;
+        const btn = e.target;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if (!id) return;
+        if (action === "edit") {
+          openInvoiceEditor(id);
+        } else if (action === "delete") {
+          const confirmDel = confirm("Delete this invoice?");
+          if (!confirmDel) return;
+          delete state.invoices[id];
+          Auth.deleteInvoice(id);
+          renderInvoices();
+          renderDashboard();
+        } else if (action === "preview") {
+          const invoice = state.invoices[id];
+          if (!invoice) return;
+          renderInvoicePreview(invoice);
+          previewDialog.showModal();
+        } else if (action === "email") {
+          const invoice = state.invoices[id];
+          if (!invoice) return;
+          prepareEmailDialog(invoice);
+          emailDialog.showModal();
+        } else if (action === "download") {
+          const invoice = state.invoices[id];
+          if (!invoice) return;
+          downloadInvoice(invoice);
+        }
+      });
+
+      /***************
+       * INVOICE PREVIEW & DOWNLOAD
+       ****************/
+
+      function renderInvoicePreview(invoice) {
+        const client = state.clients[invoice.clientId] || {
+          name: "[Deleted Client]",
+          email: "[No email]",
+          phone: "",
+        };
+
+        function makeLine(char, length = 60) {
+          return char.repeat(length) + "\n";
+        }
+
+        let previewText = "";
+        previewText += "QuickInvoice Lite\n";
+        previewText += "Professional Invoice\n";
+        previewText += makeLine("=");
+        previewText += `Invoice #: ${invoice.id}\n`;
+        previewText += `Date: ${formatDateISOToDisplay(invoice.invoiceDate)}\n`;
+        previewText += `Due Date: ${formatDateISOToDisplay(invoice.dueDate)}\n`;
+        previewText += makeLine("-");
+        previewText += `Bill To:\n${client.name}\nEmail: ${client.email}\n${
+          client.phone || ""
+        }\n`;
+        previewText += makeLine("-");
+        previewText += `Description                   Qty    Unit Price    Tax%    Total\n`;
+        previewText += makeLine("-");
+        let subtotal = 0,
+          totalTax = 0;
+        invoice.items.forEach((item) => {
+          const lineSubtotal = item.quantity * item.unitPrice;
+          const lineTax = (lineSubtotal * item.taxPercent) / 100;
+          const lineTotal = lineSubtotal + lineTax;
+          subtotal += lineSubtotal;
+          totalTax += lineTax;
+          const desc = item.description.slice(0, 25).padEnd(25, " ");
+          const qty = item.quantity.toString().padStart(3, " ");
+          const price = formatMoney(item.unitPrice).padStart(12, " ");
+          const tax = item.taxPercent.toFixed(2).padStart(6, " ");
+          const total = formatMoney(lineTotal).padStart(8, " ");
+          previewText += `${desc}${qty}   ${price}   ${tax}   ${total}\n`;
+        });
+        previewText += makeLine("-");
+        previewText += `Subtotal: ${formatMoney(subtotal)}\n`;
+        previewText += `Tax: ${formatMoney(totalTax)}\n`;
+        previewText += `Grand Total: ${formatMoney(subtotal + totalTax)}\n`;
+        previewText += makeLine("=");
+        previewText += `Status: ${invoice.status === "paid" ? "Paid" : "Unpaid"}\n`;
+        previewText += "(This is a computer-generated invoice)";
+
+        invoicePreviewContent.textContent = previewText;
+      }
+
+      downloadInvoiceBtn.addEventListener("click", () => {
+        const invoiceText = invoicePreviewContent.textContent;
+        if (!invoiceText) return;
+        const blob = new Blob([invoiceText], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Invoice_" + (state.editingInvoiceId || "invoice") + ".txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      closePreviewBtn.addEventListener("click", () => {
+        previewDialog.close();
+      });
+
+      function downloadInvoice(invoice) {
+        const client = state.clients[invoice.clientId] || {
+          name: "[Deleted Client]",
+          email: "[No email]",
+          phone: "",
+        };
+
+        let text = `QuickInvoice Lite\nProfessional Invoice\n==============================\n`;
+        text += `Invoice #: ${invoice.id}\n`;
+        text += `Date: ${formatDateISOToDisplay(invoice.invoiceDate)}\n`;
+        text += `Due Date: ${formatDateISOToDisplay(invoice.dueDate)}\n`;
+        text += "------------------------------\n";
+        text += `Bill To:\n${client.name}\nEmail: ${client.email}\n${
+          client.phone || ""
+        }\n------------------------------\n`;
+        text += `Description\tQty\tUnit Price\tTax%\tTotal\n------------------------------\n`;
+        let subtotal = 0,
+          totalTax = 0;
+        invoice.items.forEach((item) => {
+          const lineSubtotal = item.quantity * item.unitPrice;
+          const lineTax = (lineSubtotal * item.taxPercent) / 100;
+          const lineTotal = lineSubtotal + lineTax;
+          subtotal += lineSubtotal;
+          totalTax += lineTax;
+          text += `${item.description}\t${item.quantity}\t${formatMoney(
+            item.unitPrice
+          )}\t${item.taxPercent.toFixed(2)}\t${formatMoney(lineTotal)}\n`;
+        });
+        text += "------------------------------\n";
+        text += `Subtotal: ${formatMoney(subtotal)}\nTax: ${formatMoney(totalTax)}\nGrand Total: ${formatMoney(
+          subtotal + totalTax
+        )}\n==============================\n`;
+        text += `Status: ${invoice.status === "paid" ? "Paid" : "Unpaid"}\n`;
+        text += "(This is a computer-generated invoice)\n";
+
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Invoice_${invoice.id}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      /****************
+       * EMAIL INVOICE (SIMULATED)
+       ****************/
+
+      emailForm.reset();
+      emailStatus.textContent = "";
+
+      function prepareEmailDialog(invoice) {
+        const client = state.clients[invoice.clientId];
+        emailStatus.textContent = "";
+        emailToInput.value = client?.email || "";
+        emailSubjectInput.value = `Invoice ${invoice.id} from QuickInvoice Lite`;
+        emailBodyTextarea.value = `Hello ${client?.name || "Client"},\n\nPlease find attached the invoice ${invoice.id}.\n\nThank you for your business!\n\nRegards,\n[Your Name]`;
+        emailForm.dataset.invoiceId = invoice.id;
+      }
+
+      cancelEmailBtn.addEventListener("click", () => {
+        emailDialog.close();
+      });
+
+      emailForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        emailStatus.style.color = "var(--primary)";
+        emailStatus.textContent = "Sending email...";
+        sendEmailBtn.disabled = true;
+
+        // Simulate sending email with a timeout and random success
+        setTimeout(() => {
+          const success = true; // For demo we always succeed
+          if (success) {
+            emailStatus.style.color = "green";
+            emailStatus.textContent = "Email sent successfully!";
+            setTimeout(() => {
+              emailDialog.close();
+              emailStatus.textContent = "";
+              sendEmailBtn.disabled = false;
+            }, 1500);
+          } else {
+            emailStatus.style.color = "var(--danger)";
+            emailStatus.textContent = "Failed to send email. Please try again.";
+            sendEmailBtn.disabled = false;
+          }
+        }, 1500);
+      });
+
+      /*****************
+       * DASHBOARD CHART
+       *****************/
+
+      function renderDashboard() {
+        const ctx = earningsChartCanvas.getContext("2d");
+        // Clear canvas
+        ctx.clearRect(0, 0, earningsChartCanvas.width, earningsChartCanvas.height);
+
+        // Aggregate earnings per month (for last 12 months)
+        const earningsMap = {}; // "YYYY-MM": total
+        const now = new Date();
+        for (let i = 0; i < 12; i++) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const key = d.toISOString().slice(0, 7);
+          earningsMap[key] = 0;
+        }
+
+        for (const invoice of Object.values(state.invoices)) {
+          if (invoice.status === "paid") {
+            const key = invoice.invoiceDate.slice(0, 7);
+            if (earningsMap.hasOwnProperty(key)) {
+              const total = invoice.items.reduce((acc, item) => {
+                const lineSubtotal = item.quantity * item.unitPrice;
+                const lineTax = (lineSubtotal * item.taxPercent) / 100;
+                return acc + lineSubtotal + lineTax;
+              }, 0);
+              earningsMap[key] += total;
+            }
+          }
+        }
+
+        // Prepare data arrays
+        const labels = [];
+        const values = [];
+        for (let i = 11; i >= 0; i--) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          labels.push(d.toLocaleDateString(undefined, { month: "short", year: "2-digit" }));
+          const key = d.toISOString().slice(0, 7);
+          values.push(earningsMap[key] || 0);
+        }
+
+        // Chart sizes
+        const padding = 40;
+        const chartWidth = earningsChartCanvas.width - padding * 2;
+        const chartHeight = earningsChartCanvas.height - padding * 2;
+
+        // Max value for scale
+        const maxVal = Math.max(...values, 100);
+
+        // Draw axes
+        ctx.strokeStyle = "#aaa";
+        ctx.lineWidth = 1;
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "#555";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+
+        // Draw horizontal axis labels
+        labels.forEach((label, i) => {
+          const x = padding + (chartWidth / labels.length) * (i + 0.5);
+          ctx.fillText(label, x, padding + chartHeight + 6);
+        });
+
+        // Draw vertical axis labels and grid lines
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        const steps = 5;
+        for (let i = 0; i <= steps; i++) {
+          let y = padding + (chartHeight / steps) * i;
+          let val = (maxVal * (steps - i)) / steps;
+          ctx.fillText(formatMoney(val), padding - 5, y);
+          ctx.strokeStyle = "#ddd";
+          ctx.beginPath();
+          ctx.moveTo(padding, y);
+          ctx.lineTo(padding + chartWidth, y);
+          ctx.stroke();
+        }
+
+        // Draw bars
+        const barWidth = (chartWidth / values.length) * 0.7;
+        ctx.fillStyle = "var(--primary)";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+
+        values.forEach((val, i) => {
+          const x = padding + (chartWidth / values.length) * i + (chartWidth / values.length - barWidth) / 2;
+          const barHeight = (val / maxVal) * chartHeight;
+          const y = padding + chartHeight - barHeight;
+          ctx.fillRect(x, y, barWidth, barHeight);
+          ctx.fillStyle = "#222";
+          ctx.fillText(formatMoney(val), x + barWidth / 2, y - 2);
+          ctx.fillStyle = "var(--primary)";
+        });
+      }
+
+      /*************************
+       * INITIALIZATION & BOOT
+       *************************/
+
+      // On page load check auth status
+      function boot() {
+        const loggedIn = loadUserData();
+        if (loggedIn) {
+          showApp();
+          refreshUI();
+        } else {
+          showLogin();
+        }
+      }
+
+      boot();
+    })();
+  </script>
+</body>
+</html>
+```

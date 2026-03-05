@@ -1,0 +1,255 @@
+Here's a simple HTML web app MVP for "Meeting Minute Magic." It includes:
+
+- Selection of a meeting template  
+- A textarea for quick note taking with live word count  
+- Automatic extraction of action items (lines starting with "Action:" or "TODO:")  
+- A list showing extracted action items  
+- Ability to save meeting minutes in localStorage (simulating archive)  
+- Search past meetings by keywords  
+- Export current meeting notes as a plain text file  
+
+This is a very basic front-end only demo to capture core functionality and can be enhanced with real-time collaboration and integrations later.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Minute Magic</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+  h1 {
+    text-align: center;
+  }
+  label {
+    font-weight: bold;
+  }
+  select, textarea, input[type="text"] {
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+  textarea {
+    height: 200px;
+    font-family: monospace;
+    white-space: pre-wrap;
+  }
+  .action-items {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .archive-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    background: #fafafa;
+  }
+  button {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  .word-count {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  .search-container {
+    margin-top: 2rem;
+  }
+  .meeting-item {
+    border-bottom: 1px solid #ddd;
+    padding: 0.3rem 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>Meeting Minute Magic</h1>
+
+<label for="template">Choose Meeting Template:</label>
+<select id="template">
+  <option value="">-- Select Template --</option>
+  <option value="daily-standup">Daily Stand-up</option>
+  <option value="client-call">Client Call</option>
+  <option value="project-update">Project Update</option>
+</select>
+
+<label for="minutes">Meeting Minutes:</label>
+<textarea id="minutes" placeholder="Write your meeting notes here. Prefix action items with 'Action:' or 'TODO:'"></textarea>
+<div class="word-count" id="wordCount">0 words</div>
+
+<h2>Extracted Action Items</h2>
+<div class="action-items" id="actionItems">No action items detected.</div>
+
+<button id="saveBtn">Save Meeting</button>
+<button id="exportBtn">Export as Text</button>
+
+<div class="search-container">
+  <h2>Search Past Meetings</h2>
+  <input type="text" id="searchInput" placeholder="Search archive..." />
+  <div class="archive-list" id="archiveList">No archived meetings.</div>
+</div>
+
+<script>
+  const templates = {
+    "daily-standup": `Meeting Date: ${new Date().toLocaleDateString()}
+
+1. What did you do yesterday?
+2. What will you do today?
+3. Any blockers?
+
+Action:
+`,
+    "client-call": `Meeting Date: ${new Date().toLocaleDateString()}
+
+Client:
+Agenda:
+Discussion:
+Next Steps:
+
+Action:
+`,
+    "project-update": `Meeting Date: ${new Date().toLocaleDateString()}
+
+Project:
+Progress since last meeting:
+Issues/Risks:
+Next Milestones:
+
+Action:
+`,
+  };
+
+  const minutesEl = document.getElementById('minutes');
+  const templateEl = document.getElementById('template');
+  const actionItemsEl = document.getElementById('actionItems');
+  const saveBtn = document.getElementById('saveBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const archiveListEl = document.getElementById('archiveList');
+  const searchInput = document.getElementById('searchInput');
+  const wordCountEl = document.getElementById('wordCount');
+
+  let archive = JSON.parse(localStorage.getItem('mmmArchive') || '[]');
+
+  function updateWordCount() {
+    const text = minutesEl.value.trim();
+    const words = text === '' ? 0 : text.split(/\s+/).length;
+    wordCountEl.textContent = `${words} word${words !== 1 ? 's' : ''}`;
+  }
+
+  function extractActionItems(text) {
+    const lines = text.split('\n');
+    const acties = lines.filter(line => /^\s*(Action|TODO):/i.test(line)).map(line => line.trim());
+    return acties;
+  }
+
+  function displayActionItems(items) {
+    if (items.length === 0) {
+      actionItemsEl.textContent = 'No action items detected.';
+      return;
+    }
+    actionItemsEl.innerHTML = '<ul>' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+  }
+
+  function displayArchive(filter = '') {
+    archiveListEl.innerHTML = '';
+    const filtered = archive.filter(m => m.text.toLowerCase().includes(filter.toLowerCase()));
+    if (filtered.length === 0) {
+      archiveListEl.textContent = 'No archived meetings.';
+      return;
+    }
+    filtered.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'meeting-item';
+      div.innerHTML = `<strong>${new Date(m.date).toLocaleString()}</strong><br/><pre>${m.text.substring(0, 150)}${m.text.length > 150 ? "..." : ""}</pre>`;
+      div.addEventListener('click', () => {
+        minutesEl.value = m.text;
+        updateWordCount();
+        const actions = extractActionItems(m.text);
+        displayActionItems(actions);
+      });
+      archiveListEl.appendChild(div);
+    });
+  }
+
+  templateEl.addEventListener('change', () => {
+    const tpl = templates[templateEl.value];
+    if (tpl) {
+      minutesEl.value = tpl;
+      updateWordCount();
+      displayActionItems(extractActionItems(tpl));
+    } else {
+      minutesEl.value = '';
+      updateWordCount();
+      displayActionItems([]);
+    }
+  });
+
+  minutesEl.addEventListener('input', () => {
+    updateWordCount();
+    const actions = extractActionItems(minutesEl.value);
+    displayActionItems(actions);
+  });
+
+  saveBtn.addEventListener('click', () => {
+    const text = minutesEl.value.trim();
+    if (!text) {
+      alert('Please enter meeting minutes before saving.');
+      return;
+    }
+    const meeting = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      text
+    };
+    archive.unshift(meeting);
+    localStorage.setItem('mmmArchive', JSON.stringify(archive));
+    alert('Meeting saved to archive.');
+    displayArchive(searchInput.value);
+  });
+
+  exportBtn.addEventListener('click', () => {
+    const text = minutesEl.value.trim();
+    if (!text) {
+      alert('Please enter meeting minutes to export.');
+      return;
+    }
+    const blob = new Blob([text], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `meeting_minutes_${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  searchInput.addEventListener('input', () => {
+    displayArchive(searchInput.value);
+  });
+
+  // Initial display
+  updateWordCount();
+  displayActionItems([]);
+  displayArchive();
+</script>
+
+</body>
+</html>
+```
+
+Open this file in a browser to try a lightweight meeting minute app. It's easily extendable with backend services for real-time collaboration or third-party integrations later. Let me know if you'd like help with more features or next steps!

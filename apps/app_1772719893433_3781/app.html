@@ -1,0 +1,306 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MeetingSync - Consolidate Your Meeting Notes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::selection {
+      background-color: #2563eb;
+      color: white;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="#" class="text-2xl font-extrabold text-indigo-600 select-none hover:text-indigo-700 transition">MeetingSync</a>
+      <ul class="hidden md:flex space-x-10 text-gray-600 font-medium">
+        <li><a href="#tool" class="hover:text-indigo-600 transition">Tool</a></li>
+        <li><a href="#features" class="hover:text-indigo-600 transition">Features</a></li>
+        <li><a href="#footer" class="hover:text-indigo-600 transition">Contact</a></li>
+      </ul>
+      <a href="#tool" class="hidden md:inline-block bg-indigo-600 text-white px-6 py-2.5 rounded-xl shadow-lg hover:bg-indigo-700 transition font-semibold tracking-wide">Get Started</a>
+      <button id="mobile-menu-toggle" class="md:hidden focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18"></path>
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden bg-white shadow-md hidden" role="menu" aria-labelledby="mobile-menu-toggle">
+      <ul class="flex flex-col px-6 py-6 space-y-5 text-gray-700 font-medium">
+        <li><a href="#tool" class="block hover:text-indigo-600 transition" role="menuitem" tabindex="0">Tool</a></li>
+        <li><a href="#features" class="block hover:text-indigo-600 transition" role="menuitem" tabindex="0">Features</a></li>
+        <li><a href="#footer" class="block hover:text-indigo-600 transition" role="menuitem" tabindex="0">Contact</a></li>
+        <li><a href="#tool" class="block bg-indigo-600 text-white text-center py-2 rounded-xl font-semibold hover:bg-indigo-700 transition tracking-wide" role="menuitem" tabindex="0">Get Started</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="bg-white pt-24 pb-20">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center md:items-start gap-12">
+      <div class="max-w-xl text-center md:text-left">
+        <h1 class="text-5xl sm:text-6xl font-extrabold text-indigo-600 leading-tight drop-shadow-sm">
+          MeetingSync
+        </h1>
+        <p class="mt-5 text-gray-700 text-lg sm:text-xl max-w-lg mx-auto md:mx-0 leading-relaxed">
+          Effortlessly consolidate all your meeting notes, action items, and decisions from Zoom, Teams, Slack, and Google Meet into one searchable AI-powered dashboard.
+        </p>
+        <a href="#tool"
+           class="mt-10 inline-block bg-indigo-600 text-white px-10 py-3 rounded-2xl shadow-xl font-semibold tracking-wide hover:bg-indigo-700 transition focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50"
+        >
+          Try MeetingSync Now
+        </a>
+      </div>
+      <div class="max-w-lg w-full flex justify-center md:justify-end">
+        <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80" alt="Meeting dashboard illustration" class="rounded-3xl shadow-2xl border border-gray-200 max-w-full object-cover" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Tool Section -->
+  <section id="tool" class="bg-gray-100 py-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">Your Meetings, Fully Synced and Organized</h2>
+        <p class="text-gray-700 text-lg leading-relaxed mb-14">
+          Connect your collaboration apps and watch MeetingSync automatically extract key notes, decisions, action items, and deadlines — all in one place.
+        </p>
+      </div>
+      <div tabindex="0" aria-label="Demo area showing tool interface" class="max-w-5xl mx-auto rounded-2xl bg-white shadow-lg p-10 space-y-8 ring-2 ring-indigo-100 focus-within:ring-indigo-400 transition">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold text-indigo-600 tracking-wide select-none">MeetingSync Dashboard (Demo)</h3>
+          <button id="refreshDemo" class="bg-indigo-600 text-white px-4 py-2 rounded-xl shadow-md text-sm font-semibold tracking-wide hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-70 transition" title="Load sample data">Refresh</button>
+        </div>
+        <input id="searchInput"
+               type="search"
+               placeholder="Search notes, decisions, action items..."
+               class="w-full rounded-xl border border-gray-300 px-5 py-3 text-gray-800 text-base placeholder-gray-400 focus:outline-none focus:ring-3 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+               aria-label="Search notes, decisions, action items"
+        />
+        <div id="notesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 max-h-[26rem] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-300 scrollbar-track-indigo-100">
+          <!-- Cards inserted by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Section -->
+  <section id="features" class="py-20 max-w-7xl mx-auto px-6">
+    <h2 class="text-4xl font-extrabold text-gray-900 text-center mb-16 tracking-tight">Why MeetingSync?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+      <article class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition flex flex-col items-start text-gray-800 select-text focus:outline-none focus:ring-4 focus:ring-indigo-300" tabindex="0">
+        <svg class="w-12 h-12 text-indigo-600 mb-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10a8.38 8.38 0 0 1-1.9.8 4.48 4.48 0 0 0 1.98-2.48 8.38 8.38 0 0 1-2.7 1.03 4.48 4.48 0 0 0-7.64 4.1A12.8 12.8 0 0 1 3 8.1a4.49 4.49 0 0 0 1.39 5.98 4.42 4.42 0 0 1-2.03-.56c0 2.22 1.57 4.06 3.66 4.48a4.52 4.52 0 0 1-2.02.08 4.49 4.49 0 0 0 4.2 3.13 9 9 0 0 1-5.58 1.92c-.36 0-.72-.02-1.07-.06a12.76 12.76 0 0 0 6.92 2.03c8.3 0 12.84-6.87 12.84-12.83 0-.2 0-.41-.02-.61A9.22 9.22 0 0 0 21 10z"></path></svg>
+        <h3 class="text-xl font-semibold mb-3">AI-Powered Summaries</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Automatically extract key points, decisions, action items, and deadlines from your meetings using advanced AI technology.
+        </p>
+      </article>
+      <article class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition flex flex-col items-start text-gray-800 select-text focus:outline-none focus:ring-4 focus:ring-indigo-300" tabindex="0">
+        <svg class="w-12 h-12 text-indigo-600 mb-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M8 12l2 2 4-4" /></svg>
+        <h3 class="text-xl font-semibold mb-3">Unified Dashboard</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Consolidate notes and action items from Zoom, Teams, Slack, and Google Meet into a single, searchable dashboard.
+        </p>
+      </article>
+      <article class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition flex flex-col items-start text-gray-800 select-text focus:outline-none focus:ring-4 focus:ring-indigo-300" tabindex="0">
+        <svg class="w-12 h-12 text-indigo-600 mb-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" /></svg>
+        <h3 class="text-xl font-semibold mb-3">Never Miss Deadlines</h3>
+        <p class="text-gray-600 leading-relaxed">
+          AI highlights deadlines and assigns reminders so your team stays aligned on committed tasks and timelines.
+        </p>
+      </article>
+      <article class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition flex flex-col items-start text-gray-800 select-text focus:outline-none focus:ring-4 focus:ring-indigo-300" tabindex="0">
+        <svg class="w-12 h-12 text-indigo-600 mb-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10h-3a5 5 0 0 0-10 0H5" /><path d="M9 21h6" /><path d="M12 3v6" /></svg>
+        <h3 class="text-xl font-semibold mb-3">Perfect for Remote Teams</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Designed for remote and hybrid teams to streamline collaboration and keep everyone on the same page.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-white border-t border-gray-200 py-12 mt-20">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+      <p class="text-gray-600 text-sm select-none">&copy; 2024 MeetingSync, Inc. All rights reserved.</p>
+      <nav class="flex space-x-10 text-gray-500 text-sm" aria-label="Footer navigation">
+        <a href="#" class="hover:text-indigo-600 transition focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 rounded">Privacy Policy</a>
+        <a href="#" class="hover:text-indigo-600 transition focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 rounded">Terms of Service</a>
+        <a href="mailto:support@meetingsync.com" class="hover:text-indigo-600 transition focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 rounded">Contact Support</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenuBtn.addEventListener('click', () => {
+        const expanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+        mobileMenuBtn.setAttribute('aria-expanded', String(!expanded));
+        mobileMenu.classList.toggle('hidden');
+      });
+    })();
+
+    (() => {
+      const notesContainer = document.getElementById('notesContainer');
+      const searchInput = document.getElementById('searchInput');
+      const refreshDemoBtn = document.getElementById('refreshDemo');
+
+      // Sample demo data of consolidated meeting notes
+      const demoNotes = [
+        {
+          id: 1,
+          type: "Decision",
+          app: "Zoom",
+          title: "Approve Q3 Budget Increase",
+          content: "Team agreed to increase the Q3 marketing budget by 15% to boost campaign reach.",
+          deadline: null,
+        },
+        {
+          id: 2,
+          type: "Action Item",
+          app: "Slack",
+          title: "Design Landing Page Mockups",
+          content: "Alice to create high-fidelity mockups for the new product landing page by next Monday.",
+          deadline: "2024-06-12",
+        },
+        {
+          id: 3,
+          type: "Note",
+          app: "Google Meet",
+          title: "Project Kickoff Recap",
+          content: "Discussed project goals, stakeholder responsibilities, and timeline overview.",
+          deadline: null,
+        },
+        {
+          id: 4,
+          type: "Action Item",
+          app: "Teams",
+          title: "Prepare User Survey Questions",
+          content: "John tasked with preparing the initial user survey draft by Friday.",
+          deadline: "2024-06-09",
+        },
+        {
+          id: 5,
+          type: "Decision",
+          app: "Slack",
+          title: "Adopt Agile Workflow",
+          content: "Team decided to implement Agile with bi-weekly sprints starting July 1st.",
+          deadline: null,
+        },
+        {
+          id: 6,
+          type: "Note",
+          app: "Zoom",
+          title: "Weekly Sync Updates",
+          content: "General updates on development progress and blockers.",
+          deadline: null,
+        },
+        {
+          id: 7,
+          type: "Action Item",
+          app: "Google Meet",
+          title: "Finalize Vendor Contracts",
+          content: "Legal to review and finalize contracts with third-party vendors this week.",
+          deadline: "2024-06-10",
+        }
+      ];
+
+      // Icons for types (inline SVG)
+      function getTypeIcon(type) {
+        switch(type) {
+          case "Decision":
+            return `<svg aria-hidden="true" class="w-5 h-5 mr-2 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M9 12l2 2 5-5"></path>
+            </svg>`;
+          case "Action Item":
+            return `<svg aria-hidden="true" class="w-5 h-5 mr-2 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M5 13l4 4L19 7"></path>
+            </svg>`;
+          case "Note":
+            return `<svg aria-hidden="true" class="w-5 h-5 mr-2 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>`;
+          default: return "";
+        }
+      }
+
+      // App badges with better accessible colors and consistent styling
+      function getAppBadge(app) {
+        const appColors = {
+          Zoom: "bg-blue-100 text-blue-800",
+          Teams: "bg-purple-100 text-purple-800",
+          Slack: "bg-emerald-100 text-emerald-800",
+          "Google Meet": "bg-red-100 text-red-800",
+        };
+        const colorClass = appColors[app] || "bg-gray-100 text-gray-700";
+        return `<span class="inline-block ${colorClass} text-xs font-semibold px-3 py-1 rounded-full select-none tracking-wide shadow-sm">${app}</span>`;
+      }
+
+      function formatDeadline(dateStr) {
+        if (!dateStr) return "";
+        const date = new Date(dateStr + "T00:00:00");
+        if (isNaN(date)) return "";
+        return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+      }
+
+      function renderNotes(notes) {
+        if (notes.length < 1) {
+          notesContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center py-14 select-none text-lg font-medium">No notes found matching your search.</p>`;
+          return;
+        }
+        notesContainer.innerHTML = notes.map(note => `
+          <article tabindex="0" role="article" class="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl focus:shadow-indigo-400 transition cursor-default flex flex-col select-text ring-1 ring-transparent focus:ring-2 focus:ring-indigo-500">
+            <header class="flex justify-between items-start mb-4 space-x-4">
+              <h4 class="font-semibold text-lg text-gray-900 flex items-center whitespace-nowrap">
+                ${getTypeIcon(note.type)}<span>${note.type}</span>
+              </h4>
+              ${getAppBadge(note.app)}
+            </header>
+            <h3 class="text-indigo-700 font-bold text-xl mb-3 leading-snug">${note.title}</h3>
+            <p class="text-gray-700 flex-grow leading-relaxed">${note.content}</p>
+            ${note.deadline ? `<p class="mt-5 text-sm text-rose-600 font-semibold tracking-wide select-none">Deadline: ${formatDeadline(note.deadline)}</p>` : ""}
+          </article>
+        `).join("");
+      }
+
+      function filterNotes(term) {
+        const t = term.trim().toLowerCase();
+        if (!t) return demoNotes;
+        return demoNotes.filter(n => 
+          n.title.toLowerCase().includes(t) || 
+          n.content.toLowerCase().includes(t) || 
+          n.type.toLowerCase().includes(t) || 
+          n.app.toLowerCase().includes(t)
+        );
+      }
+
+      function init() {
+        renderNotes(demoNotes);
+      }
+
+      searchInput.addEventListener('input', e => {
+        const filtered = filterNotes(e.target.value);
+        renderNotes(filtered);
+      });
+
+      refreshDemoBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        renderNotes(demoNotes);
+        searchInput.focus();
+      });
+
+      init();
+    })();
+  </script>
+</body>
+</html>
+```

@@ -1,0 +1,17 @@
+Idea: **QuickInvoice** – A simple micro SaaS for freelancers to create, send, and track invoices in under a minute.
+
+**Core features:**
+- Create and customize invoices with your branding.
+- Save client info for faster invoicing.
+- Send invoices via email directly from the app.
+- Track invoice status: sent, viewed, paid, overdue.
+- Basic payment integration with Stripe or PayPal.
+- Dashboard showing total outstanding and paid amounts.
+
+**Why it’s profitable and simple:**
+- Targets freelancers and solo entrepreneurs who hate bulky accounting software.
+- Minimalistic, easy-to-use product requires small dev effort.
+- Recurring revenue via monthly subscription (e.g., $5/month).
+- Opportunity to add premium features (tax calculations, reports) later.
+
+Would you like a rough tech stack or a minimal MVP plan?

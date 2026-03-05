@@ -1,0 +1,371 @@
+```html
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickSplit - Split Bills Instantly</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #f9fafb;
+      font-family: 'Inter', sans-serif;
+    }
+    /* Scrollbar thin & subtle */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 py-12 text-gray-800">
+  <main class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8 md:p-12">
+    <header class="mb-8 text-center">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-600 mb-2 select-none">QuickSplit</h1>
+      <p class="text-gray-600 text-lg md:text-xl">Instantly split any bill, tax, tip & partial payments</p>
+    </header>
+
+    <form id="split-form" class="space-y-6" autocomplete="off" novalidate>
+      <div>
+        <label for="total" class="block font-semibold mb-1">Total Bill Amount ($)</label>
+        <input
+          type="number"
+          id="total"
+          min="0"
+          step="0.01"
+          placeholder="e.g. 123.45"
+          required
+          class="w-full rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        />
+      </div>
+
+      <div>
+        <label for="people" class="block font-semibold mb-1">Number of People</label>
+        <input
+          type="number"
+          id="people"
+          min="1"
+          step="1"
+          value="2"
+          required
+          class="w-full rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        />
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label for="tax" class="block font-semibold mb-1">Tax (%)</label>
+          <input
+            type="number"
+            id="tax"
+            min="0"
+            step="0.01"
+            placeholder="e.g. 8.5"
+            class="w-full rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label for="tip" class="block font-semibold mb-1">Tip (%)</label>
+          <input
+            type="number"
+            id="tip"
+            min="0"
+            step="0.01"
+            placeholder="e.g. 15"
+            class="w-full rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-2 select-none">Partial Payments (Optional)</label>
+        <p class="text-gray-500 text-sm mb-2">Enter individual pre-payments to adjust shares. One per line, format: &lt;Name&gt;,&nbsp;&lt;Amount&gt;</p>
+        <textarea
+          id="partials"
+          rows="4"
+          placeholder="Alice, 10.00&#10;Bob, 5.50"
+          class="w-full rounded-md border border-gray-300 px-4 py-3 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md py-3 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-indigo-300"
+      >
+        Calculate & Generate Link
+      </button>
+    </form>
+
+    <section id="result-section" class="mt-10 hidden bg-indigo-50 rounded-lg p-6 border border-indigo-200">
+      <h2 class="text-2xl font-semibold mb-4 text-indigo-700">Payment Summary</h2>
+      <div id="summary" class="space-y-3 text-gray-700"></div>
+      <div class="mt-6 flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+        <input id="share-link" type="text" readonly class="flex-grow rounded-md border border-indigo-300 px-4 py-3 bg-white cursor-pointer select-all" aria-label="Shareable payment summary link" />
+        <button id="copy-btn" class="ml-0 md:ml-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-5 py-3 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-indigo-300">
+          Copy Link
+        </button>
+      </div>
+      <p id="copy-msg" class="mt-2 text-sm text-green-600 font-semibold hidden select-none" aria-live="polite">Copied to clipboard!</p>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-400 text-sm mt-12 mb-6 select-none">
+    &copy; 2024 QuickSplit &mdash; Designed for seamless group payments
+  </footer>
+
+  <script>
+    (() => {
+      const form = document.getElementById('split-form');
+      const resultSection = document.getElementById('result-section');
+      const summaryDiv = document.getElementById('summary');
+      const shareLinkInput = document.getElementById('share-link');
+      const copyBtn = document.getElementById('copy-btn');
+      const copyMsg = document.getElementById('copy-msg');
+
+      // Helper: Format number as USD currency string
+      function formatMoney(value) {
+        return '$' + value.toFixed(2);
+      }
+      // Helper: Percent to decimal
+      function toDecimal(percent) {
+        return percent ? percent / 100 : 0;
+      }
+
+      // Parse partial payments textarea into an array of objects {name, amount}
+      function parsePartials(text) {
+        const lines = text.trim().split('\n');
+        const partials = [];
+        for (let line of lines) {
+          if (!line.trim()) continue;
+          const [name, amount] = line.split(',').map(s => s.trim());
+          if (!name || !amount) continue; // skip invalid line
+          const amtNum = parseFloat(amount);
+          if (isNaN(amtNum) || amtNum < 0) continue; // skip invalid amount
+          partials.push({ name, amount: amtNum });
+        }
+        return partials;
+      }
+
+      // Generate summary text (to encode into URL)
+      function generateSummaryText(total, taxPct, tipPct, people, partials, shares) {
+        let lines = [];
+        lines.push(`QuickSplit Bill Summary`);
+        lines.push(`-------------------------`);
+        lines.push(`Total Bill: ${formatMoney(total)}`);
+        if (taxPct) lines.push(`Tax: ${taxPct.toFixed(2)}%`);
+        if (tipPct) lines.push(`Tip: ${tipPct.toFixed(2)}%`);
+        lines.push(`Number of People: ${people}`);
+        lines.push('');
+        if (partials.length) {
+          lines.push(`Partial Payments:`);
+          partials.forEach(p => lines.push(`- ${p.name}: ${formatMoney(p.amount)}`));
+          lines.push('');
+        }
+        lines.push('Final Share per Person:');
+        shares.forEach(({name, share}) => lines.push(`- ${name}: ${formatMoney(share)}`));
+        lines.push('-------------------------');
+        lines.push('(Generated by QuickSplit)');
+        return lines.join('\n');
+      }
+
+      // Extract from URL and populate form if available
+      function loadFromURL() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          if (!params.has('data')) return;
+
+          const jsonStr = atob(params.get('data'));
+          const data = JSON.parse(jsonStr);
+
+          if (typeof data.total === 'number') form.total.value = data.total;
+          if (typeof data.people === 'number') form.people.value = data.people;
+
+          if (typeof data.tax === 'number') form.tax.value = data.tax;
+          if (typeof data.tip === 'number') form.tip.value = data.tip;
+
+          if (Array.isArray(data.partials)) {
+            form.partials.value = data.partials.map(p => `${p.name}, ${p.amount.toFixed(2)}`).join('\n');
+          }
+
+          if (params.has('showResult')) {
+            calculateAndDisplay(data);
+          }
+        } catch {
+          // malformed or invalid data in URL, silently ignore
+        }
+      }
+
+      // Calculate shares and update UI
+      function calculateAndDisplay(inputs = null) {
+        // Inputs from param or from form fields
+        let total, people, taxPct, tipPct, partials;
+        if (inputs) {
+          total = inputs.total;
+          people = inputs.people;
+          taxPct = inputs.tax || 0;
+          tipPct = inputs.tip || 0;
+          partials = inputs.partials || [];
+        } else {
+          total = parseFloat(form.total.value);
+          people = parseInt(form.people.value);
+          taxPct = parseFloat(form.tax.value) || 0;
+          tipPct = parseFloat(form.tip.value) || 0;
+          partials = parsePartials(form.partials.value);
+        }
+
+        if (isNaN(total) || total < 0) {
+          alert('Please enter a valid Total Bill amount.');
+          return;
+        }
+        if (isNaN(people) || people < 1) {
+          alert('Number of People must be at least 1.');
+          return;
+        }
+
+        // Calculate tax and tip
+        const taxAmount = total * toDecimal(taxPct);
+        const tipAmount = total * toDecimal(tipPct);
+        const totalWithExtras = total + taxAmount + tipAmount;
+
+        // Sum of partial payments
+        const partialSum = partials.reduce((acc, p) => acc + p.amount, 0);
+
+        if (partialSum > totalWithExtras + 0.01) {
+          alert('Partial payments exceed total amount (including tax and tip). Please check your entries.');
+          return;
+        }
+
+        // Remaining amount to split
+        const remaining = totalWithExtras - partialSum;
+
+        // Determine who are paid partially and how many left to split remaining
+        // We name default people as Person 1, Person 2, ...
+        // Partial payments override their shares
+
+        // Build people list
+        let peopleList = [];
+        for (let i = 1; i <= people; i++) {
+          peopleList.push({ name: `Person ${i}` });
+        }
+
+        // Map partial payments by name for lookup
+        let partialMap = new Map();
+        partials.forEach(p => partialMap.set(p.name.toLowerCase(), p.amount));
+
+        // Assign shares
+        // For each person, if they have a partial payment: share = partial payment
+        // Else: share = even split of remainder among those without partial payments
+        const unpaidPeople = peopleList.filter(p => !partialMap.has(p.name.toLowerCase()));
+
+        const unpaidCount = unpaidPeople.length;
+
+        if (unpaidCount === 0 && partialSum < totalWithExtras - 0.01) {
+          alert('All people have partial payments but total partial payments do not cover entire bill.');
+          return;
+        }
+
+        const sharePerUnpaid = unpaidCount > 0 ? remaining / unpaidCount : 0;
+
+        let shares = peopleList.map(p => {
+          const partialPay = partialMap.get(p.name.toLowerCase());
+          return { name: p.name, share: partialPay !== undefined ? partialPay : sharePerUnpaid };
+        });
+
+        // Add partial payments with custom names that might not correspond to Person N
+        for (let p of partials) {
+          const exists = peopleList.some(pl => pl.name.toLowerCase() === p.name.toLowerCase());
+          if (!exists) {
+            shares.push({ name: p.name, share: p.amount });
+          }
+        }
+
+        // Round shares to 2 decimals and fix rounding differences by adjusting last unpaid person
+        shares = shares.map(s => ({ ...s, share: Math.round(s.share * 100) / 100 }));
+
+        // Adjust sum to exactly totalWithExtras
+        let sumShares = shares.reduce((a, s) => a + s.share, 0);
+        const difference = Math.round((totalWithExtras - sumShares) * 100) / 100;
+        if (Math.abs(difference) >= 0.01) {
+          // Find last person without partial payment or simply last person and adjust share
+          let adjIndex = shares.length - 1;
+          shares[adjIndex].share = +(shares[adjIndex].share + difference).toFixed(2);
+          sumShares = shares.reduce((a, s) => a + s.share, 0);
+        }
+
+        // Display summary
+        summaryDiv.innerHTML = '';
+        const ul = document.createElement('ul');
+        ul.className = "divide-y divide-indigo-200 border border-indigo-300 rounded-md overflow-hidden";
+        shares.forEach(({ name, share }) => {
+          const li = document.createElement('li');
+          li.className = "flex justify-between px-4 py-3 bg-white hover:bg-indigo-50 transition-colors";
+          li.innerHTML = `<strong>${name}</strong><span class="font-mono">${formatMoney(share)}</span>`;
+          ul.appendChild(li);
+        });
+        summaryDiv.appendChild(ul);
+
+        // Generate shareable link
+        // Encode: {total, people, tax, tip, partials}
+        const data = {
+          total,
+          people,
+          tax: taxPct,
+          tip: tipPct,
+          partials
+        };
+        const jsonStr = JSON.stringify(data);
+        const b64 = btoa(jsonStr);
+
+        // Create URL with param and showResult flag to load and show on page load
+        const baseUrl = window.location.origin + window.location.pathname;
+        const outUrl = `${baseUrl}?data=${encodeURIComponent(b64)}&showResult=1`;
+
+        shareLinkInput.value = outUrl;
+        resultSection.classList.remove('hidden');
+        copyMsg.classList.add('hidden');
+      }
+
+      copyBtn.addEventListener('click', () => {
+        shareLinkInput.select();
+        shareLinkInput.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+          copyMsg.classList.remove('hidden');
+          setTimeout(() => copyMsg.classList.add('hidden'), 2500);
+        });
+      });
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        calculateAndDisplay();
+        // Update URL to reflect current summary (doesn't reload page)
+        const params = new URLSearchParams(window.location.search);
+        // Prepare data
+        const total = parseFloat(form.total.value);
+        const people = parseInt(form.people.value);
+        const tax = parseFloat(form.tax.value) || 0;
+        const tip = parseFloat(form.tip.value) || 0;
+        const partials = parsePartials(form.partials.value);
+
+        const data = { total, people, tax, tip, partials };
+        const jsonStr = JSON.stringify(data);
+        const b64 = btoa(jsonStr);
+
+        params.set('data', b64);
+        params.set('showResult', '1');
+
+        const newUrl = window.location.pathname + '?' + params.toString();
+        window.history.replaceState({}, '', newUrl);
+      });
+
+      // Load data from URL if present
+      loadFromURL();
+    })();
+  </script>
+</body>
+</html>
+```

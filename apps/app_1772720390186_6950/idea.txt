@@ -1,0 +1,1 @@
+A web tool that instantly generates personalized daily habit reminders via email or SMS based on simple user input (e.g., goals, available time), helping users build consistent routines without complicated tracking apps.

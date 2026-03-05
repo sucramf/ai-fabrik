@@ -1,0 +1,22 @@
+Sure! Here's a simple and potentially profitable micro SaaS idea:
+
+**Automated Meeting Summary Generator**
+
+**Problem:** Professionals spend a lot of time taking notes during meetings, and sometimes important details are missed or notes are disorganized.
+
+**Solution:** A web app that integrates with popular video conferencing platforms (Zoom, Google Meet, Microsoft Teams) to automatically generate concise meeting summaries and action items from the transcriptions.
+
+**Key Features:**
+- Upload or connect recorded meetings or live transcription.
+- AI-powered summarization that extracts key points and action items.
+- Easy sharing and export options (PDF, email, Slack).
+- Searchable meeting history database.
+- Optional integrations with calendar apps for scheduling follow-ups.
+
+**Why it's profitable:**
+- Subscription model targeting small to medium-sized teams.
+- Saves time and increases productivity, a strong selling point.
+- Can start with simple transcription file uploads before integrating live APIs.
+- Potential to upsell analytics or advanced integrations.
+
+Would you like me to help you refine this idea or brainstorm others?

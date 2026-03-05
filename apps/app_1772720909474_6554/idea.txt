@@ -1,0 +1,1 @@
+A web tool that generates personalized daily email reminders for household chores, syncing with users’ calendars and adjusting tasks based on weather and season (e.g., watering plants less in rainy periods).

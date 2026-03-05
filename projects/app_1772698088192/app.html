@@ -1,0 +1,572 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CleanInbox - Minimalist Email Inbox Cleaner</title>
+<style>
+  :root {
+    --blue: #2a6df4;
+    --gray-light: #f5f7fa;
+    --gray-dark: #555;
+    --red: #e44c4c;
+    --green: #48a868;
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body {
+    margin: 0; padding: 0; background: var(--gray-light); font-family: var(--font-family); color: var(--gray-dark);
+  }
+  header {
+    background: var(--blue); color: white; text-align: center; padding: 1rem 1rem 1.5rem;
+  }
+  header h1 {
+    margin: 0; font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+  header p {
+    margin-top: 0.25rem; font-weight: 400; font-size: 1rem; opacity: 0.9;
+  }
+  main {
+    max-width: 800px; margin: 1.5rem auto; background: white; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+  }
+  button {
+    background: var(--blue); border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; font-size: 1rem;
+    cursor: pointer; transition: background-color 0.3s ease;
+  }
+  button:disabled {
+    background: #a3bffa; cursor: default;
+  }
+  button:hover:not(:disabled) {
+    background: #1e4cb8;
+  }
+  section#connect-section {
+    text-align: center; margin-bottom: 2rem;
+  }
+  #unsubscribe-list {
+    list-style: none; padding: 0; margin: 0 0 1.5rem 0;
+  }
+  #unsubscribe-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #ddd; padding: 0.75rem 0;
+  }
+  #unsubscribe-list li:last-child {
+    border-bottom: none;
+  }
+  .sender-info {
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .sender-logo {
+    width: 40px; height: 40px; background: var(--gray-light); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--blue);
+    font-size: 1.5rem; user-select: none;
+  }
+  .sender-details {
+    display: flex; flex-direction: column;
+  }
+  .sender-name {
+    font-weight: 600; font-size: 1.1rem;
+  }
+  .sender-email {
+    font-size: 0.85rem; color: #777;
+  }
+  .unsubscribe-btn {
+    background: var(--red); border: none; color: white; border-radius: 4px; padding: 0.4rem 0.8rem;
+    font-size: 0.9rem; cursor: pointer; transition: background-color 0.2s ease;
+  }
+  .unsubscribe-btn:hover:not(:disabled){
+    background: #b03d3d;
+  }
+  #bulk-unsubscribe-btn {
+    display: block; margin: 1rem auto 0 auto;
+    font-weight: 700;
+  }
+  #status-message {
+    text-align: center; padding: 0.75rem; margin-bottom: 1rem; border-radius: 6px; display: none;
+  }
+  #status-message.success {
+    background: var(--green); color: white;
+  }
+  #status-message.error {
+    background: var(--red); color: white;
+  }
+  #filters {
+    border: 1px solid #ccc; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;
+  }
+  #filters label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  #exclude-input {
+    width: 100%; padding: 0.5rem; border: 1px solid #bbb; border-radius: 4px;
+    font-size: 1rem;
+  }
+  footer {
+    text-align: center; font-size: 0.85rem; color: #999; margin: 2rem 0 1rem 0;
+  }
+  /* Loader */
+  .loader {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--blue);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  /* Scroll in list */
+  #unsubscribe-list-container {
+    max-height: 360px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0 1rem;
+  }
+  #plan-info {
+    font-size: 0.9rem; margin-bottom: 1rem; color: #444;
+  }
+  #signup {
+    margin-top: 1rem; font-weight: 700; color: var(--blue); cursor: pointer; text-decoration: underline;
+  }
+  #signup:hover {
+    color: #1e4cb8;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>CleanInbox</h1>
+  <p>Minimalist Email Inbox Cleaner — Unsubscribe with one click</p>
+</header>
+<main>
+  <section id="connect-section" aria-label="Connect your email account">
+    <button id="connect-btn" aria-label="Connect to Gmail">Connect Gmail</button>
+    <button id="connect-outlook-btn" aria-label="Connect to Outlook">Connect Outlook</button>
+    <p id="connect-status" role="status" aria-live="polite" style="margin-top: 0.75rem;"></p>
+  </section>
+
+  <section id="filters" aria-label="Subscription Filters">
+    <label for="exclude-input">Exclude important senders (comma-separated emails/domains):</label>
+    <input type="text" id="exclude-input" placeholder="e.g. boss@example.com, myfriend.com" />
+  </section>
+
+  <section id="unsubscribe-section" aria-label="List of subscriptions with unsubscribe options" style="display:none;">
+    <div id="plan-info"></div>
+    <div id="unsubscribe-list-container" tabindex="0" aria-live="polite" aria-relevant="additions removals">
+      <ul id="unsubscribe-list"></ul>
+    </div>
+    <button id="bulk-unsubscribe-btn" aria-label="Unsubscribe selected senders in bulk" disabled>Unsubscribe Selected</button>
+  </section>
+
+  <div id="status-message" role="alert"></div>
+</main>
+<footer>
+  &copy; 2024 CleanInbox &mdash; Simple, secure, and privacy-conscious inbox cleaner
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  /* 
+    NOTE: This demo simulates the app logic and UI but DOES NOT connect to real email APIs or OAuth,
+    because those require backend and OAuth setup.
+
+    This single-file demo implements:
+    - Simulated OAuth connect buttons with fake login flows
+    - Simulated inbox scan returning fake promotional senders
+    - Displays an actionable list with unsubscribe buttons and bulk unsubscribe
+    - Implements simple freemium logic: free 3 unsubscribes/month tracked in localStorage
+    - Exclude filter to skip senders by email/domain
+    - Shows status messages and disables buttons based on usage
+    - Shows simple UI for paid plan info and upgrading prompt
+
+    Real integration requires OAuth flows, secure backends, and email API usage for scanning and unsubscribe.
+  */
+
+  // App State & Config
+  const FREE_UNSUBSCRIBE_LIMIT = 3;
+  const PAID_PLAN = {
+    price: 5,
+    currency: "USD",
+    unlimited: true,
+    weeklyReports: true,
+    prioritySupport: true
+  };
+
+  // Elements
+  const connectBtn = document.getElementById("connect-btn");
+  const connectOutlookBtn = document.getElementById("connect-outlook-btn");
+  const connectStatus = document.getElementById("connect-status");
+  const unsubscribeSection = document.getElementById("unsubscribe-section");
+  const unsubscribeList = document.getElementById("unsubscribe-list");
+  const bulkUnsubscribeBtn = document.getElementById("bulk-unsubscribe-btn");
+  const statusMessage = document.getElementById("status-message");
+  const excludeInput = document.getElementById("exclude-input");
+  const planInfo = document.getElementById("plan-info");
+
+  // State
+  let userEmail = null;
+  let inboxData = []; // array of subscription objects: {id,email,senderName,logoUrl,unsubscribeUrl, selected}
+  let unsubscribeCountThisMonth = 0;
+  let isPaidUser = false; // For demo, toggle for testing paid/free plan behavior
+  let excludeList = [];
+
+  // Utilities to manage localStorage unsubscribe count resetting monthly
+  function getMonthKey() {
+    const d = new Date();
+    return d.getFullYear() + "-" + (d.getMonth() + 1);
+  }
+  function loadUnsubscribeCount() {
+    const key = "CleanInbox_unsubscribeCount_" + getMonthKey();
+    const count = parseInt(localStorage.getItem(key) || "0", 10);
+    return isNaN(count) ? 0 : count;
+  }
+  function saveUnsubscribeCount(count) {
+    const key = "CleanInbox_unsubscribeCount_" + getMonthKey();
+    localStorage.setItem(key, count.toString());
+  }
+
+  function setStatusMessage(text, type="") {
+    if (!text) {
+      statusMessage.style.display = "none";
+      statusMessage.textContent = "";
+      statusMessage.className = "";
+      return;
+    }
+    statusMessage.textContent = text;
+    statusMessage.className = type === "success" ? "success" : type === "error" ? "error" : "";
+    statusMessage.style.display = "block";
+  }
+
+  function createSenderLogo(name, email) {
+    // Generate initials fallback if no logo URL
+    if (!name) return email[0].toUpperCase();
+    const parts = name.trim().split(/\s+/);
+    let initials = "";
+    if (parts.length === 1) initials = parts[0][0];
+    else initials = parts[0][0] + parts[1][0];
+    return initials.toUpperCase();
+  }
+
+  function isExcluded(senderEmail) {
+    if (!senderEmail) return false;
+    const e = senderEmail.toLowerCase();
+    return excludeList.some(ex => {
+      ex = ex.trim().toLowerCase();
+      if (!ex) return false;
+      if (ex.includes("@")) {
+        // full email match
+        return e === ex;
+      } else {
+        // domain exclusion: check domain part of email
+        return e.endsWith("@" + ex);
+      }
+    });
+  }
+
+  // Simulated Inbox Scan (mock data)
+  function simulateInboxScan() {
+    // Sample promotional senders with unsubscribe links (fake URLs)
+    const sampleSenders = [
+      {
+        id: "promo1",
+        email: "deals@weeklyoffers.com",
+        senderName: "Weekly Offers",
+        logoUrl: null,
+        unsubscribeUrl: "https://example.com/unsubscribe/deals"
+      },
+      {
+        id: "newsletter1",
+        email: "newsletter@technews.com",
+        senderName: "Tech News Daily",
+        logoUrl: null,
+        unsubscribeUrl: "https://example.com/unsubscribe/technews"
+      },
+      {
+        id: "promos2",
+        email: "sales@flashsales.com",
+        senderName: "Flash Sales",
+        logoUrl: null,
+        unsubscribeUrl: "https://example.com/unsubscribe/flashsales"
+      },
+      {
+        id: "offers3",
+        email: "offers@shoppinghub.com",
+        senderName: "Shopping Hub",
+        logoUrl: null,
+        unsubscribeUrl: "https://example.com/unsubscribe/shoppinghub"
+      },
+      {
+        id: "noreply@newsletters.com",
+        email: "noreply@newsletters.com",
+        senderName: "Daily Deals",
+        logoUrl: null,
+        unsubscribeUrl: "https://example.com/unsubscribe/dailydeals"
+      }
+    ];
+    // Filter out excluded senders according to excludeList
+    return sampleSenders.filter(s => !isExcluded(s.email));
+  }
+
+  function renderUnsubscribeList() {
+    unsubscribeList.innerHTML = "";
+    if (inboxData.length === 0) {
+      unsubscribeList.innerHTML = "<li>No subscriptions detected for unsubscribe.</li>";
+      bulkUnsubscribeBtn.disabled = true;
+      return;
+    }
+    inboxData.forEach(item => {
+      const li = document.createElement("li");
+      const senderInfoDiv = document.createElement("div");
+      senderInfoDiv.className = "sender-info";
+
+      // Logo
+      const logoDiv = document.createElement("div");
+      logoDiv.className = "sender-logo";
+      if (item.logoUrl) {
+        const img = document.createElement("img");
+        img.src = item.logoUrl;
+        img.alt = item.senderName || item.email || "Sender Logo";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+        logoDiv.textContent = "";
+        logoDiv.appendChild(img);
+      } else {
+        logoDiv.textContent = createSenderLogo(item.senderName, item.email);
+      }
+      senderInfoDiv.appendChild(logoDiv);
+
+      // Details
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className = "sender-details";
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "sender-name";
+      nameSpan.textContent = item.senderName || item.email;
+
+      const emailSpan = document.createElement("span");
+      emailSpan.className = "sender-email";
+      emailSpan.textContent = item.email;
+
+      detailsDiv.appendChild(nameSpan);
+      detailsDiv.appendChild(emailSpan);
+      senderInfoDiv.appendChild(detailsDiv);
+
+      li.appendChild(senderInfoDiv);
+
+      // One-click unsubscribe button
+      const btn = document.createElement("button");
+      btn.className = "unsubscribe-btn";
+      btn.textContent = "Unsubscribe";
+      btn.disabled = false;
+      btn.setAttribute("aria-label", `Unsubscribe from ${item.senderName || item.email}`);
+      btn.onclick = () => handleUnsubscribe(item.id, btn);
+
+      li.appendChild(btn);
+
+      // Checkbox for bulk unsubscribe
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.style.marginLeft = "12px";
+      checkbox.setAttribute("aria-label", `Select ${item.senderName || item.email} to unsubscribe in bulk`);
+      checkbox.onchange = () => {
+        item.selected = checkbox.checked;
+        updateBulkUnsubscribeButtonState();
+      };
+      li.insertBefore(checkbox, li.firstChild);
+
+      unsubscribeList.appendChild(li);
+    });
+
+    updateBulkUnsubscribeButtonState();
+  }
+
+  // Update bulk unsubscribe button enabled/disabled state
+  function updateBulkUnsubscribeButtonState() {
+    const anySelected = inboxData.some(i => i.selected);
+    if (!isPaidUser) {
+      // Free user limited unsubscribes left
+      const left = FREE_UNSUBSCRIBE_LIMIT - unsubscribeCountThisMonth;
+      const canUnsubscribeCount = inboxData.filter(i => i.selected).length;
+      bulkUnsubscribeBtn.disabled = !anySelected || (left < canUnsubscribeCount);
+    } else {
+      bulkUnsubscribeBtn.disabled = !anySelected;
+    }
+  }
+
+  // Handle one-click unsubscribe for one sender
+  function handleUnsubscribe(senderId, buttonElem) {
+    const item = inboxData.find(i => i.id === senderId);
+    if (!item || buttonElem.disabled) return;
+
+    if (!isPaidUser && unsubscribeCountThisMonth >= FREE_UNSUBSCRIBE_LIMIT) {
+      setStatusMessage(`Free plan limit reached. Upgrade to unsubscribe more senders.`, "error");
+      return;
+    }
+
+    buttonElem.disabled = true;
+    buttonElem.textContent = "Processing...";
+    setStatusMessage("", ""); // Clear
+
+    // Simulate an async unsubscribe process (e.g. API call or unsubscribe url visit)
+    setTimeout(() => {
+      // Mark as unsubscribed and remove from list
+      inboxData = inboxData.filter(i => i.id !== senderId);
+      unsubscribeCountThisMonth++;
+      saveUnsubscribeCount(unsubscribeCountThisMonth);
+      setStatusMessage(`Unsubscribed from ${item.senderName || item.email}.`, "success");
+      renderUnsubscribeList();
+      updatePlanInfo();
+      connectStatus.textContent = "";
+    }, 1200);
+  }
+
+  // Handle bulk unsubscribe button click
+  function handleBulkUnsubscribe() {
+    const toUnsubscribe = inboxData.filter(i => i.selected);
+    if (toUnsubscribe.length === 0) return;
+
+    if (!isPaidUser) {
+      const left = FREE_UNSUBSCRIBE_LIMIT - unsubscribeCountThisMonth;
+      if (toUnsubscribe.length > left) {
+        setStatusMessage(`You can only unsubscribe ${left} more sender(s) this month on the free plan.`, "error");
+        return;
+      }
+    }
+
+    bulkUnsubscribeBtn.disabled = true;
+    bulkUnsubscribeBtn.textContent = "Processing...";
+
+    // Simulate batch unsubscribe delay
+    setTimeout(() => {
+      const unsubscribedNames = toUnsubscribe.map(i => i.senderName || i.email);
+      inboxData = inboxData.filter(i => !i.selected);
+      unsubscribeCountThisMonth += toUnsubscribe.length;
+      saveUnsubscribeCount(unsubscribeCountThisMonth);
+      setStatusMessage(`Unsubscribed from ${unsubscribedNames.join(", ")}.`, "success");
+      renderUnsubscribeList();
+      updatePlanInfo();
+      bulkUnsubscribeBtn.textContent = "Unsubscribe Selected";
+      connectStatus.textContent = "";
+    }, 1600);
+  }
+
+  // Update plan info text and possible upgrade prompt
+  function updatePlanInfo() {
+    if (isPaidUser) {
+      planInfo.textContent = "You have a paid plan with unlimited unsubscribes, weekly reports, and priority support.";
+    } else {
+      const left = FREE_UNSUBSCRIBE_LIMIT - unsubscribeCountThisMonth;
+      planInfo.innerHTML = `
+        Free plan: You have <strong>${left}</strong> unsubscribe${left !== 1 ? "s" : ""} left this month. 
+        <span id="signup" role="button" tabindex="0" aria-label="Upgrade to paid plan">Upgrade for $5/month</span>
+      `;
+      const signupEl = document.getElementById("signup");
+      signupEl.onclick = () => handleUpgrade();
+      signupEl.onkeypress = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleUpgrade();
+        }
+      };
+
+      if (left <= 0) {
+        setStatusMessage(`Free unsubscribe limit reached. Please upgrade to continue unsubscribing.`, "error");
+      } else {
+        setStatusMessage("");
+      }
+    }
+  }
+
+  // Simulate upgrade flow
+  function handleUpgrade() {
+    const confirmUpgrade = confirm(`Subscribe to CleanInbox paid plan for $${PAID_PLAN.price}/month?\nYou get unlimited unsubscribes, weekly reports, and priority support.`);
+    if (confirmUpgrade) {
+      isPaidUser = true;
+      setStatusMessage("Thank you for upgrading to the paid plan! You now have unlimited unsubscribes.", "success");
+      updatePlanInfo();
+      renderUnsubscribeList();
+    }
+  }
+
+  // Simulate OAuth sign-in flows
+
+  async function simulateOAuth(provider) {
+    setStatusMessage("", "");
+    connectStatus.textContent = "";
+    connectBtn.disabled = true;
+    connectOutlookBtn.disabled = true;
+    connectBtn.textContent = provider === "gmail" ? "Connecting..." : connectBtn.textContent;
+    connectOutlookBtn.textContent = provider === "outlook" ? "Connecting..." : connectOutlookBtn.textContent;
+
+    // Simulate OAuth login delay and success/fail
+    try {
+      await new Promise(res => setTimeout(res, 1500));
+      // Fake success - assign user email depending on provider
+      userEmail = provider === "gmail" ? "user@gmail.com" : "user@outlook.com";
+      connectStatus.textContent = `Connected as ${userEmail}`;
+      setStatusMessage(`Connected to ${provider === "gmail" ? "Gmail" : "Outlook"} successfully! Scanning inbox...`, "success");
+
+      // Simulate inbox scan and update UI
+      excludeList = parseExcludeFilter();
+      inboxData = simulateInboxScan();
+      // Add selected property default false
+      inboxData.forEach(i => i.selected = false);
+
+      unsubscribeSection.style.display = "block";
+      updatePlanInfo();
+      renderUnsubscribeList();
+    } catch (e) {
+      setStatusMessage("Failed to connect. Please try again.", "error");
+    } finally {
+      connectBtn.disabled = false;
+      connectOutlookBtn.disabled = false;
+      connectBtn.textContent = "Connect Gmail";
+      connectOutlookBtn.textContent = "Connect Outlook";
+    }
+  }
+
+  // Parse exclude input field on demand
+  function parseExcludeFilter() {
+    const raw = excludeInput.value || "";
+    return raw.split(",").map(s => s.trim()).filter(s => s.length > 0);
+  }
+
+  function handleExcludeInputChange() {
+    excludeList = parseExcludeFilter();
+    if (userEmail) {
+      // Re-simulate inbox scan with new filters
+      inboxData = simulateInboxScan();
+      inboxData.forEach(i => i.selected = false);
+      renderUnsubscribeList();
+    }
+  }
+
+  // Event Listeners
+  connectBtn.addEventListener("click", () => simulateOAuth("gmail"));
+  connectOutlookBtn.addEventListener("click", () => simulateOAuth("outlook"));
+  bulkUnsubscribeBtn.addEventListener("click", handleBulkUnsubscribe);
+  excludeInput.addEventListener("input", () => {
+    handleExcludeInputChange();
+  });
+
+  // On load: load unsubscribe count from storage and show no connection state
+  unsubscribeCountThisMonth = loadUnsubscribeCount();
+
+  // Welcome message in status
+  setStatusMessage("Connect your Gmail or Outlook account to start cleaning your inbox.", "");
+
+})();
+</script>
+</body>
+</html>
+```

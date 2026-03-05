@@ -1,0 +1,829 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Minute Minute</title>
+<style>
+  :root {
+    --color-bg: #fefefe;
+    --color-primary: #2a7ae2;
+    --color-secondary: #555;
+    --color-accent: #e26a6a;
+    --color-muted: #888;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; padding:0;
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-secondary);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    background: var(--color-primary);
+    color: white;
+    padding: 0.8rem 1rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  main {
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+    height: calc(100vh - 44px);
+  }
+  /* Sidebar */
+  #sidebar {
+    width: 280px;
+    background: #f5f7fa;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+  }
+  #sidebar header {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid #ddd;
+  }
+  #search {
+    margin: 0.5rem 1rem 0.5rem 1rem;
+    padding: 0.4rem;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: calc(100% - 2rem);
+  }
+  #meetingList {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    margin-top: 0.5rem;
+  }
+  .meetingItem {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    user-select: none;
+  }
+  .meetingItem:hover,
+  .meetingItem.active {
+    background: var(--color-primary);
+    color: white;
+  }
+  .meetingDate {
+    font-size: 0.7rem;
+    color: var(--color-muted);
+  }
+
+  /* Content */
+  #content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
+  }
+  form > label {
+    font-weight: 600;
+    margin-top: 1rem;
+    display: block;
+  }
+  input[type=text],
+  input[type=date],
+  input[type=email],
+  textarea {
+    width: 100%;
+    padding: 0.45rem 0.5rem;
+    margin-top: 0.3rem;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    font-size: 1rem;
+    font-family: var(--font-sans);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+  textarea.multiline {
+    min-height: 120px;
+  }
+  /* Action item rows */
+  #actionItemsWrapper {
+    margin-top:0.5rem;
+  }
+  .actionItemRow {
+    display: grid;
+    grid-template-columns: 4fr 3fr 3fr 1fr;
+    grid-gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+  .actionItemRow input[type=text],
+  .actionItemRow input[type=date],
+  .actionItemRow input[type=email] {
+    font-size: 0.9rem;
+  }
+  .actionItemRow button {
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    color: var(--color-accent);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 0.15rem;
+    user-select: none;
+  }
+  .actionItemRow button:hover {
+    color: #c33;
+  }
+  /* Buttons */
+  .btn {
+    margin-top: 1.2rem;
+    background: var(--color-primary);
+    border: none;
+    border-radius: 4px;
+    padding: 0.7rem 1.2rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+  }
+  .btn:disabled {
+    background: #a4beff;
+    cursor: default;
+  }
+  .btn-secondary {
+    background: #eee;
+    color: var(--color-secondary);
+    margin-left: 0.8rem;
+  }
+  /* Footer */
+  footer {
+    flex-shrink: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    border-top: 1px solid #ddd;
+    text-align: center;
+  }
+
+  /* Scrollbar styling (for supporting browsers) */
+  #meetingList::-webkit-scrollbar,
+  #content::-webkit-scrollbar {
+    width: 8px;
+  }
+  #meetingList::-webkit-scrollbar-thumb,
+  #content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  #meetingList::-webkit-scrollbar-track,
+  #content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    main {
+      flex-direction: column;
+      height: auto;
+    }
+    #sidebar {
+      width: 100%;
+      height: 240px;
+      border-right: none;
+      border-bottom: 1px solid #ddd;
+    }
+    #content {
+      padding: 1rem 1rem 2rem;
+      flex-grow: 1;
+      height: calc(100vh - 44px - 240px);
+      overflow-y: auto;
+    }
+  }
+  /* Collaborative cursor */
+  .cursor {
+    position: absolute;
+    pointer-events: none;
+    transform-origin: bottom left;
+    user-select: none;
+  }
+  .cursor-color-block {
+    width: 8px;
+    height: 18px;
+    margin-right: 3px;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+  .cursor-name {
+    background: #222;
+    color: white;
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+  
+  /* Simple toast - temporary messages */
+  #toast {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-primary);
+    color: white;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+  }
+  #toast.show {
+    opacity: 0.95;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+<header>Meeting Minute Minute</header>
+<main>
+  <nav id="sidebar" aria-label="Meeting minutes archive">
+    <header>Archive <button id="newMeetingBtn" title="New Meeting" aria-label="Create new meeting" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--color-primary);font-size:1.2rem;">＋</button></header>
+    <input type="search" id="search" placeholder="Search meetings..." aria-label="Search meetings"/>
+    <div id="meetingList" tabindex="0" aria-live="polite" aria-relevant="additions"></div>
+  </nav>
+  <section id="content" aria-live="polite" aria-atomic="true" aria-relevant="additions removals">
+    <form id="meetingForm" autocomplete="off">
+      <label for="meetingDate">Date</label>
+      <input type="date" id="meetingDate" name="date" required aria-required="true" />
+
+      <label for="meetingTitle">Meeting Title / Agenda</label>
+      <input type="text" id="meetingTitle" name="title" placeholder="Brief Meeting Title or Agenda" required aria-required="true" />
+
+      <label for="attendees">Attendees (comma separated emails)</label>
+      <input type="text" id="attendees" name="attendees" placeholder="e.g. alice@example.com, bob@example.com"  autocomplete="email" />
+
+      <label for="discussionPoints">Discussion Points / Notes</label>
+      <textarea id="discussionPoints" name="discussionPoints" class="multiline" placeholder="Write notes, decisions, key points..."></textarea>
+
+      <label>Action Items</label>
+      <div id="actionItemsWrapper" aria-label="Action items list"></div>
+      <button type="button" class="btn-secondary" id="addActionItemBtn" style="font-size:0.9rem;">+ Add action item</button>
+
+      <div style="margin-top: 1.8rem;">
+        <button type="submit" class="btn" id="saveMeetingBtn">Save Meeting</button>
+        <button type="button" class="btn-secondary" id="emailSummaryBtn" disabled>Send Email Summary</button>
+      </div>
+    </form>
+  </section>
+</main>
+<footer>
+  &copy; 2024 Meeting Minute Minute — Small teams, simple meeting notes.
+</footer>
+<div id="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+<script>
+(() => {
+  // Utility
+  function showToast(message, duration=2500) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toast._timeoutId);
+    toast._timeoutId = setTimeout(() => {
+      toast.classList.remove('show');
+    }, duration);
+  }
+
+  // Generate unique id
+  function makeId(len = 8) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for(let i=0; i<len; i++) {
+      id += chars.charAt(Math.floor(Math.random()*chars.length));
+    }
+    return id;
+  }
+
+  // Storage keys
+  const STORAGE_KEY = 'mmm_meetings_v1';
+
+  // Load all meetings from localStorage
+  function loadMeetings() {
+    try {
+      let data = localStorage.getItem(STORAGE_KEY);
+      if (!data) return [];
+      return JSON.parse(data);
+    } catch(e) {
+      console.error(e);
+      return [];
+    }
+  }
+  // Save all meetings to localStorage
+  function saveMeetings(meetings) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(meetings));
+    } catch(e) {
+      console.error(e);
+      showToast('Storage error: could not save.');
+    }
+  }
+
+  // Format date (yyyy-mm-dd) to localized date string e.g. Jan 25, 2024
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+  }
+
+  // Parse attendees textarea string to array of trimmed emails
+  function parseAttendees(text) {
+    return text
+      .split(',')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+  }
+
+  // Validate email simple regex
+  function isValidEmail(email) {
+    // simple check
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Meeting item DOM elements
+  const meetingListElem = document.getElementById('meetingList');
+  const searchInput = document.getElementById('search');
+  const newMeetingBtn = document.getElementById('newMeetingBtn');
+  const emailSummaryBtn = document.getElementById('emailSummaryBtn');
+
+  // Form elements
+  const meetingForm = document.getElementById('meetingForm');
+  const meetingDateInput = document.getElementById('meetingDate');
+  const meetingTitleInput = document.getElementById('meetingTitle');
+  const attendeesInput = document.getElementById('attendees');
+  const discussionPointsInput = document.getElementById('discussionPoints');
+  const actionItemsWrapper = document.getElementById('actionItemsWrapper');
+  const addActionItemBtn = document.getElementById('addActionItemBtn');
+
+  // Current meeting being edited (id)
+  let currentMeetingId = null;
+
+  // Current meetings loaded in memory
+  let meetings = loadMeetings();
+
+  // Render meeting list in sidebar (filtered with search)
+  function renderMeetingList(filter='') {
+    meetingListElem.innerHTML = '';
+    // Sort by date descending
+    let sorted = [...meetings].sort((a, b) => (b.date?.localeCompare(a.date)));
+    if (filter) {
+      filter = filter.toLowerCase();
+      sorted = sorted.filter(m => {
+        return m.title.toLowerCase().includes(filter)
+          || (m.discussionPoints && m.discussionPoints.toLowerCase().includes(filter))
+          || (m.attendees && m.attendees.some(a => a.toLowerCase().includes(filter)))
+          || (m.actionItems && m.actionItems.some(item=> 
+            (item.task && item.task.toLowerCase().includes(filter)) ||
+            (item.assignee && item.assignee.toLowerCase().includes(filter))
+          ));
+      });
+    }
+    if (sorted.length === 0) {
+      const emptyElem = document.createElement('div');
+      emptyElem.textContent = 'No meetings found.';
+      emptyElem.style.color = 'var(--color-muted)';
+      emptyElem.style.padding = '0.7rem 1rem';
+      meetingListElem.appendChild(emptyElem);
+      return;
+    }
+    for (const m of sorted) {
+      const div = document.createElement('div');
+      div.className = 'meetingItem';
+      div.tabIndex = 0;
+      if (m.id === currentMeetingId) div.classList.add('active');
+      div.dataset.id = m.id;
+      const title = document.createElement('div');
+      title.textContent = m.title || '(Untitled)';
+      title.style.fontWeight = '600';
+      const date = document.createElement('div');
+      date.className = 'meetingDate';
+      date.textContent = formatDate(m.date);
+      div.appendChild(title);
+      div.appendChild(date);
+      div.addEventListener('click', () => selectMeeting(m.id));
+      div.addEventListener('keydown', (ev) => {
+        if(ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          selectMeeting(m.id);
+        }
+      });
+      meetingListElem.appendChild(div);
+    }
+  }
+
+  // Select meeting by id - load it into form
+  function selectMeeting(id) {
+    const m = meetings.find(x => x.id === id);
+    if (!m) return;
+    currentMeetingId = id;
+    meetingDateInput.value = m.date || '';
+    meetingTitleInput.value = m.title || '';
+    attendeesInput.value = m.attendees ? m.attendees.join(', ') : '';
+    discussionPointsInput.value = m.discussionPoints || '';
+    renderActionItems(m.actionItems || []);
+    renderMeetingList(searchInput.value);
+    emailSummaryBtn.disabled = false;
+    scrollFormIntoView();
+  }
+
+  // Scroll form a bit to top for better UX on mobile after loading
+  function scrollFormIntoView() {
+    setTimeout(() => {
+      meetingForm.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }, 100);
+  }
+
+  // Clear form - for new meeting
+  function clearForm() {
+    currentMeetingId = null;
+    meetingDateInput.value = new Date().toISOString().slice(0,10);
+    meetingTitleInput.value = '';
+    attendeesInput.value = '';
+    discussionPointsInput.value = '';
+    renderActionItems([]);
+    emailSummaryBtn.disabled = true;
+    renderMeetingList(searchInput.value);
+  }
+
+  // Render action items array in the actionItemsWrapper
+  function renderActionItems(items) {
+    actionItemsWrapper.innerHTML = '';
+    if (!items.length) {
+      const noActionElem = document.createElement('div');
+      noActionElem.style.color = 'var(--color-muted)';
+      noActionElem.style.fontStyle = 'italic';
+      noActionElem.textContent = 'No action items yet.';
+      actionItemsWrapper.appendChild(noActionElem);
+      return;
+    }
+    items.forEach(({task, assignee, deadline}, index) => {
+      addActionItemRow({task, assignee, deadline}, index);
+    });
+  }
+
+  // Add a new empty or provided action item row to UI
+  function addActionItemRow(data = {task:'', assignee:'', deadline:''}, index = -1) {
+    if (index === -1) {
+      // Append at the end, remove "No action items yet." if present
+      if(actionItemsWrapper.children.length === 1 && actionItemsWrapper.children[0].textContent === 'No action items yet.') {
+        actionItemsWrapper.innerHTML = '';
+      }
+    }
+    const row = document.createElement('div');
+    row.className = 'actionItemRow';
+    // Task input (text)
+    const taskInput = document.createElement('input');
+    taskInput.type = 'text';
+    taskInput.placeholder = 'Task description';
+    taskInput.value = data.task;
+    taskInput.autocomplete = 'off';
+    // Assignee input (email)
+    const assigneeInput = document.createElement('input');
+    assigneeInput.type = 'email';
+    assigneeInput.placeholder = 'Assignee email';
+    assigneeInput.value = data.assignee;
+    assigneeInput.autocomplete = 'email';
+    // Deadline input (date)
+    const deadlineInput = document.createElement('input');
+    deadlineInput.type = 'date';
+    deadlineInput.value = data.deadline;
+    // Remove button
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.title = 'Remove action item';
+    removeBtn.setAttribute('aria-label', 'Remove action item');
+    removeBtn.textContent = '✕';
+    removeBtn.addEventListener('click', () => {
+      row.remove();
+      if(actionItemsWrapper.children.length === 0) {
+        renderActionItems([]);
+      }
+    });
+    row.appendChild(taskInput);
+    row.appendChild(assigneeInput);
+    row.appendChild(deadlineInput);
+    row.appendChild(removeBtn);
+    actionItemsWrapper.appendChild(row);
+  }
+
+  // Gather action items data from UI
+  function getActionItemsFromUI() {
+    const rows = Array.from(actionItemsWrapper.querySelectorAll('.actionItemRow'));
+    let result = [];
+    for (const row of rows) {
+      const inputs = row.querySelectorAll('input');
+      if(inputs.length < 3) continue;
+      let task = inputs[0].value.trim();
+      let assignee = inputs[1].value.trim();
+      let deadline = inputs[2].value;
+      // Validate and include only if task has content
+      if(task) {
+        result.push({task, assignee, deadline});
+      }
+    }
+    return result;
+  }
+
+  // Save or update meeting from form data
+  function saveCurrentMeeting() {
+    let date = meetingDateInput.value;
+    const title = meetingTitleInput.value.trim();
+    const attendeesRaw = attendeesInput.value;
+    const discussionPoints = discussionPointsInput.value.trim();
+    const actionItems = getActionItemsFromUI();
+
+    if (!date) {
+      showToast('Please select meeting date.');
+      meetingDateInput.focus();
+      return false;
+    }
+    if (!title) {
+      showToast('Meeting title is required.');
+      meetingTitleInput.focus();
+      return false;
+    }
+    let attendees = parseAttendees(attendeesRaw);
+    // Validate emails for attendees
+    for (const a of attendees) {
+      if (!isValidEmail(a)) {
+        showToast(`Invalid attendee email: ${a}`);
+        attendeesInput.focus();
+        return false;
+      }
+    }
+    // Validate action items assignee emails (if provided)
+    for(const act of actionItems) {
+      if(act.assignee && !isValidEmail(act.assignee)) {
+        showToast(`Invalid action item assignee email: ${act.assignee}`);
+        return false;
+      }
+    }
+
+    // Normalize date (yyyy-mm-dd)
+    if (date.length > 10) date = date.slice(0,10);
+
+    const newMeetingData = {
+      id: currentMeetingId || makeId(),
+      date,
+      title,
+      attendees,
+      discussionPoints,
+      actionItems
+    };
+
+    if (currentMeetingId) {
+      // Update existing meeting
+      const idx = meetings.findIndex(m=>m.id === currentMeetingId);
+      if (idx !== -1) {
+        meetings[idx] = newMeetingData;
+      } else {
+        meetings.push(newMeetingData);
+        currentMeetingId = newMeetingData.id;
+      }
+    } else {
+      // New meeting, add
+      meetings.push(newMeetingData);
+      currentMeetingId = newMeetingData.id;
+    }
+
+    saveMeetings(meetings);
+    renderMeetingList(searchInput.value);
+    showToast('Meeting saved');
+    emailSummaryBtn.disabled = false;
+    return true;
+  }
+
+  // Compose email body text from meeting data
+  function composeEmailBody(meeting) {
+    let lines = [];
+    lines.push(`Meeting Title / Agenda: ${meeting.title}`);
+    lines.push(`Date: ${formatDate(meeting.date)}`);
+    lines.push('');
+    if (meeting.attendees && meeting.attendees.length > 0) {
+      lines.push('Attendees:');
+      meeting.attendees.forEach(a => lines.push(`- ${a}`));
+      lines.push('');
+    }
+    if (meeting.discussionPoints) {
+      lines.push('Discussion Points / Notes:');
+      lines.push(meeting.discussionPoints);
+      lines.push('');
+    }
+    if (meeting.actionItems && meeting.actionItems.length > 0) {
+      lines.push('Action Items:');
+      meeting.actionItems.forEach((item,i) => {
+        let line = `${i+1}. ${item.task}`;
+        if (item.assignee) line += ` (Assignee: ${item.assignee})`;
+        if (item.deadline) line += ` - Due: ${formatDate(item.deadline)}`;
+        lines.push(line);
+      });
+    }
+    return lines.join('\n');
+  }
+
+  // Send email summary: open mailto links for each attendee
+  // Because browsers disallow JS mail sending, we open mailto: with body and recipients
+  function sendEmailSummary() {
+    if (!currentMeetingId) {
+      showToast('Save a meeting first before emailing.');
+      return;
+    }
+    const meeting = meetings.find(m => m.id === currentMeetingId);
+    if (!meeting) {
+      showToast('Meeting not found.');
+      return;
+    }
+    if (!meeting.attendees || meeting.attendees.length === 0) {
+      if (!confirm('No attendees set. Proceed with empty recipients?')) return;
+    }
+    const toEmails = meeting.attendees.join(',');
+    const subject = 'Meeting Minutes: ' + (meeting.title || 'Untitled');
+    const body = composeEmailBody(meeting);
+
+    // Encode subject and body for mailto link
+    const mailto = `mailto:${encodeURIComponent(toEmails)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // Open in new tab to trigger client email app
+    window.open(mailto, '_blank');
+    showToast('Email summary opened in your mail client.');
+  }
+
+  // Collaborative editing basics
+  // This is a simplified simulation using BroadcastChannel (works on most modern browsers)
+  // We'll sync form fields and action items live within the same origin tabs/windows.
+  // Each tab has a random user color and id.
+
+  const collabChannel = new BroadcastChannel('mmm_collaboration');
+  const USER_ID = makeId(6);
+  const USER_COLOR = `hsl(${Math.floor(Math.random()*360)}, 70%, 60%)`;
+  let collabUsers = {};
+
+  function broadcastUpdate() {
+    if (!currentMeetingId) return; // do not broadcast unsaved blank forms
+
+    // Package minimal meeting data (all fields)
+    const data = {
+      type: 'update',
+      userId: USER_ID,
+      meetingId: currentMeetingId,
+      payload: {
+        date: meetingDateInput.value,
+        title: meetingTitleInput.value,
+        attendees: attendeesInput.value,
+        discussionPoints: discussionPointsInput.value,
+        actionItems: getActionItemsFromUI()
+      }
+    };
+    collabChannel.postMessage(data);
+  }
+
+  // Receive update from others and merge (if for current meeting)
+  collabChannel.onmessage = (ev) => {
+    if (!ev.data || ev.data.userId === USER_ID) return;
+    if (ev.data.type !== 'update') return;
+    if (ev.data.meetingId !== currentMeetingId) return;
+
+    // Merge simple text fields if they differ from local
+    const p = ev.data.payload;
+    let changed = false;
+    if (meetingDateInput.value !== p.date) {
+      meetingDateInput.value = p.date;
+      changed = true;
+    }
+    if (meetingTitleInput.value !== p.title) {
+      meetingTitleInput.value = p.title;
+      changed = true;
+    }
+    if (attendeesInput.value !== p.attendees) {
+      attendeesInput.value = p.attendees;
+      changed = true;
+    }
+    if (discussionPointsInput.value !== p.discussionPoints) {
+      discussionPointsInput.value = p.discussionPoints;
+      changed = true;
+    }
+
+    // For action items - to avoid cursor conflicts, replace entire list
+    const localItems = getActionItemsFromUI();
+    const remoteItems = p.actionItems || [];
+    // Simple deep compare
+    if (JSON.stringify(localItems) !== JSON.stringify(remoteItems)) {
+      renderActionItems(remoteItems);
+      changed = true;
+    }
+    if (changed) {
+      showToast(`Update from collaborator`);
+    }
+  };
+
+  // UI event handlers for collaboration
+
+  // On input changes, broadcast update (debounce to avoid flooding)
+  let broadcastTimeout = null;
+  function onInputChange() {
+    if (broadcastTimeout) clearTimeout(broadcastTimeout);
+    broadcastTimeout = setTimeout(() => {
+      broadcastUpdate();
+    }, 300);
+  }
+
+  meetingDateInput.addEventListener('input', onInputChange);
+  meetingTitleInput.addEventListener('input', onInputChange);
+  attendeesInput.addEventListener('input', onInputChange);
+  discussionPointsInput.addEventListener('input', onInputChange);
+  // Action items inputs are dynamic - delegate on container
+  actionItemsWrapper.addEventListener('input', onInputChange);
+
+  // UI interactions
+
+  // Add new action item button
+  addActionItemBtn.addEventListener('click', () => {
+    addActionItemRow();
+    onInputChange();
+  });
+
+  // Meeting save form submit
+  meetingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (saveCurrentMeeting()) {
+      // Broadcast update on save
+      broadcastUpdate();
+    }
+  });
+
+  // New meeting button
+  newMeetingBtn.addEventListener('click', () => {
+    clearForm();
+  });
+
+  // Email summary button
+  emailSummaryBtn.addEventListener('click', () => {
+    sendEmailSummary();
+  });
+
+  // Search input filter meetings as user types (debounced)
+  let searchDebounce;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => {
+      renderMeetingList(searchInput.value);
+    }, 200);
+  });
+
+  // Initializations
+
+  // Show today's date default for new
+  function init() {
+    if(meetings.length > 0) {
+      // Load latest meeting on startup
+      const latest = meetings.reduce((a,b) => (!a || b.date > a.date)? b : a, null);
+      selectMeeting(latest.id);
+    } else {
+      clearForm();
+    }
+    renderMeetingList();
+  }
+
+  init();
+
+  // Keyboard shortcuts
+  // Ctrl+N new meeting, Ctrl+S save
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') {
+      e.preventDefault();
+      clearForm();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      if(saveCurrentMeeting()) {
+        broadcastUpdate();
+      }
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
+```

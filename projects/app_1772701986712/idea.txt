@@ -1,0 +1,26 @@
+Sure! Here’s a simple, profitable micro SaaS idea:
+
+**App Name:** Meeting Minute Master
+
+**Concept:**  
+A lightweight web app that helps small teams and freelancers quickly create, organize, and share meeting minutes. The app uses simple templates and smart reminders to ensure action items are tracked and deadlines met without the bloat of full project management tools.
+
+**Key Features:**  
+- Easy meeting minute templates (editable)  
+- Action item assignment with due dates and email reminders  
+- Searchable archive of past meeting notes  
+- Export notes to PDF or shareable web link  
+- Integrations with Google Calendar and Slack for scheduling and notifications  
+- User-friendly interface to capture quick notes during meetings  
+
+**Target Market:**  
+- Small businesses, startups, freelancer teams, and consultants who need a simple, focused meeting notes tool without the complexity of larger collaboration suites.
+
+**Monetization:**  
+- Freemium model: Free for up to 3 active projects, then a small monthly fee (e.g., $5/month) for unlimited projects and additional integrations.  
+- Optional premium templates and custom branding for teams.
+
+**Why It Can Be Profitable:**  
+Many teams rely on email and bulky project management tools to track meeting outcomes, which can be inefficient. A focused, easy-to-use tool that saves time and improves accountability can attract paying users willing to subscribe for simplicity and productivity gains.
+
+Would you like me to help you outline the MVP or tech stack next?

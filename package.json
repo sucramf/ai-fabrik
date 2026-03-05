@@ -1,0 +1,13 @@
+{
+  "name": "ai-fabrik",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node superchief.js",
+    "deploy": "gh-pages -d deploy"
+  },
+  "dependencies": {
+    "openai": "^4.0.0",
+    "gh-pages": "^6.0.0"
+  }
+}

@@ -1,0 +1,421 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StockAlert - Inventory Restock Alerts for Small Shops</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    /* Custom scrollbar for the inventory list */
+    .inventory-list::-webkit-scrollbar {
+      width: 8px;
+    }
+    .inventory-list::-webkit-scrollbar-thumb {
+      background-color: #94a3b8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 selection:bg-indigo-400 selection:text-white flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-indigo-600 font-extrabold text-xl md:text-2xl select-none">StockAlert</a>
+      <nav class="hidden md:flex gap-8 text-gray-600 font-medium">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Tool</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button class="md:hidden text-indigo-600 focus:outline-none" aria-label="Toggle Menu" id="navToggle">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    <nav id="mobileMenu" class="md:hidden bg-white shadow border-t hidden">
+      <div class="flex flex-col px-6 py-4 space-y-3 text-gray-700 font-medium">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Tool</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-indigo-600 text-white py-20 px-6">
+    <div class="container mx-auto max-w-5xl text-center md:text-left flex flex-col md:flex-row items-center md:gap-16">
+      <div class="md:flex-1">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-6 drop-shadow">
+          Never Run Out of Stock Again
+        </h1>
+        <p class="text-indigo-200 text-lg md:text-xl mb-8 max-w-md drop-shadow">
+          StockAlert is a simple inventory restock alert system designed for small retail shops to stay on top of their product availability.
+        </p>
+        <a href="#tool" class="inline-block bg-white text-indigo-600 font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-indigo-500/50 transition">
+          Try It Now
+        </a>
+      </div>
+      <div class="md:flex-1 mt-12 md:mt-0 w-full max-w-md">
+        <img src="https://images.unsplash.com/photo-1590080877777-2f8a04e9bd65?auto=format&fit=crop&w=600&q=80" alt="Retail store inventory" class="rounded-xl shadow-lg" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="container mx-auto max-w-5xl px-6 py-20">
+    <h2 class="text-3xl font-extrabold text-center mb-12">Why StockAlert?</h2>
+    <div class="grid gap-12 md:grid-cols-3 text-center">
+      <div class="space-y-4">
+        <div class="mx-auto bg-indigo-100 text-indigo-600 w-16 h-16 rounded-full flex items-center justify-center text-3xl select-none drop-shadow">
+          📈
+        </div>
+        <h3 class="text-xl font-semibold">Real-Time Alerts</h3>
+        <p class="text-gray-600">
+          Get notified instantly when your inventory drops below your specified restock level.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="mx-auto bg-indigo-100 text-indigo-600 w-16 h-16 rounded-full flex items-center justify-center text-3xl select-none drop-shadow">
+          🛒
+        </div>
+        <h3 class="text-xl font-semibold">Simplified Inventory Tracking</h3>
+        <p class="text-gray-600">
+          Easily manage your product list with minimum fuss and no complicated setup.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="mx-auto bg-indigo-100 text-indigo-600 w-16 h-16 rounded-full flex items-center justify-center text-3xl select-none drop-shadow">
+          🔔
+        </div>
+        <h3 class="text-xl font-semibold">Customizable Thresholds</h3>
+        <p class="text-gray-600">
+          Set restock thresholds per item to control when alerts should be triggered.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool UI -->
+  <section id="tool" class="bg-white py-16 px-6 drop-shadow-sm">
+    <div class="container max-w-4xl mx-auto">
+      <h2 class="text-3xl font-extrabold mb-8 text-center text-indigo-700">Inventory Restock Alert Tool</h2>
+
+      <!-- Add new item form -->
+      <form id="addItemForm" class="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto mb-12">
+        <input
+          aria-label="Product name"
+          type="text"
+          id="productName"
+          placeholder="Product name"
+          class="flex-1 rounded border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 px-4 py-2"
+          required
+        />
+        <input
+          aria-label="Current stock quantity"
+          type="number"
+          id="productStock"
+          placeholder="Current stock qty"
+          min="0"
+          class="w-36 rounded border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 px-4 py-2"
+          required
+        />
+        <input
+          aria-label="Restock threshold quantity"
+          type="number"
+          id="productThreshold"
+          placeholder="Restock threshold"
+          min="0"
+          class="w-36 rounded border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 px-4 py-2"
+          required
+        />
+        <button
+          type="submit"
+          class="bg-indigo-600 text-white font-semibold rounded px-6 py-2 hover:bg-indigo-700 transition flex items-center justify-center whitespace-nowrap"
+          aria-label="Add inventory item"
+        >
+          Add Item
+        </button>
+      </form>
+
+      <!-- Inventory List -->
+      <div class="overflow-x-auto shadow rounded border border-gray-200">
+        <table class="w-full text-left table-auto">
+          <thead class="bg-indigo-50 border-b border-indigo-200">
+            <tr>
+              <th class="px-4 py-3 text-indigo-700 font-semibold">Product</th>
+              <th class="px-4 py-3 text-indigo-700 font-semibold">Stock Qty</th>
+              <th class="px-4 py-3 text-indigo-700 font-semibold">Threshold</th>
+              <th class="px-4 py-3 text-indigo-700 font-semibold">Status</th>
+              <th class="px-4 py-3 text-indigo-700 font-semibold text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody" class="bg-white divide-y divide-gray-100">
+            <!-- Items will be added here dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Alert box -->
+      <div id="alertBox" role="alert" aria-live="polite" aria-atomic="true"
+        class="mt-8 max-w-4xl mx-auto hidden rounded-lg px-6 py-4 text-sm font-semibold"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-indigo-600 text-indigo-200 py-10 mt-auto">
+    <div class="container max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      <p class="text-sm select-none">&copy; 2024 StockAlert. All rights reserved.</p>
+      <p class="text-sm">
+        Built with ❤️ by a professional SaaS product designer.
+      </p>
+      <nav class="space-x-6">
+        <a href="mailto:support@stockalert.com" class="hover:underline">support@stockalert.com</a>
+        <a href="#" class="hover:underline">Privacy Policy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      // Mobile nav toggle
+      const navToggle = document.getElementById("navToggle");
+      const mobileMenu = document.getElementById("mobileMenu");
+      navToggle.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+
+      // Inventory data model stored in localStorage
+      const STORAGE_KEY = "stockalert_inventory";
+
+      const inventoryBody = document.getElementById("inventoryBody");
+      const alertBox = document.getElementById("alertBox");
+      const addItemForm = document.getElementById("addItemForm");
+      const productNameInput = document.getElementById("productName");
+      const productStockInput = document.getElementById("productStock");
+      const productThresholdInput = document.getElementById("productThreshold");
+
+      let inventory = [];
+
+      function saveInventory() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
+      }
+
+      function loadInventory() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          try {
+            inventory = JSON.parse(saved);
+          } catch {
+            inventory = [];
+          }
+        }
+      }
+
+      // Utility: escape HTML to prevent injection
+      function escapeHtml(text) {
+        return text.replace(/[&<>"']/g, (match) => {
+          return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+          }[match];
+        });
+      }
+
+      function updateStatus(stock, threshold) {
+        if (stock <= threshold) {
+          return {
+            text: "Restock Needed",
+            colorDulled: "bg-red-100 text-red-700",
+            colorStrong: "bg-red-600 text-white",
+            needsRestock: true,
+          };
+        } else {
+          return {
+            text: "Stock Sufficient",
+            colorDulled: "bg-green-100 text-green-700",
+            colorStrong: "bg-green-600 text-white",
+            needsRestock: false,
+          };
+        }
+      }
+
+      function renderInventory() {
+        if (inventory.length === 0) {
+          inventoryBody.innerHTML =
+            `<tr><td colspan="5" class="text-center text-gray-500 py-10 select-none">No items added yet. Start by adding your products above.</td></tr>`;
+          alertBox.classList.add("hidden");
+          alertBox.textContent = "";
+          return;
+        }
+
+        inventoryBody.innerHTML = "";
+
+        let alerts = [];
+
+        inventory.forEach((item, i) => {
+          const status = updateStatus(item.stock, item.threshold);
+
+          // Row
+          const tr = document.createElement("tr");
+          tr.className = status.needsRestock ? "bg-red-50" : "";
+
+          // Product name cell
+          const productTd = document.createElement("td");
+          productTd.className = "px-4 py-3 font-semibold";
+          productTd.textContent = item.name;
+          tr.appendChild(productTd);
+
+          // Stock qty cell (editable inline)
+          const stockTd = document.createElement("td");
+          stockTd.className = "px-4 py-3";
+
+          const stockInput = document.createElement("input");
+          stockInput.type = "number";
+          stockInput.min = "0";
+          stockInput.value = item.stock;
+          stockInput.className =
+            "w-20 px-2 py-1 border border-gray-300 rounded focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500";
+          stockInput.setAttribute("aria-label", `Current stock quantity for ${item.name}`);
+
+          stockInput.addEventListener("change", () => {
+            const val = Number(stockInput.value);
+            if (isNaN(val) || val < 0) {
+              stockInput.value = item.stock;
+              return;
+            }
+            item.stock = val;
+            saveInventory();
+            renderInventory();
+          });
+          stockTd.appendChild(stockInput);
+          tr.appendChild(stockTd);
+
+          // Threshold cell (editable inline)
+          const thresholdTd = document.createElement("td");
+          thresholdTd.className = "px-4 py-3";
+
+          const thresholdInput = document.createElement("input");
+          thresholdInput.type = "number";
+          thresholdInput.min = "0";
+          thresholdInput.value = item.threshold;
+          thresholdInput.className =
+            "w-24 px-2 py-1 border border-gray-300 rounded focus:outline-indigo-500 focus:ring-1 focus:ring-indigo-500";
+          thresholdInput.setAttribute("aria-label", `Restock threshold for ${item.name}`);
+
+          thresholdInput.addEventListener("change", () => {
+            const val = Number(thresholdInput.value);
+            if (isNaN(val) || val < 0) {
+              thresholdInput.value = item.threshold;
+              return;
+            }
+            item.threshold = val;
+            saveInventory();
+            renderInventory();
+          });
+          thresholdTd.appendChild(thresholdInput);
+          tr.appendChild(thresholdTd);
+
+          // Status cell
+          const statusTd = document.createElement("td");
+          statusTd.className = "px-4 py-3";
+
+          const statusSpan = document.createElement("span");
+          statusSpan.className = `inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+            status.needsRestock ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+          } select-none`;
+          statusSpan.textContent = status.text;
+          statusTd.appendChild(statusSpan);
+          tr.appendChild(statusTd);
+
+          // Actions cell
+          const actionsTd = document.createElement("td");
+          actionsTd.className = "px-4 py-3 text-center";
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "text-red-600 hover:text-red-800 transition font-semibold";
+          deleteBtn.setAttribute("aria-label", `Delete ${item.name} from inventory`);
+          deleteBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" 
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18L18 6M6 6l12 12"/></svg>
+          `;
+          deleteBtn.addEventListener("click", () => {
+            if (confirm(`Delete "${item.name}"?`)) {
+              inventory.splice(i, 1);
+              saveInventory();
+              renderInventory();
+            }
+          });
+
+          actionsTd.appendChild(deleteBtn);
+          tr.appendChild(actionsTd);
+
+          inventoryBody.appendChild(tr);
+
+          if (status.needsRestock) {
+            alerts.push(`${item.name} (Stock: ${item.stock}, Threshold: ${item.threshold})`);
+          }
+        });
+
+        if (alerts.length > 0) {
+          alertBox.className =
+            "mt-8 max-w-4xl mx-auto rounded-lg px-6 py-4 text-sm font-semibold bg-red-100 text-red-700 border border-red-300";
+          alertBox.innerHTML =
+            `⚠️ <strong>Restock Alert!</strong> The following items need to be restocked:<br>` +
+            alerts.map((a) => `&mdash; ${escapeHtml(a)}`).join("<br>");
+          alertBox.classList.remove("hidden");
+        } else {
+          alertBox.classList.add("hidden");
+          alertBox.textContent = "";
+        }
+      }
+
+      addItemForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = productNameInput.value.trim();
+        const stock = Number(productStockInput.value);
+        const threshold = Number(productThresholdInput.value);
+
+        if (!name) {
+          alert("Please enter a product name.");
+          return;
+        }
+        if (isNaN(stock) || stock < 0) {
+          alert("Please enter a valid stock quantity (0 or more).");
+          return;
+        }
+        if (isNaN(threshold) || threshold < 0) {
+          alert("Please enter a valid restock threshold (0 or more).");
+          return;
+        }
+
+        // Check if product already exists (case insensitive)
+        const exists = inventory.findIndex(i => i.name.toLowerCase() === name.toLowerCase()) !== -1;
+        if (exists) {
+          alert("This product already exists in your inventory.");
+          return;
+        }
+
+        inventory.push({ name, stock, threshold });
+        saveInventory();
+        renderInventory();
+
+        addItemForm.reset();
+        productNameInput.focus();
+      });
+
+      // Load inventory and render on page load
+      loadInventory();
+      renderInventory();
+    })();
+  </script>
+</body>
+</html>
+```

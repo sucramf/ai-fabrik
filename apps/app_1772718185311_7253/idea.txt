@@ -1,0 +1,1 @@
+A web tool that lets users quickly create and share personalized daily gratitude journals with automated daily reminder emails and simple mood tracking.

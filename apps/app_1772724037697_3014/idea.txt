@@ -1,0 +1,1 @@
+Basic inventory restock alert system for small retail shops

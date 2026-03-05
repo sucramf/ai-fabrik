@@ -1,0 +1,1 @@
+A simple web tool that generates personalized daily affirmations based on user input keywords (e.g., confidence, focus, kindness), delivering a fresh, motivational phrase every morning via email or app notification.

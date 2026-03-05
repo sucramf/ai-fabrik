@@ -1,0 +1,1244 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>QuickInvoice - Simple Invoice SaaS for Freelancers</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background: #f4f7f9;
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  h1, h2, h3 {
+    margin: 0 0 8px 0;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  a {
+    color: #0984e3;
+  }
+  /* Container */
+  #app {
+    max-width: 900px;
+    margin: 1.5rem auto 3rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgb(0 0 0 / 0.07);
+    padding: 1rem 1.5rem 3rem;
+  }
+  header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 {
+    font-weight: 700;
+    color: #0984e3;
+  }
+  nav button {
+    margin-left: 8px;
+    background-color: #0984e3;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: background-color 0.25s ease;
+  }
+  nav button:hover:not(:disabled) {
+    background-color: #065aab;
+  }
+  nav button.active {
+    background-color: #065aab;
+  }
+  main {
+    margin-top: 10px;
+  }
+  /* Form styles */
+  form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    margin-top: 4px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    font-size: 1rem;
+    resize: vertical;
+  }
+  textarea {
+    min-height: 60px;
+  }
+  /* Clients list */
+  #client-list {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+  #client-list select {
+    width: 100%;
+  }
+
+  /* Invoice items */
+  #items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  #items-table th,
+  #items-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  #items-table th {
+    background-color: #f0f4fc;
+    text-align: left;
+  }
+  #items-table input {
+    width: 100%;
+    padding: 4px 6px;
+    font-size: 0.9rem;
+  }
+  #items-table button.remove-item {
+    background: transparent;
+    border: none;
+    color: #e74c3c;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #items-table button.remove-item:hover {
+    text-decoration: underline;
+  }
+
+  /* Summary */
+  #summary {
+    margin-top: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: right;
+  }
+  /* Invoice preview */
+  #invoice-preview {
+    max-width: 700px;
+    margin: 1rem auto;
+    box-shadow: 0 0 8px rgb(0 0 0 / 0.05);
+    padding: 20px;
+    border-radius: 6px;
+    background: white;
+    font-family: "Courier New", Courier, monospace;
+    color: #222;
+    font-size: 14px;
+  }
+  #invoice-preview header {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 12px;
+  }
+  #invoice-preview h2 {
+    margin-bottom: 4px;
+  }
+  #invoice-preview .branding {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  #invoice-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  #invoice-preview th,
+  #invoice-preview td {
+    border: 1px solid #ddd;
+    padding: 6px 10px;
+    text-align: left;
+  }
+  #invoice-preview th {
+    background: #f0f4fc;
+  }
+  /* Dashboard */
+  #dashboard {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+  }
+  .dashboard-card {
+    background: #0984e3;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .dashboard-card span.label {
+    font-weight: 400;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-top: 6px;
+  }
+
+  /* Invoice list table */
+  #invoice-list {
+    max-width: 900px;
+    margin: 1rem auto;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  #invoice-list th,
+  #invoice-list td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+  #invoice-list th {
+    background-color: #f0f4fc;
+  }
+  #invoice-list td.status {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  #invoice-list td.status.sent {
+    color: #0984e3;
+  }
+  #invoice-list td.status.viewed {
+    color: #fdcb6e;
+  }
+  #invoice-list td.status.paid {
+    color: #00b894;
+  }
+  #invoice-list td.status.overdue {
+    color: #d63031;
+  }
+  #invoice-list button.send-email {
+    background-color: #0984e3;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-size: 0.85rem;
+  }
+  #invoice-list button.send-email:disabled {
+    background-color: #bbb;
+  }
+
+  /* Subscription prompt */
+  #subscription-banner {
+    background-color: #ffeaa7;
+    color: #2d3436;
+    max-width: 900px;
+    margin: 0 auto 20px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  #subscription-banner button {
+    background: #fdcb6e;
+    border: none;
+    color: #2d3436;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  #subscription-banner button:hover {
+    background: #fab93e;
+  }
+
+  /* Modal */
+  #modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgb(0 0 0 / 0.35);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2222;
+  }
+  #modal-overlay.active {
+    display: flex;
+  }
+  #modal {
+    background: white;
+    max-width: 400px;
+    width: 90%;
+    border-radius: 10px;
+    padding: 20px 25px;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.2);
+    position: relative;
+  }
+  #modal h3 {
+    margin-bottom: 1rem;
+  }
+  #modal button.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    color: #666;
+  }
+  #modal button.close-modal:hover {
+    color: #222;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    #dashboard {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    nav {
+      margin-top: 0.6rem;
+      width: 100%;
+    }
+    nav button {
+      margin: 0 6px 6px 0;
+      padding: 8px 14px;
+      width: auto;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="app" role="main" aria-label="QuickInvoice application">
+  <header>
+    <h1>QuickInvoice</h1>
+    <nav aria-label="Primary navigation">
+      <button id="nav-dashboard" class="active" aria-current="page">Dashboard</button>
+      <button id="nav-create-invoice">Create Invoice</button>
+      <button id="nav-clients">Clients</button>
+      <button id="nav-subscription">Subscription</button>
+    </nav>
+  </header>
+
+  <!-- Subscription banner -->
+  <section id="subscription-banner" hidden>
+    You’re on a free plan. Sending invoices and payment integrations require a subscription.
+    <button id="btn-open-subscription">Subscribe $5/mo</button>
+  </section>
+
+  <main>
+    <!-- Dashboard view -->
+    <section id="dashboard-view" tabindex="0" aria-label="Invoice dashboard overview">
+      <div id="dashboard" role="region" aria-live="polite">
+        <div class="dashboard-card" id="total-outstanding" aria-label="Total outstanding amount">
+          $0.00
+          <span class="label">Outstanding</span>
+        </div>
+        <div class="dashboard-card" id="total-paid" aria-label="Total paid amount" style="background:#00b894;">
+          $0.00
+          <span class="label">Paid</span>
+        </div>
+        <div class="dashboard-card" id="total-invoices" aria-label="Total invoices">
+          0
+          <span class="label">Invoices</span>
+        </div>
+        <div class="dashboard-card" id="total-clients" aria-label="Total clients" style="background:#fd79a8;">
+          0
+          <span class="label">Clients</span>
+        </div>
+      </div>
+
+      <h2 style="margin-top:2rem;">Recent Invoices</h2>
+      <table id="invoice-list" aria-label="List of invoices">
+        <thead>
+          <tr>
+            <th>Invoice #</th>
+            <th>Client</th>
+            <th>Due Date</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Send</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- invoices go here -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Create invoice view -->
+    <section id="create-invoice-view" hidden aria-label="Create or edit invoice form">
+      <form id="invoice-form" novalidate autocomplete="off">
+        <h2>Create Invoice</h2>
+        <label for="branding">Your Branding / Company Name</label>
+        <input id="branding" name="branding" type="text" placeholder="e.g. Jane Doe Freelance" required />
+
+        <label for="client-select">Select Client</label>
+        <select id="client-select" aria-describedby="client-select-desc">
+          <option value="">-- New Client / Select client --</option>
+        </select>
+        <div id="client-select-desc" class="sr-only">Select from saved clients or enter new client info below</div>
+
+        <fieldset style="margin-top: 1rem;">
+          <legend><strong>Client Details (for new client or overwrite)</strong></legend>
+          <label for="client-name">Client Name *</label>
+          <input type="text" id="client-name" name="clientName" placeholder="Client or company name" required/>
+          <label for="client-email">Client Email *</label>
+          <input type="email" id="client-email" name="clientEmail" placeholder="email@example.com" required/>
+          <label for="client-address">Client Address</label>
+          <textarea id="client-address" name="clientAddress" placeholder="Optional"></textarea>
+        </fieldset>
+
+        <fieldset style="margin-top:1rem;">
+          <legend><strong>Invoice Info</strong></legend>
+          <label for="invoice-number">Invoice Number *</label>
+          <input id="invoice-number" name="invoiceNumber" type="text" placeholder="e.g. INV-1001" required />
+          <label for="invoice-date">Invoice Date *</label>
+          <input id="invoice-date" name="invoiceDate" type="date" required />
+          <label for="due-date">Due Date *</label>
+          <input id="due-date" name="dueDate" type="date" required />
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" placeholder="e.g. Thanks for your business!"></textarea>
+        </fieldset>
+
+        <fieldset style="margin-top: 1rem;">
+          <legend><strong>Invoice Items</strong></legend>
+          <table id="items-table" aria-label="Invoice items">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th style="width:80px;">Qty</th>
+                <th style="width:100px;">Price</th>
+                <th style="width:100px;">Total</th>
+                <th style="width:40px;">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Items rows here -->
+            </tbody>
+          </table>
+          <button type="button" id="btn-add-item" style="margin-top:0.5rem;">+ Add Item</button>
+        </fieldset>
+
+        <div id="summary">Total: $0.00</div>
+
+        <div style="margin-top: 1rem;">
+          <button type="submit" id="btn-save-invoice" style="background: #00b894; color: white; border:none; padding: 10px 16px; border-radius: 5px; font-weight:600;">Save Invoice</button>
+          <button type="button" id="btn-reset-invoice" style="margin-left: 0.5rem;">Reset</button>
+        </div>
+      </form>
+
+      <section id="invoice-preview" aria-label="Invoice preview" hidden>
+        <!-- Invoice preview content -->
+      </section>
+    </section>
+
+    <!-- Clients view -->
+    <section id="clients-view" hidden aria-label="Manage clients">
+      <h2>Clients</h2>
+      <form id="client-form" novalidate autocomplete="off" style="max-width:600px; margin-bottom:1rem;">
+        <label for="client-form-name">Client Name *</label>
+        <input id="client-form-name" name="clientName" type="text" required placeholder="Client or company name" />
+        <label for="client-form-email">Client Email *</label>
+        <input id="client-form-email" name="clientEmail" type="email" required placeholder="email@example.com" />
+        <label for="client-form-address">Address</label>
+        <textarea id="client-form-address" name="clientAddress" placeholder="Optional"></textarea>
+        <button type="submit" style="margin-top: 0.5rem; background:#0984e3; color:white; border:none; padding:8px 12px; font-weight:600; border-radius:4px;">Add / Update Client</button>
+      </form>
+
+      <table id="clients-list-table" aria-label="List of saved clients" style="max-width:600px; border-collapse: collapse; width: 100%;">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Address</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <!-- clients rows here -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Subscription view -->
+    <section id="subscription-view" hidden aria-label="Subscription plans and billing">
+      <h2>Subscription</h2>
+      <p>QuickInvoice is free to try. To send invoices and accept payments, please subscribe for $5/month.</p>
+      <button id="btn-subscribe" style="background:#0984e3; color:white; border:none; padding:10px 14px; font-weight:600; border-radius:6px;">Subscribe Now</button>
+      <p id="subscription-status" style="margin-top:1rem; color:green; font-weight:600;"></p>
+    </section>
+  </main>
+</div>
+
+<!-- Modal for payment simulation or info -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+  <div id="modal">
+    <button class="close-modal" aria-label="Close modal">&times;</button>
+    <h3 id="modal-title">Subscription</h3>
+    <p id="modal-message"></p>
+    <button id="modal-ok-btn" style="background:#0984e3; color:white; border:none; padding:8px 12px; font-weight:600; border-radius:4px;">Okay</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // Storage keys
+  const STORAGE_CLIENTS = "quickinvoice_clients";
+  const STORAGE_INVOICES = "quickinvoice_invoices";
+  const STORAGE_SUBSCRIPTION = "quickinvoice_subscription"; // e.g. {active:bool, since:timestamp}
+
+  // Helpers
+  function $id(id) { return document.getElementById(id); }
+  function formatCurrency(num) {
+    return "$" + num.toFixed(2);
+  }
+  function parseCurrency(str) {
+    return parseFloat(str.replace(/[^0-9.-]+/g,"")) || 0;
+  }
+  function todayDateISO() {
+    return new Date().toISOString().slice(0,10);
+  }
+  function daysDiff(d1, d2) {
+    return Math.floor((d2 - d1) / (1000*60*60*24));
+  }
+
+  // Modal control
+  const modalOverlay = $id("modal-overlay");
+  const modalMessage = $id("modal-message");
+  const modalOkBtn = $id("modal-ok-btn");
+  const modalCloseBtn = modalOverlay.querySelector(".close-modal");
+
+  function openModal(title, message, onOk) {
+    $id("modal-title").textContent = title;
+    modalMessage.textContent = message;
+    modalOverlay.classList.add("active");
+
+    function okHandler() {
+      modalOverlay.classList.remove("active");
+      modalOkBtn.removeEventListener("click", okHandler);
+      modalCloseBtn.removeEventListener("click", closeHandler);
+      if (onOk) onOk();
+    }
+    function closeHandler() {
+      modalOverlay.classList.remove("active");
+      modalOkBtn.removeEventListener("click", okHandler);
+      modalCloseBtn.removeEventListener("click", closeHandler);
+    }
+    modalOkBtn.addEventListener("click", okHandler);
+    modalCloseBtn.addEventListener("click", closeHandler);
+  }
+
+  // Data stores
+  let clients = [];
+  let invoices = [];
+  let subscription = {active: false, since: null};
+  
+  // Current UI state
+  let currentView = "dashboard"; // dashboard, create-invoice, clients, subscription
+  let editingInvoiceId = null; // when editing an invoice
+
+  // Elements shortcuts
+  const navDashboard = $id("nav-dashboard");
+  const navCreateInvoice = $id("nav-create-invoice");
+  const navClients = $id("nav-clients");
+  const navSubscription = $id("nav-subscription");
+  const subscriptionBanner = $id("subscription-banner");
+  const btnOpenSubscription = $id("btn-open-subscription");
+
+  // Invoice form elements
+  const invoiceForm = $id("invoice-form");
+  const brandingInput = $id("branding");
+  const clientSelect = $id("client-select");
+  const clientNameInput = $id("client-name");
+  const clientEmailInput = $id("client-email");
+  const clientAddressInput = $id("client-address");
+  const invoiceNumberInput = $id("invoice-number");
+  const invoiceDateInput = $id("invoice-date");
+  const dueDateInput = $id("due-date");
+  const notesInput = $id("notes");
+  const itemsTableBody = $id("items-table").querySelector("tbody");
+  const btnAddItem = $id("btn-add-item");
+  const summaryDiv = $id("summary");
+  const invoicePreview = $id("invoice-preview");
+  const btnResetInvoice = $id("btn-reset-invoice");
+
+  // Dashboard elements
+  const totalOutstandingElem = $id("total-outstanding");
+  const totalPaidElem = $id("total-paid");
+  const totalInvoicesElem = $id("total-invoices");
+  const totalClientsElem = $id("total-clients");
+  const invoiceListTbody = $id("invoice-list").querySelector("tbody");
+
+  // Clients elements
+  const clientsView = $id("clients-view");
+  const clientForm = $id("client-form");
+  const clientFormName = $id("client-form-name");
+  const clientFormEmail = $id("client-form-email");
+  const clientFormAddress = $id("client-form-address");
+  const clientsListTableBody = $id("clients-list-table").querySelector("tbody");
+
+  // Subscription elements
+  const subscriptionView = $id("subscription-view");
+  const btnSubscribe = $id("btn-subscribe");
+  const subscriptionStatus = $id("subscription-status");
+
+  // Utility functions
+
+  // Save & Load from localStorage
+  function loadData() {
+    try {
+      const cl = localStorage.getItem(STORAGE_CLIENTS);
+      clients = cl ? JSON.parse(cl) : [];
+    } catch {
+      clients = [];
+    }
+    try {
+      const inv = localStorage.getItem(STORAGE_INVOICES);
+      invoices = inv ? JSON.parse(inv) : [];
+    } catch {
+      invoices = [];
+    }
+    try {
+      const sub = localStorage.getItem(STORAGE_SUBSCRIPTION);
+      if (sub) {
+        subscription = JSON.parse(sub);
+      }
+    } catch {
+      subscription = {active: false, since:null};
+    }
+  }
+  function saveData() {
+    localStorage.setItem(STORAGE_CLIENTS, JSON.stringify(clients));
+    localStorage.setItem(STORAGE_INVOICES, JSON.stringify(invoices));
+    localStorage.setItem(STORAGE_SUBSCRIPTION, JSON.stringify(subscription));
+  }
+
+  // Navigation
+  function setActiveNav(selected) {
+    [navDashboard, navCreateInvoice, navClients, navSubscription].forEach(btn => {
+      btn.classList.toggle("active", btn === selected);
+      if (btn === selected) btn.setAttribute("aria-current", "page");
+      else btn.removeAttribute("aria-current");
+    });
+  }
+  function showView(name) {
+    currentView = name;
+    // Hide all sections
+    $id("dashboard-view").hidden = true;
+    $id("create-invoice-view").hidden = true;
+    $id("clients-view").hidden = true;
+    subscriptionView.hidden = true;
+
+    switch(name) {
+      case "dashboard": 
+        $id("dashboard-view").hidden = false; 
+        refreshDashboard();
+        break;
+      case "create-invoice":
+        $id("create-invoice-view").hidden = false; 
+        loadInvoiceForm(editingInvoiceId);
+        break;
+      case "clients":
+        clientsView.hidden = false; 
+        refreshClientsList();
+        break;
+      case "subscription":
+        subscriptionView.hidden = false;
+        refreshSubscriptionStatus();
+        break;
+    }
+  }
+
+  // Subscription
+  function refreshSubscriptionStatus() {
+    if(subscription.active){
+      subscriptionStatus.textContent = `Active - since ${new Date(subscription.since).toLocaleDateString()}`;
+      btnSubscribe.disabled = true;
+    } else {
+      subscriptionStatus.textContent = "Not subscribed.";
+      btnSubscribe.disabled = false;
+    }
+    // Show or hide subscription banner on top for required features:
+    if(currentView === "dashboard" || currentView === "create-invoice") {
+      if(!subscription.active) subscriptionBanner.hidden = false;
+      else subscriptionBanner.hidden = true;
+    } else {
+      subscriptionBanner.hidden = true;
+    }
+  }
+
+  // Simulated subscribe action
+  function subscribeUser() {
+    openModal("Subscribe", "Subscribe for $5/month to unlock sending invoices and payment integrations.", () => {
+      subscription = {active:true, since: Date.now()};
+      saveData();
+      refreshSubscriptionStatus();
+      if(currentView === "create-invoice") refreshInvoiceFormButtons();
+    });
+  }
+
+  // Clients management
+
+  // Add/update client
+  function addOrUpdateClient(c) {
+    const existingIndex = clients.findIndex(cl => cl.email.toLowerCase() === c.email.toLowerCase());
+    if(existingIndex !== -1){
+      clients[existingIndex] = {...clients[existingIndex], ...c};
+    } else {
+      clients.push(c);
+    }
+    saveData();
+    refreshClientsList();
+    refreshClientSelectOptions();
+  }
+  function deleteClient(email) {
+    clients = clients.filter(c => c.email.toLowerCase() !== email.toLowerCase());
+    saveData();
+    refreshClientsList();
+    refreshClientSelectOptions();
+  }
+  function refreshClientsList(){
+    clientsListTableBody.innerHTML = "";
+    if(clients.length === 0){
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 4;
+      td.textContent = "No clients saved yet.";
+      td.style.fontStyle = "italic";
+      tr.appendChild(td);
+      clientsListTableBody.appendChild(tr);
+      totalClientsElem.textContent = "0";
+      return;
+    }
+    for(const client of clients){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHTML(client.name)}</td>
+        <td><a href="mailto:${escapeHTML(client.email)}">${escapeHTML(client.email)}</a></td>
+        <td>${escapeHTML(client.address || "")}</td>
+        <td><button class="btn-delete-client" data-email="${escapeHTML(client.email)}" aria-label="Delete client ${escapeHTML(client.name)}">Delete</button></td>
+      `;
+      clientsListTableBody.appendChild(tr);
+    }
+    totalClientsElem.textContent = clients.length.toString();
+    // Bind delete buttons
+    clientsListTableBody.querySelectorAll(".btn-delete-client").forEach(btn => {
+      btn.onclick = e => {
+        if(confirm("Are you sure you want to delete this client? This action cannot be undone.")){
+          deleteClient(btn.dataset.email);
+        }
+      };
+    });
+  }
+  function refreshClientSelectOptions(){
+    // Clear first
+    clientSelect.innerHTML = '<option value="">-- New Client / Select client --</option>';
+    // Sort clients alphabetically
+    clients.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.email;
+      opt.textContent = c.name + " (" + c.email + ")";
+      clientSelect.appendChild(opt);
+    });
+  }
+  // Escape HTML
+  function escapeHTML(text) {
+    if(!text) return "";
+    return text.replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
+  }
+
+  // Invoice Management
+
+  function refreshDashboard() {
+    // Calculate totals
+    let totalOutstanding = 0;
+    let totalPaid = 0;
+    invoices.forEach(inv => {
+      if(inv.status === "paid"){
+        totalPaid += inv.total;
+      } else if(inv.status !== "draft") {
+        totalOutstanding += inv.total;
+      }
+    });
+    totalOutstandingElem.textContent = formatCurrency(totalOutstanding);
+    totalPaidElem.textContent = formatCurrency(totalPaid);
+    totalInvoicesElem.textContent = invoices.length;
+
+    // Refresh invoice table
+    invoiceListTbody.innerHTML = "";
+    if(invoices.length === 0){
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 6;
+      td.textContent = "No invoices yet.";
+      td.style.fontStyle = "italic";
+      tr.appendChild(td);
+      invoiceListTbody.appendChild(tr);
+      return;
+    }
+
+    // Sort invoices by most recent invoiceDate desc
+    const invoicesSorted = invoices.slice().sort((a,b) => (new Date(b.invoiceDate)) - (new Date(a.invoiceDate)));
+
+    for(const inv of invoicesSorted){
+      const tr = document.createElement("tr");
+      const dueDateObj = new Date(inv.dueDate);
+      const now = new Date();
+      let statusClass = inv.status;
+      let statusText = inv.status.charAt(0).toUpperCase()+inv.status.slice(1);
+
+      // Overdue check
+      if(inv.status !== "paid" && new Date(inv.dueDate) < now){
+        statusClass = "overdue";
+        statusText = "Overdue";
+      }
+
+      tr.innerHTML = `
+        <td><button class="btn-edit-invoice" data-id="${escapeHTML(inv.id)}" style="background:none; border:none; color:#0984e3; cursor:pointer; text-decoration:underline; font-size:0.95rem;">${escapeHTML(inv.invoiceNumber)}</button></td>
+        <td>${escapeHTML(inv.client.name)}</td>
+        <td>${escapeHTML(inv.dueDate)}</td>
+        <td>${formatCurrency(inv.total)}</td>
+        <td class="status ${statusClass}">${statusText}</td>
+        <td>
+          <button class="send-email" data-id="${escapeHTML(inv.id)}" ${subscription.active ? "" : "disabled"} aria-label="Send invoice ${escapeHTML(inv.invoiceNumber)} to email">Send</button>
+        </td>
+      `;
+      invoiceListTbody.appendChild(tr);
+    }
+
+    // Bind send buttons
+    invoiceListTbody.querySelectorAll("button.send-email").forEach(btn => {
+      btn.onclick = () => {
+        sendInvoiceEmail(btn.dataset.id);
+      };
+    });
+    // Bind edit buttons
+    invoiceListTbody.querySelectorAll("button.btn-edit-invoice").forEach(btn => {
+      btn.onclick = () => {
+        editInvoice(btn.dataset.id);
+      };
+    });
+
+    refreshSubscriptionStatus();
+  }
+
+  // Prepare form (clear or load)
+  function loadInvoiceForm(id=null) {
+    editingInvoiceId = null;
+    invoiceForm.reset();
+    invoicePreview.hidden = true;
+    clearInvoiceItems();
+
+    // Defaults
+    invoiceDateInput.value = todayDateISO();
+    dueDateInput.value = todayDateISO();
+
+    refreshClientSelectOptions();
+
+    if(id){
+      // Load invoice data to form
+      const inv = invoices.find(i => i.id === id);
+      if(!inv) return;
+      editingInvoiceId = id;
+      brandingInput.value = inv.branding || "";
+      // Set client select if matches known client by email, else reset
+      const clientIdx = clients.findIndex(c => c.email.toLowerCase() === inv.client.email.toLowerCase());
+      if(clientIdx !== -1){
+        clientSelect.value = clients[clientIdx].email;
+      } else {
+        clientSelect.value = "";
+      }
+      // Fill client info fields:
+      clientNameInput.value = inv.client.name;
+      clientEmailInput.value = inv.client.email;
+      clientAddressInput.value = inv.client.address || "";
+
+      invoiceNumberInput.value = inv.invoiceNumber;
+      invoiceDateInput.value = inv.invoiceDate;
+      dueDateInput.value = inv.dueDate;
+      notesInput.value = inv.notes || "";
+
+      // Load items
+      for(const it of inv.items){
+        addInvoiceItem(it.description, it.qty, it.price);
+      }
+
+      recalcSummaryAndPreview();
+    } else {
+      // new invoice defaults
+      brandingInput.focus();
+      addInvoiceItem(); // start with one item line
+      recalcSummaryAndPreview();
+    }
+
+    refreshInvoiceFormButtons();
+  }
+  function refreshInvoiceFormButtons() {
+    // If no subscription, send/saving invoices is allowed but sending emails & payment disabled
+    // We disallow sending emails by disabling on dashboard
+    btnSave.enabled = true;
+  }
+
+  function clearInvoiceItems(){
+    itemsTableBody.innerHTML = "";
+  }
+  function addInvoiceItem(desc = "", qty = 1, price = 0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input type="text" class="item-desc" placeholder="Description" required value="${escapeHTML(desc)}" /></td>
+      <td><input type="number" class="item-qty" min="0" step="1" value="${qty}" required/></td>
+      <td><input type="number" class="item-price" min="0" step="0.01" value="${price.toFixed(2)}" required/></td>
+      <td class="item-total">0</td>
+      <td><button class="remove-item" aria-label="Remove item">&times;</button></td>
+    `;
+    itemsTableBody.appendChild(tr);
+
+    const descInput = tr.querySelector(".item-desc");
+    const qtyInput = tr.querySelector(".item-qty");
+    const priceInput = tr.querySelector(".item-price");
+    const totalCell = tr.querySelector(".item-total");
+    const removeBtn = tr.querySelector(".remove-item");
+
+    // Update total on qty or price change
+    function updateTotal(){
+      let q = parseInt(qtyInput.value)||0;
+      let p = parseFloat(priceInput.value)||0;
+      let total = q * p;
+      totalCell.textContent = formatCurrency(total);
+      recalcSummaryAndPreview();
+    }
+    qtyInput.addEventListener("input", updateTotal);
+    priceInput.addEventListener("input", updateTotal);
+    descInput.addEventListener("input", recalcSummaryAndPreview);
+
+    // Remove item
+    removeBtn.onclick = () => {
+      tr.remove();
+      recalcSummaryAndPreview();
+    };
+
+    updateTotal();
+  }
+  btnAddItem.onclick = () => addInvoiceItem();
+
+  // Recalculate invoice total and update summary and preview
+  function recalcSummaryAndPreview(){
+    const trs = [...itemsTableBody.querySelectorAll("tr")];
+    let total = 0;
+    let valid = true;
+    for(const tr of trs){
+      const qty = parseInt(tr.querySelector(".item-qty").value);
+      const price = parseFloat(tr.querySelector(".item-price").value);
+      if(!tr.querySelector(".item-desc").value.trim()){
+        valid = false; // description required
+      }
+      if(isNaN(qty) || qty<0 || isNaN(price) || price<0){
+        valid = false;
+      }
+      total += qty * price;
+    }
+    summaryDiv.textContent = `Total: ${formatCurrency(total)}`;
+    renderInvoicePreview(total);
+    return valid && total > 0;
+  }
+
+  // Render invoice preview text-only block
+  function renderInvoicePreview(totalAmount){
+    if(!brandingInput.value.trim() || !clientNameInput.value.trim() || !invoiceNumberInput.value.trim()){
+      invoicePreview.hidden = true;
+      return;
+    }
+    // Compose preview HTML
+    const notesHTML = notesInput.value.trim() ? `<p><em>${escapeHTML(notesInput.value)}</em></p>` : "";
+    let itemsHTML = "";
+    for(const tr of itemsTableBody.querySelectorAll("tr")){
+      const desc = tr.querySelector(".item-desc").value.trim();
+      const qty = tr.querySelector(".item-qty").value;
+      const price = tr.querySelector(".item-price").value;
+      const lineTotal = (parseFloat(price) * parseInt(qty)).toFixed(2);
+      if(desc){
+        itemsHTML += `
+        <tr>
+          <td>${escapeHTML(desc)}</td>
+          <td style="text-align:center;">${qty}</td>
+          <td style="text-align:right;">$${parseFloat(price).toFixed(2)}</td>
+          <td style="text-align:right;">$${lineTotal}</td>
+        </tr>`;
+      }
+    }
+    const html = `
+      <header>
+        <h2>Invoice ${escapeHTML(invoiceNumberInput.value)}</h2>
+        <div class="branding">${escapeHTML(brandingInput.value)}</div>
+      </header>
+      <section>
+        <p><strong>Bill To:</strong><br/>
+          ${escapeHTML(clientNameInput.value)}<br/>
+          ${escapeHTML(clientAddressInput.value).replace(/\n/g, "<br/>")}
+        </p>
+        <p><strong>Invoice Date:</strong> ${escapeHTML(invoiceDateInput.value)}<br/>
+           <strong>Due Date:</strong> ${escapeHTML(dueDateInput.value)}
+        </p>
+      </section>
+      <table>
+        <thead>
+          <tr><th>Description</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th><th style="text-align:right;">Total</th></tr>
+        </thead>
+        <tbody>
+          ${itemsHTML}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" style="text-align:right; font-weight:bold;">Total</td>
+            <td style="text-align:right; font-weight:bold;">${formatCurrency(totalAmount)}</td>
+          </tr>
+        </tfoot>
+      </table>
+      ${notesHTML}
+    `;
+    invoicePreview.innerHTML = html;
+    invoicePreview.hidden = false;
+  }
+
+  // Gather invoice form data and validate
+  function gatherInvoiceFormData(){
+    // Return a validated invoice object or null if invalid
+    if(!invoiceForm.checkValidity()){
+      invoiceForm.reportValidity();
+      return null;
+    }
+    // Validate client fields explicitly
+    if(!clientNameInput.value.trim() || !clientEmailInput.validity.valid){
+      alert("Please enter valid client name and email.");
+      clientNameInput.focus();
+      return null;
+    }
+    // Validate invoice items (at least one item with description, qty>0, price>0)
+    let items = [];
+    for(const tr of itemsTableBody.querySelectorAll("tr")){
+      const desc = tr.querySelector(".item-desc").value.trim();
+      const qty = parseInt(tr.querySelector(".item-qty").value);
+      const price = parseFloat(tr.querySelector(".item-price").value);
+      if(!desc || qty <= 0 || price <= 0){
+        alert("Please ensure all items have description and positive quantity and price.");
+        return null;
+      }
+      items.push({description:desc, qty, price});
+    }
+    if(items.length === 0) {
+      alert("Please add at least one invoice item.");
+      return null;
+    }
+    // Invoice dates and numbers
+    const dInvoice = new Date(invoiceDateInput.value);
+    const dDue = new Date(dueDateInput.value);
+    if(dDue < dInvoice){
+      alert("Due date cannot be earlier than invoice date.");
+      return null;
+    }
+    const total = items.reduce((acc,i) => acc + i.qty * i.price, 0);
+
+    return {
+      id: editingInvoiceId || ("inv_" + Math.random().toString(36).substring(2,9)),
+      branding: brandingInput.value.trim(),
+      client: {
+        name: clientNameInput.value.trim(),
+        email: clientEmailInput.value.trim().toLowerCase(),
+        address: clientAddressInput.value.trim()
+      },
+      invoiceNumber: invoiceNumberInput.value.trim(),
+      invoiceDate: invoiceDateInput.value,
+      dueDate: dueDateInput.value,
+      notes: notesInput.value.trim(),
+      items,
+      total,
+      status: "sent", // new invoice default status set as sent (but not emailed yet)
+      createdAt: editingInvoiceId ? undefined : Date.now(), 
+      lastUpdatedAt: Date.now()
+    };
+  }
+
+  // Save invoice logic (insert or update)
+  function saveInvoice(){
+    const inv = gatherInvoiceFormData();
+    if(!inv) return false;
+    // Save/update client info as well
+    addOrUpdateClient(inv.client);
+    // Insert or update invoice
+    const index = invoices.findIndex(i => i.id === inv.id);
+    if(index !== -1){
+      invoices[index] = inv;
+    } else {
+      invoices.push(inv);
+    }
+    saveData();
+    openModal("Invoice saved", `Invoice ${inv.invoiceNumber} saved successfully.`);
+    editingInvoiceId = null;
+    showView("dashboard");
+    return true;
+  }
+
+  invoiceForm.onsubmit = (e) => {
+    e.preventDefault();
+    if(saveInvoice()) {
+      invoiceForm.reset();
+      clearInvoiceItems();
+    }
+  };
+  btnResetInvoice.onclick = () => {
+    if(confirm("Clear invoice form and start over?")){
+      editingInvoiceId = null;
+      loadInvoiceForm(null);
+    }
+  };
+
+  // Edit invoice by ID - open create-invoice view with data loaded
+  function editInvoice(id){
+    editingInvoiceId = id;
+    showView("create-invoice");
+  }
+
+  // Send invoice email simulation
+  function sendInvoiceEmail(id){
+    if(!subscription.active){
+      openModal("Subscription required", "You need a subscription to send invoices via email. Please subscribe to unlock this feature.");
+      showView("subscription");
+      return;
+    }
+    const inv = invoices.find(i => i.id === id);
+    if(!inv){
+      openModal("Invoice not found", "Invoice not found to send.");
+      return;
+    }
+    // We simulate sending email - in real app, here you'd use backend/email service, or payment and send APIs
+
+    openModal("Sending email", `Sending invoice <strong>${escapeHTML(inv.invoiceNumber)}</strong> to <strong>${escapeHTML(inv.client.email)}</strong>...`, () => {
+      // Mark invoice as sent & track status (sent)
+      inv.status = "sent";
+      inv.lastUpdatedAt = Date.now();
+      saveData();
+      refreshDashboard();
+      openModal("Sent", `Invoice ${inv.invoiceNumber} sent successfully to ${inv.client.email}.`);
+    });
+  }
+
+  // Billing simulation with payment integration (stub)
+  btnSubscribe.onclick = () => {
+    subscribeUser();
+  };
+  btnOpenSubscription.onclick = () => {
+    showView("subscription");
+  };
+
+  // Client select change event - fill client info fields if existing client selected
+  clientSelect.onchange = () => {
+    if(clientSelect.value){
+      const c = clients.find(cl => cl.email === clientSelect.value);
+      if(c){
+        clientNameInput.value = c.name;
+        clientEmailInput.value = c.email;
+        clientAddressInput.value = c.address || "";
+      }
+    } else {
+      clientNameInput.value = "";
+      clientEmailInput.value = "";
+      clientAddressInput.value = "";
+    }
+  };
+
+  // On invoice form input events — recalc summary and preview on any relevant input
+  ["input","change"].forEach(evName => {
+    invoiceForm.addEventListener(evName, () => recalcSummaryAndPreview());
+  });
+
+  // Escape helper (already defined)
+  // Initialization
+  function init(){
+    loadData();
+    setActiveNav(navDashboard);
+    showView("dashboard");
+
+    navDashboard.onclick = () => {
+      setActiveNav(navDashboard);
+      showView("dashboard");
+    };
+    navCreateInvoice.onclick = () => {
+      setActiveNav(navCreateInvoice);
+      editingInvoiceId = null; // new invoice
+      showView("create-invoice");
+    };
+    navClients.onclick = () => {
+      setActiveNav(navClients);
+      showView("clients");
+    };
+    navSubscription.onclick = () => {
+      setActiveNav(navSubscription);
+      showView("subscription");
+    };
+
+    clientForm.onsubmit = e => {
+      e.preventDefault();
+      // Validate & add/update client
+      if(!clientForm.checkValidity()) {
+        clientForm.reportValidity();
+        return;
+      }
+      addOrUpdateClient({
+        name: clientFormName.value.trim(),
+        email: clientFormEmail.value.trim().toLowerCase(),
+        address: clientFormAddress.value.trim()
+      });
+      clientForm.reset();
+    };
+
+    refreshClientSelectOptions();
+    refreshSubscriptionStatus();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+
+</body>
+</html>
+```

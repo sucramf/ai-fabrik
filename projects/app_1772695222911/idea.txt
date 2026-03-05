@@ -1,0 +1,24 @@
+Idea: **Meeting Summary Automator**
+
+**Description:**  
+A web app that integrates with calendar services (Google Calendar, Outlook) to automatically generate concise meeting summaries and action items from recorded meetings or user notes. Users upload their meeting recordings or type notes during/after a meeting, and the app uses AI to create a clear summary that can be shared with attendees.
+
+**Key Features:**  
+- Integration with popular calendar apps for easy meeting import  
+- Upload or link to meeting recordings (Zoom, Microsoft Teams, etc.)  
+- AI-powered transcription and summarization  
+- Speaker identification and action item extraction  
+- One-click sharing of summaries via email or Slack  
+- Searchable archive of past meeting summaries  
+
+**Monetization:**  
+- Freemium model with a limited number of summaries per month  
+- Paid plans unlock unlimited summaries, advanced features like multi-language support and integrations with team tools  
+
+**Why it’s profitable:**  
+- Addresses the common pain point of time-consuming meeting notes  
+- Useful for remote and hybrid teams alike  
+- Low maintenance web app with AI handled via APIs  
+- Potential for expansion into other productivity features like task tracking  
+
+Would you like me to help outline the tech stack or go deeper into feature sets?

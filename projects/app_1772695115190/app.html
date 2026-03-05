@@ -1,0 +1,317 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meeting Summary Bot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f4f7fa;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    main {
+      flex: 1;
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    input[type="file"], textarea {
+      width: 100%;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    button {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:disabled {
+      background: #a1c0f7;
+      cursor: not-allowed;
+    }
+    section#summary {
+      margin-top: 2rem;
+      border-top: 1px solid #ddd;
+      padding-top: 1rem;
+    }
+    h2 {
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    ul {
+      padding-left: 1.2rem;
+    }
+    .actions {
+      margin-top: 1rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      color: #777;
+      font-size: 0.9rem;
+    }
+    #status {
+      margin-bottom: 1rem;
+      font-style: italic;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>Meeting Summary Bot</header>
+  <main>
+    <form id="uploadForm">
+      <label for="audioFile">Upload meeting audio (wav, mp3):</label>
+      <input type="file" id="audioFile" accept="audio/*" />
+      <label for="transcriptFile">Or upload meeting transcript (txt):</label>
+      <input type="file" id="transcriptFile" accept=".txt" />
+      <label for="manualTranscript">Or paste meeting transcript here:</label>
+      <textarea id="manualTranscript" placeholder="Paste meeting transcript text here..."></textarea>
+      <button type="submit" id="processBtn">Generate Summary</button>
+    </form>
+
+    <div id="status"></div>
+
+    <section id="summary" hidden>
+      <h2>Meeting Summary</h2>
+      <p id="summaryText"></p>
+
+      <h3>Key Points</h3>
+      <ul id="keyPointsList"></ul>
+
+      <h3>Action Items</h3>
+      <ul id="actionItemsList"></ul>
+
+      <div class="actions">
+        <button id="downloadPdfBtn">Download PDF</button>
+        <button id="copySummaryBtn">Copy Summary Text</button>
+      </div>
+    </section>
+  </main>
+  <footer>© 2024 Meeting Summary Bot</footer>
+
+  <script>
+    const uploadForm = document.getElementById('uploadForm');
+    const audioFileInput = document.getElementById('audioFile');
+    const transcriptFileInput = document.getElementById('transcriptFile');
+    const manualTranscript = document.getElementById('manualTranscript');
+    const processBtn = document.getElementById('processBtn');
+    const status = document.getElementById('status');
+    const summarySection = document.getElementById('summary');
+    const summaryText = document.getElementById('summaryText');
+    const keyPointsList = document.getElementById('keyPointsList');
+    const actionItemsList = document.getElementById('actionItemsList');
+    const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+    const copySummaryBtn = document.getElementById('copySummaryBtn');
+
+    // Placeholder AI processing function - simulates summarization
+    // In a real app, would call backend API for speech-to-text and summarization
+    async function fakeAIprocess(text) {
+      // Simple mock: just pick lines and add sample data
+      await new Promise(res => setTimeout(res, 1500)); // Simulate processing delay
+      
+      const lines = text.split('\n').filter(l => l.trim().length > 0);
+
+      // Simple summary: first line + last line combined
+      const summary = lines.length > 1 ? lines[0] + " ... " + lines[lines.length - 1] : lines[0];
+
+      // Key points: picking first 3 lines if available
+      const keyPoints = lines.slice(0,3);
+
+      // Action items: lines containing "action" or "todo" or "will"
+      const actionItems = lines.filter(line => /action|todo|will|follow up|next step/i.test(line));
+      
+      return { summary, keyPoints, actionItems };
+    }
+
+    function clearResults() {
+      summaryText.textContent = "";
+      keyPointsList.innerHTML = "";
+      actionItemsList.innerHTML = "";
+      summarySection.hidden = true;
+      status.textContent = "";
+    }
+
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearResults();
+      status.textContent = "Processing...";
+
+      // Priority: transcript textarea > transcript file > audio file
+      let inputText = manualTranscript.value.trim();
+
+      if (!inputText && transcriptFileInput.files.length > 0) {
+        // Read transcript file text
+        try {
+          inputText = await transcriptFileInput.files[0].text();
+        } catch(e) {
+          status.textContent = "Error reading transcript file.";
+          return;
+        }
+      }
+
+      if (!inputText && audioFileInput.files.length > 0) {
+        status.textContent = "Converting audio to text (simulated)...";
+        // NOTE: No real audio-to-text here, just a placeholder
+        // In real deployment, upload to backend to convert or call 3rd party API
+        await new Promise(res => setTimeout(res, 2000));
+        inputText = "Simulated transcript from audio. Action: Schedule follow-up meeting. Next step: Prepare presentation.";
+      }
+
+      if (!inputText) {
+        status.textContent = "Please upload an audio/transcript or paste transcript text.";
+        return;
+      }
+
+      try {
+        const result = await fakeAIprocess(inputText);
+
+        summaryText.textContent = result.summary;
+
+        keyPointsList.innerHTML = "";
+        if(result.keyPoints.length === 0){
+          keyPointsList.innerHTML = "<li>No key points found.</li>";
+        }else{
+          result.keyPoints.forEach(point => {
+            const li = document.createElement('li');
+            li.textContent = point;
+            keyPointsList.appendChild(li);
+          });
+        }
+
+        actionItemsList.innerHTML = "";
+        if(result.actionItems.length === 0){
+          actionItemsList.innerHTML = "<li>No action items found.</li>";
+        }else{
+          result.actionItems.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            actionItemsList.appendChild(li);
+          });
+        }
+
+        summarySection.hidden = false;
+        status.textContent = "Summary generated successfully.";
+      } catch(error) {
+        status.textContent = "Error processing the input.";
+        console.error(error);
+      }
+    });
+
+    copySummaryBtn.addEventListener('click', () => {
+      const fullText = 
+        "Meeting Summary:\n\n" + summaryText.textContent + "\n\n" +
+        "Key Points:\n" + Array.from(keyPointsList.children).map(li => "- " + li.textContent).join("\n") + "\n\n" +
+        "Action Items:\n" + Array.from(actionItemsList.children).map(li => "- " + li.textContent).join("\n");
+
+      navigator.clipboard.writeText(fullText).then(() => {
+        status.textContent = "Summary copied to clipboard!";
+      }).catch(() => {
+        status.textContent = "Failed to copy summary.";
+      });
+    });
+
+    downloadPdfBtn.addEventListener('click', () => {
+      // Create a simple PDF using jsPDF library (if offline, will fallback to txt download)
+      if(typeof window.jsPDF === "undefined"){
+        // fallback: download a .txt file
+        const content = 
+          "Meeting Summary\n\n" + summaryText.textContent + "\n\n" +
+          "Key Points:\n" + Array.from(keyPointsList.children).map(li => "- " + li.textContent).join("\n") + "\n\n" +
+          "Action Items:\n" + Array.from(actionItemsList.children).map(li => "- " + li.textContent).join("\n");
+
+        const blob = new Blob([content], {type: 'text/plain'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'meeting-summary.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        status.textContent = "No PDF library found. Downloaded as TXT.";
+        return;
+      }
+
+      const doc = new jsPDF();
+      let y = 10;
+      doc.setFontSize(14);
+      doc.text("Meeting Summary", 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      doc.text(summaryText.textContent, 10, y);
+      y += 15;
+
+      doc.setFontSize(14);
+      doc.text("Key Points", 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      Array.from(keyPointsList.children).forEach(li => {
+        doc.text("- " + li.textContent, 10, y);
+        y += 7;
+        if(y > 280){
+          doc.addPage();
+          y = 10;
+        }
+      });
+
+      y += 8;
+      doc.setFontSize(14);
+      doc.text("Action Items", 10, y);
+      y += 10;
+      doc.setFontSize(12);
+      Array.from(actionItemsList.children).forEach(li => {
+        doc.text("- " + li.textContent, 10, y);
+        y += 7;
+        if(y > 280){
+          doc.addPage();
+          y = 10;
+        }
+      });
+
+      doc.save("meeting-summary.pdf");
+      status.textContent = "PDF downloaded.";
+    });
+
+  </script>
+
+  <!-- jsPDF library CDN for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>
+```
+  
+This web app lets users upload audio (simulated transcription) or transcripts (file or pasted), then generates a simple AI-like summary, key points, and action items. Users can download the summary as PDF or copy it. The AI processing here is simulated since real speech-to-text and summarization would require backend APIs.
+
+Would you like me to help build a backend or integrate a real AI API next?

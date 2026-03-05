@@ -1,0 +1,21 @@
+App Idea: "Meeting Minute Maker"
+
+Description:
+A lightweight web app that helps teams quickly generate, share, and store meeting minutes. Users can create a meeting, add attendees, jot down key points, assign action items, and instantly generate a clean, shareable summary.
+
+Key Features:
+- Simple interface optimized for fast minute-taking during or after meetings.
+- Action item tracking with due dates and assigned owners.
+- Export options (PDF, DOCX) and one-click sharing links.
+- Searchable archive of past meeting minutes.
+- Integrations with Google Calendar and Slack for reminders and notifications.
+
+Monetization:
+- Free tier with basic features and limited meeting storage.
+- Monthly subscription for unlimited meetings, advanced exports, and integrations.
+- Team plans with user management and analytics on follow-up completion rates.
+
+Why it could be profitable:
+- Many small businesses and remote teams struggle with organizing meeting outcomes.
+- Existing tools are often bulky or too complex.
+- Recurring SaaS revenue opportunity with low operational overhead.

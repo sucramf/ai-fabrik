@@ -1,0 +1,475 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>InvoiceSpark - Simple Invoicing Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafe;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #4f46e5;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-top: 0;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #3b3aaf;
+    }
+    .invoice-preview {
+      margin-top: 2rem;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 4px;
+      background: #f3f4f6;
+    }
+    .invoice-header, .invoice-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .invoice-header img {
+      max-height: 50px;
+      max-width: 150px;
+      object-fit: contain;
+    }
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    .status {
+      font-weight: bold;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      color: white;
+      display: inline-block;
+    }
+    .status.sent {
+      background-color: #2563eb;
+    }
+    .status.viewed {
+      background-color: #f59e0b;
+    }
+    .status.paid {
+      background-color: #10b981;
+    }
+    .status.overdue {
+      background-color: #ef4444;
+    }
+    .client-list {
+      margin-top: 1rem;
+    }
+    .client-list button {
+      background: #10b981;
+      margin: 0.25rem 0;
+      width: 100%;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.875rem;
+      margin: 2rem 0;
+      color: #555;
+    }
+    .small-note {
+      font-size: 0.875rem;
+      color: #777;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>InvoiceSpark</h1>
+  <p>Your simple invoicing tool for freelancers & small businesses</p>
+</header>
+
+<main>
+  <section>
+    <h2>Create New Invoice</h2>
+    <form id="invoice-form">
+      <fieldset>
+        <legend>Branding</legend>
+        <label for="logo-url">Logo URL</label>
+        <input type="text" id="logo-url" placeholder="https://example.com/logo.png" />
+        <label for="primary-color">Primary Color (hex)</label>
+        <input type="text" id="primary-color" placeholder="#4f46e5" value="#4f46e5" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Client Details</legend>
+        <label for="client-name">Name</label>
+        <input type="text" id="client-name" placeholder="Client or Company name" required />
+        <label for="client-email">Email</label>
+        <input type="email" id="client-email" placeholder="client@example.com" required />
+        <label for="client-address">Address</label>
+        <textarea id="client-address" rows="2" placeholder="Client address (optional)"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Invoice Items</legend>
+        <div id="items-container"></div>
+        <button type="button" id="add-item-btn">+ Add Item</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Invoice Info</legend>
+        <label for="invoice-number">Invoice Number</label>
+        <input type="text" id="invoice-number" placeholder="e.g. INV-1001" required />
+        <label for="invoice-date">Invoice Date</label>
+        <input type="date" id="invoice-date" required />
+        <label for="due-date">Due Date</label>
+        <input type="date" id="due-date" required />
+        <label for="payment-method">Payment Method</label>
+        <select id="payment-method" required>
+          <option value="">Select payment method</option>
+          <option value="stripe">Stripe</option>
+          <option value="paypal">PayPal</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="cash">Cash</option>
+        </select>
+      </fieldset>
+
+      <button type="submit">Generate Invoice Preview</button>
+    </form>
+  </section>
+
+  <section id="invoice-preview-section" style="display:none;">
+    <h2>Invoice Preview</h2>
+    <div class="invoice-preview" id="invoice-preview">
+      <!-- Invoice preview generated by JS -->
+    </div>
+  </section>
+</main>
+
+<footer>
+  &copy; 2024 InvoiceSpark &mdash; Simple, fast invoicing for freelancers and small businesses.
+</footer>
+
+<script>
+  // Simple data store in localStorage for client details
+  const CLIENTS_KEY = 'invoiceSparkClients';
+  const INVOICES_KEY = 'invoiceSparkInvoices';
+
+  function saveClient(client) {
+    let clients = JSON.parse(localStorage.getItem(CLIENTS_KEY) || '[]');
+    // Check if client exists, update if so
+    const idx = clients.findIndex(c => c.email.toLowerCase() === client.email.toLowerCase());
+    if (idx > -1) {
+      clients[idx] = client;
+    } else {
+      clients.push(client);
+    }
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+  }
+
+  // Add item row
+  function addItemRow(description = '', quantity = 1, price = 0) {
+    const container = document.getElementById('items-container');
+    const itemDiv = document.createElement('div');
+    itemDiv.style.display = 'flex';
+    itemDiv.style.gap = '1rem';
+    itemDiv.style.marginTop = '0.5rem';
+    itemDiv.style.alignItems = 'center';
+
+    const descInput = document.createElement('input');
+    descInput.type = 'text';
+    descInput.placeholder = 'Item description';
+    descInput.value = description;
+    descInput.required = true;
+    descInput.style.flex = '3';
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.min = '1';
+    qtyInput.value = quantity;
+    qtyInput.required = true;
+    qtyInput.style.flex = '1';
+
+    const priceInput = document.createElement('input');
+    priceInput.type = 'number';
+    priceInput.min = '0';
+    priceInput.step = '0.01';
+    priceInput.value = price;
+    priceInput.required = true;
+    priceInput.style.flex = '1';
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.textContent = 'Remove';
+    removeBtn.style.flex = '0.8';
+    removeBtn.style.background = '#ef4444';
+    removeBtn.style.color = 'white';
+    removeBtn.style.border = 'none';
+    removeBtn.style.borderRadius = '4px';
+    removeBtn.style.cursor = 'pointer';
+    removeBtn.onclick = () => itemDiv.remove();
+
+    itemDiv.appendChild(descInput);
+    itemDiv.appendChild(qtyInput);
+    itemDiv.appendChild(priceInput);
+    itemDiv.appendChild(removeBtn);
+
+    container.appendChild(itemDiv);
+  }
+
+  document.getElementById('add-item-btn').addEventListener('click', () => {
+    addItemRow();
+  });
+
+  // Initialize form with one item row
+  addItemRow();
+
+  // Format currency helper
+  function formatCurrency(value) {
+    return '$' + value.toFixed(2);
+  }
+
+  function calculateTotals(items) {
+    let subtotal = 0;
+    items.forEach(i => subtotal += i.quantity * i.price);
+    let tax = 0; // Could add tax logic here
+    let total = subtotal + tax;
+    return {subtotal, tax, total};
+  }
+
+  function createInvoicePreview(data) {
+    const {
+      logoUrl, primaryColor, client, invoiceNumber,
+      invoiceDate, dueDate, paymentMethod, items
+    } = data;
+
+    const totals = calculateTotals(items);
+
+    const invoiceDiv = document.createElement('div');
+    invoiceDiv.style.color = '#333';
+    invoiceDiv.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+    // Header with logo and invoice info
+    const header = document.createElement('div');
+    header.className = 'invoice-header';
+
+    const logo = document.createElement('img');
+    logo.src = logoUrl || 'https://via.placeholder.com/150x50?text=InvoiceSpark';
+    logo.alt = 'Logo';
+    header.appendChild(logo);
+
+    const invoiceInfo = document.createElement('div');
+    invoiceInfo.innerHTML = `
+      <div><strong style="font-size:1.25rem; color:${primaryColor};">Invoice</strong></div>
+      <div>Number: ${invoiceNumber}</div>
+      <div>Date: ${invoiceDate}</div>
+      <div>Due: ${dueDate}</div>
+      <div>Payment Method: ${paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)}</div>
+    `;
+    header.appendChild(invoiceInfo);
+
+    invoiceDiv.appendChild(header);
+
+    // Client details
+    const clientSection = document.createElement('div');
+    clientSection.style.marginTop = '1rem';
+    clientSection.style.paddingBottom = '1rem';
+    clientSection.style.borderBottom = '1px solid #ccc';
+    clientSection.innerHTML = `
+      <h3>Bill To:</h3>
+      <p><strong>${client.name}</strong><br/>
+      ${client.address ? client.address.replace(/\n/g, '<br/>') : ''}
+      <br/>${client.email}</p>
+    `;
+    invoiceDiv.appendChild(clientSection);
+
+    // Items table
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr style="background-color: ${primaryColor}; color: white;">
+        <th>Description</th><th>Quantity</th><th>Price</th><th>Total</th>
+      </tr>
+    `;
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    items.forEach(({description, quantity, price}) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${description}</td>
+        <td>${quantity}</td>
+        <td>${formatCurrency(price)}</td>
+        <td>${formatCurrency(quantity * price)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Totals footer
+    const tfoot = document.createElement('tfoot');
+    tfoot.innerHTML = `
+      <tr>
+        <td colspan="3" style="text-align: right; font-weight: bold;">Subtotal</td>
+        <td>${formatCurrency(totals.subtotal)}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="text-align: right; font-weight: bold;">Tax</td>
+        <td>${formatCurrency(totals.tax)}</td>
+      </tr>
+      <tr style="background-color: ${primaryColor}; color: white; font-weight: bold;">
+        <td colspan="3" style="text-align: right;">Total</td>
+        <td>${formatCurrency(totals.total)}</td>
+      </tr>
+    `;
+    table.appendChild(tfoot);
+
+    invoiceDiv.appendChild(table);
+
+    // Footer note
+    const footer = document.createElement('div');
+    footer.style.marginTop = '1rem';
+    footer.style.fontSize = '0.875rem';
+    footer.style.color = '#555';
+    footer.innerHTML = `
+      <p>Thank you for your business!</p>
+    `;
+    invoiceDiv.appendChild(footer);
+
+    return invoiceDiv;
+  }
+
+  // Handle invoice form submission
+  document.getElementById('invoice-form').addEventListener('submit', e => {
+    e.preventDefault();
+
+    // Gather form data
+    const logoUrl = document.getElementById('logo-url').value.trim();
+    const primaryColor = document.getElementById('primary-color').value.trim() || '#4f46e5';
+    const clientName = document.getElementById('client-name').value.trim();
+    const clientEmail = document.getElementById('client-email').value.trim();
+    const clientAddress = document.getElementById('client-address').value.trim();
+    const invoiceNumber = document.getElementById('invoice-number').value.trim();
+    const invoiceDate = document.getElementById('invoice-date').value;
+    const dueDate = document.getElementById('due-date').value;
+    const paymentMethod = document.getElementById('payment-method').value;
+
+    if (!clientName || !clientEmail || !invoiceNumber || !invoiceDate || !dueDate || !paymentMethod) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+
+    // Validate date logic
+    if (dueDate < invoiceDate) {
+      alert('Due date cannot be before invoice date.');
+      return;
+    }
+
+    // Gather items
+    const container = document.getElementById('items-container');
+    const itemDivs = container.querySelectorAll('div');
+    let items = [];
+    for (const div of itemDivs) {
+      const inputs = div.querySelectorAll('input');
+      const description = inputs[0].value.trim();
+      const quantity = parseInt(inputs[1].value);
+      const price = parseFloat(inputs[2].value);
+      if(!description || quantity <= 0 || price < 0) {
+        alert('Please fill out all item fields correctly.');
+        return;
+      }
+      items.push({description, quantity, price});
+    }
+    if(items.length === 0) {
+      alert('Add at least one invoice item.');
+      return;
+    }
+
+    const client = {name: clientName, email: clientEmail, address: clientAddress};
+
+    // Save client for future quick selects
+    saveClient(client);
+
+    // Create and show preview
+    const previewSection = document.getElementById('invoice-preview-section');
+    const previewDiv = document.getElementById('invoice-preview');
+    previewDiv.innerHTML = '';
+    const invoicePreviewEl = createInvoicePreview({
+      logoUrl, primaryColor, client,
+      invoiceNumber, invoiceDate, dueDate,
+      paymentMethod, items
+    });
+    previewDiv.appendChild(invoicePreviewEl);
+    previewSection.style.display = 'block';
+
+    // Scroll to preview
+    previewSection.scrollIntoView({behavior: 'smooth'});
+  });
+</script>
+
+</body>
+</html>
+```
+  
+This simple web app lets freelancers or small business owners create custom-branded invoices with line items, client info, invoice dates, and payment details. It instantly generates a clean invoice preview. The UI includes:
+
+- Branding inputs (logo URL, primary color)  
+- Client info inputs (name, email, address) with saved client support in localStorage  
+- Dynamic invoice line items with add/remove controls  
+- Invoice info like number, dates, and payment method  
+- Invoice preview generated live on form submit  
+
+This is a minimal starting point focusing on easy invoice creation and preview. Features like emailing invoices, reminders, payment integration, saving invoices, and reports could be added next with backend services or APIs.  
+
+Let me know if you want help extending it with those!

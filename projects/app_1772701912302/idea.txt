@@ -1,0 +1,22 @@
+Sure! Here's a simple and potentially profitable micro SaaS idea:
+
+**Web App Idea:**  
+**"Meeting Minute Maker"**
+
+**What it does:**  
+A lightweight web app that helps remote teams create, share, and track meeting minutes quickly and efficiently. Users input meeting notes in a structured template, tag action items, assign owners, and set due dates. The app then automatically sends reminders and generates summary reports.
+
+**Key Features:**  
+- Easy-to-use meeting minute templates  
+- Action item tracking with deadlines and notifications  
+- Integration with calendars (Google Calendar, Outlook)  
+- Export minutes as PDF or shareable links  
+- Searchable archive of past meeting notes  
+
+**Why it can be profitable:**  
+- Targets remote teams and organizations increasingly reliant on virtual meetings  
+- Saves time and increases accountability, making it valuable for managers and project leaders  
+- Can offer a free tier (basic features) with premium subscription for advanced tracking and integrations  
+- Relatively simple to build and maintain with clear value to customers  
+
+Would you like me to help you outline a minimal viable product (MVP) or marketing strategy?

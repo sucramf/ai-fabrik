@@ -1,0 +1,21 @@
+Sure! Here's a simple, profitable micro SaaS web app idea:
+
+**Idea:** Automated Meeting Summary Generator
+
+**Description:**  
+A web app that integrates with users’ calendar and video conferencing tools (e.g., Zoom, Google Meet, Microsoft Teams) to automatically record meetings and generate concise, actionable summaries with key points, decisions, and assigned tasks. Users can easily share summaries with their team post-meeting.
+
+**Why it’s profitable:**  
+- Saves time on manual note-taking and follow-ups  
+- Valuable for remote teams, freelancers, consultants, and executives  
+- Subscription-based pricing tiered by meeting hours or features  
+- Potential for integrations with popular productivity tools (Slack, Trello, Asana)
+
+**Core features:**  
+- Calendar and conferencing platform integration  
+- AI-powered transcription and summarization  
+- Action item detection and task assignment  
+- Export/share summaries via email or integrations  
+- Simple dashboard with history of past meetings  
+
+Would you like me to suggest the tech stack or marketing approach for this idea?

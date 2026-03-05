@@ -1,0 +1,22 @@
+Sure! Here's a simple and potentially profitable micro SaaS idea:
+
+**App Name:** Meeting Minute Maker
+
+**Concept:**  
+An easy-to-use web app that helps small teams and freelancers quickly create, organize, and share meeting minutes. It offers templates, real-time collaboration, and automated action item tracking with deadline reminders.
+
+**Key Features:**  
+- Pre-built meeting minute templates (standup, client meeting, project kickoff, etc.)  
+- Collaborative editing with team members in real-time  
+- Automated extraction of action items and deadlines  
+- Integration with calendar apps to send reminders  
+- Export minutes as PDF or shareable web links  
+- Searchable archive of past meeting notes
+
+**Why it's profitable:**  
+- Small teams and freelancers often spend a lot of time manually documenting meetings.  
+- Many existing solutions are complex or expensive, so a simple focused tool can attract paying users.  
+- Subscription pricing ($5-$15/month) for premium features like integrations and increased collaborators.  
+- Low operational costs, easy to scale.
+
+Would you like me to help you with a monetization strategy or user acquisition ideas next?

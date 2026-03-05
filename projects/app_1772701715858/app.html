@@ -1,0 +1,164 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Minute Summarizer MVP</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    background: #0052cc;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }
+  main {
+    flex: 1;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 0 8px #ccc;
+    border-radius: 4px;
+  }
+  h1 {
+    margin-top: 0;
+  }
+  label {
+    display: block;
+    margin: 1rem 0 0.3rem;
+  }
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    font-family: monospace;
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+  input[type="file"] {
+    margin-top: 0.5rem;
+  }
+  button {
+    margin-top: 1rem;
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    background: #0052cc;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  button:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
+  #summary {
+    margin-top: 2rem;
+    white-space: pre-wrap;
+    border-left: 5px solid #0052cc;
+    padding-left: 1rem;
+    background: #eef4ff;
+  }
+  #action-items {
+    margin-top: 1rem;
+    background: #fffae5;
+    border-left: 5px solid #ffa500;
+    padding: 1rem;
+  }
+  #footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+    padding: 1rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Meeting Minute Summarizer MVP</h1>
+</header>
+<main>
+  <p>Paste your meeting transcript below or upload a meeting audio file (WAV/MP3) to generate concise meeting minutes with highlighted action items.</p>
+
+  <label for="transcript">Paste Meeting Transcript</label>
+  <textarea id="transcript" placeholder="Paste meeting transcript here..."></textarea>
+
+  <label for="audioUpload">Or upload meeting audio (audio transcription not supported in this MVP)</label>
+  <input type="file" id="audioUpload" accept="audio/*" disabled />
+
+  <button id="summarizeBtn">Summarize Meeting</button>
+
+  <section id="result" aria-live="polite">
+    <h2>Summary</h2>
+    <pre id="summary"></pre>
+    <h3>Action Items</h3>
+    <ul id="action-items"></ul>
+  </section>
+</main>
+<footer id="footer">
+  &copy; 2024 Meeting Minute Summarizer MVP
+</footer>
+
+<script>
+  // Basic keyword-based mock summarization and action item extraction for MVP demo
+
+  const summarizeBtn = document.getElementById('summarizeBtn');
+  const transcriptInput = document.getElementById('transcript');
+  const summaryEl = document.getElementById('summary');
+  const actionItemsEl = document.getElementById('action-items');
+
+  summarizeBtn.addEventListener('click', () => {
+    const text = transcriptInput.value.trim();
+    if (!text) {
+      alert('Please paste meeting transcript to summarize.');
+      return;
+    }
+
+    // Simple naive "summarization": extract sentences containing key decision/action words
+    const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
+    const actionKeywords = ['action', 'task', 'due', 'deadline', 'will', 'must', 'shall', 'assign', 'responsible', 'follow up', 'to do'];
+    let summarySentences = [];
+    let actions = [];
+
+    sentences.forEach(sentence => {
+      const lower = sentence.toLowerCase();
+
+      // Collect "action item" sentences
+      if (actionKeywords.some(word => lower.includes(word))) {
+        actions.push(sentence.trim());
+      } else if (sentence.length > 30) {
+        // Assume important sentences longer than 30 chars could be summary
+        summarySentences.push(sentence.trim());
+      }
+    });
+
+    // Build a concise summary by joining first 3 relevant sentences excluding action items
+    const summary = summarySentences.slice(0, 3).join(' ');
+
+    summaryEl.textContent = summary || 'No clear summary could be extracted from the input.';
+    actionItemsEl.innerHTML = '';
+
+    if (actions.length) {
+      actions.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        actionItemsEl.appendChild(li);
+      });
+    } else {
+      const li = document.createElement('li');
+      li.textContent = 'No action items found.';
+      actionItemsEl.appendChild(li);
+    }
+  });
+</script>
+</body>
+</html>
+```

@@ -1,0 +1,21 @@
+**Web app idea:**  
+**"QuickInvoiceBot"** — an ultra-simple invoicing tool for freelancers and small service providers who want to generate professional invoices in under 2 minutes without account sign-ups or complex setups.
+
+---
+
+### Core Features:
+- Generate clean, printable PDF invoices with your logo, service description, client info, and payment terms.
+- Save invoice data locally in the browser (no account needed).
+- Download or email invoices directly.
+- Customizable templates and colors.
+- Basic invoice numbering and date autofill.
+
+### Why it’s profitable:
+- Freelancers and solopreneurs constantly need quick invoicing without clutter.
+- Charge a low monthly fee (~$5-7) for premium features (branding, multiple clients, email history).
+- Keep a free tier with limited features to attract users.
+- Simple enough for rapid development and minimal maintenance.
+
+---
+
+Would you like me to help you brainstorm the tech stack or marketing plan for this?

@@ -1,0 +1,346 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SkillSwap MVP</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f9f9f9;
+  }
+  header {
+    background: #2a9d8f;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }
+  main {
+    max-width: 600px;
+    margin: 1rem auto;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  }
+  h1 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  label {
+    display:block;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 0.4rem;
+    font-size: 1rem;
+    margin-top: 0.25rem;
+  }
+  button {
+    margin-top: 1.5rem;
+    background: #2a9d8f;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  button:disabled {
+    background: #7cc9c1;
+    cursor: default;
+  }
+  .match-section {
+    margin-top: 2rem;
+  }
+  .user-profile {
+    margin-top: 1rem;
+    background: #e0f2f1;
+    padding: 1rem;
+    border-radius: 6px;
+  }
+  .user-profile h3 {
+    margin-top: 0;
+  }
+  .skills-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  .skills-list li {
+    background: #81c784;
+    color: white;
+    display: inline-block;
+    margin: 0.1rem 0.3rem 0.3rem 0;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+  }
+  .rating-section {
+    margin-top: 1rem;
+  }
+  select {
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+  }
+  .message {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 4px;
+  }
+  .message.success {
+    background: #d0f0d5;
+    color: #27632a;
+  }
+  .message.error {
+    background: #fbdada;
+    color: #9d2a2a;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>SkillSwap</h1>
+  <p>Quick skill exchanges & microlearning sessions</p>
+</header>
+<main>
+  <section id="signup-section">
+    <h2>Sign Up / Register</h2>
+    <form id="signup-form">
+      <label for="username">Your Name:</label>
+      <input type="text" id="username" name="username" required placeholder="E.g. Jane Doe" />
+
+      <label>Skills you can teach (up to 3):</label>
+      <input type="text" class="teach-skill" placeholder="E.g. Graphic Design" />
+      <input type="text" class="teach-skill" placeholder="E.g. Public Speaking" />
+      <input type="text" class="teach-skill" placeholder="E.g. Python Basics" />
+
+      <label>Skills you want to learn (up to 3):</label>
+      <input type="text" class="learn-skill" placeholder="E.g. Smartphone Photography" />
+      <input type="text" class="learn-skill" placeholder="E.g. Excel Tips" />
+      <input type="text" class="learn-skill" placeholder="E.g. French Basics" />
+
+      <button type="submit">Register</button>
+    </form>
+  </section>
+
+  <section id="match-section" class="match-section" style="display:none;">
+    <h2>Find a Match</h2>
+    <p>Try to find a user to swap skills with:</p>
+    <button id="find-match-btn">Find Best Match</button>
+    <div id="match-result"></div>
+  </section>
+
+  <section id="session-section" class="match-section" style="display:none;">
+    <h2>Session Summary & Rating</h2>
+    <div id="session-info"></div>
+    <div class="rating-section">
+      <label for="rating">Rate your session:</label>
+      <select id="rating" aria-label="Rate session">
+        <option value="5">5 - Excellent</option>
+        <option value="4">4 - Very good</option>
+        <option value="3">3 - Good</option>
+        <option value="2">2 - Fair</option>
+        <option value="1">1 - Poor</option>
+      </select>
+      <button id="submit-rating-btn">Submit Rating</button>
+    </div>
+    <div id="rating-message"></div>
+  </section>
+</main>
+
+<script>
+  // In-memory users database (simulate backend)
+  const users = [];
+
+  // Current logged in user index in `users`
+  let currentUserIndex = null;
+  // Current matched user index for session
+  let currentMatchIndex = null;
+
+  const signupForm = document.getElementById('signup-form');
+  const signupSection = document.getElementById('signup-section');
+  const matchSection = document.getElementById('match-section');
+  const sessionSection = document.getElementById('session-section');
+  const findMatchBtn = document.getElementById('find-match-btn');
+  const matchResultDiv = document.getElementById('match-result');
+  const sessionInfoDiv = document.getElementById('session-info');
+  const submitRatingBtn = document.getElementById('submit-rating-btn');
+  const ratingSelect = document.getElementById('rating');
+  const ratingMessageDiv = document.getElementById('rating-message');
+
+  // Helper: get trimmed non-empty skills from inputs
+  function getSkills(inputs) {
+    return Array.from(inputs)
+      .map(input => input.value.trim())
+      .filter(s => s.length > 0)
+      .slice(0, 3);
+  }
+
+  // On register
+  signupForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const username = signupForm.username.value.trim();
+    if (!username) {
+      alert('Please enter your name.');
+      return;
+    }
+    const teachSkillsInputs = signupForm.querySelectorAll('.teach-skill');
+    const learnSkillsInputs = signupForm.querySelectorAll('.learn-skill');
+    const teachSkills = getSkills(teachSkillsInputs);
+    const learnSkills = getSkills(learnSkillsInputs);
+
+    if (teachSkills.length === 0) {
+      alert('Please enter at least one skill you can teach.');
+      return;
+    }
+    if (learnSkills.length === 0) {
+      alert('Please enter at least one skill you want to learn.');
+      return;
+    }
+
+    // Save user
+    const user = {
+      username,
+      teachSkills,
+      learnSkills,
+      ratings: [] // to store received ratings
+    };
+    users.push(user);
+    currentUserIndex = users.length - 1;
+
+    // Hide signup, show match
+    signupSection.style.display = 'none';
+    matchSection.style.display = 'block';
+  });
+
+  // Matching logic:
+  // Find user (other than current) where:
+  // - current user wants to learn a skill that other can teach
+  // - other user wants to learn a skill that current can teach
+  // Prioritize those with highest number of matching skills.
+  // Also prioritize higher average rating users.
+  function findBestMatch() {
+    const currentUser = users[currentUserIndex];
+    if (!currentUser) return null;
+
+    let bestMatch = null;
+    let bestScore = -1;
+
+    for (let i = 0; i < users.length; i++) {
+      if (i === currentUserIndex) continue;
+      const u = users[i];
+
+      // Check mutual interest skills match
+      const currentWants = currentUser.learnSkills;
+      const otherCanTeach = u.teachSkills;
+      const learnMatch = currentWants.filter(skill =>
+        otherCanTeach.some(s => s.toLowerCase() === skill.toLowerCase())
+      );
+
+      const otherWants = u.learnSkills;
+      const currentCanTeach = currentUser.teachSkills;
+      const teachMatch = otherWants.filter(skill =>
+        currentCanTeach.some(s => s.toLowerCase() === skill.toLowerCase())
+      );
+
+      if (learnMatch.length > 0 && teachMatch.length > 0) {
+        // Calculate score: number of matched skills + avg rating bonus
+        const matchCount = learnMatch.length + teachMatch.length;
+
+        const avgRating = u.ratings.length > 0 ?
+          u.ratings.reduce((a,b) => a+b, 0)/u.ratings.length : 3;
+
+        const score = matchCount + avgRating/2; // weight rating moderately
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = {
+            index: i,
+            user: u,
+            skillsYouLearn: learnMatch,
+            skillsYouTeach: teachMatch
+          };
+        }
+      }
+    }
+    return bestMatch;
+  }
+
+  findMatchBtn.addEventListener('click', () => {
+    matchResultDiv.innerHTML = '';
+    const match = findBestMatch();
+    if (!match) {
+      matchResultDiv.innerHTML = '<p>No suitable match found right now. Try again later!</p>';
+      return;
+    }
+    currentMatchIndex = match.index;
+
+    // Show matched user details
+    const u = match.user;
+    const s1 = match.skillsYouLearn.map(skill => `<li>${skill}</li>`).join('');
+    const s2 = match.skillsYouTeach.map(skill => `<li>${skill}</li>`).join('');
+    let avgRating = u.ratings.length > 0 ?
+      (u.ratings.reduce((a,b) => a+b, 0)/u.ratings.length).toFixed(1) : 'No ratings yet';
+
+    matchResultDiv.innerHTML = `
+      <div class="user-profile">
+        <h3>Matched with ${u.username}</h3>
+        <p><strong>You will learn:</strong></p>
+        <ul class="skills-list">${s1}</ul>
+        <p><strong>You will teach:</strong></p>
+        <ul class="skills-list">${s2}</ul>
+        <p><strong>Average rating:</strong> ${avgRating}</p>
+      </div>
+      <button id="start-session-btn">Start Session (Simulated)</button>
+    `;
+
+    // Listen for start session
+    document.getElementById('start-session-btn').addEventListener('click', () => {
+      // Hide match section, show session summary & rating
+      matchSection.style.display = 'none';
+      sessionSection.style.display = 'block';
+
+      sessionInfoDiv.innerHTML = `
+        <p>Session between <strong>${users[currentUserIndex].username}</strong> and <strong>${u.username}</strong> is now complete.</p>
+        <p>You taught: ${match.skillsYouTeach.join(', ')}</p>
+        <p>You learned: ${match.skillsYouLearn.join(', ')}</p>
+      `;
+      ratingMessageDiv.innerHTML = '';
+      ratingSelect.value = '5';
+    });
+  });
+
+  submitRatingBtn.addEventListener('click', () => {
+    const ratingValue = parseInt(ratingSelect.value, 10);
+    if (!ratingValue || ratingValue < 1 || ratingValue > 5) {
+      ratingMessageDiv.innerHTML = '<div class="message error">Please select a valid rating.</div>';
+      return;
+    }
+    // Add rating to matched user profile
+    users[currentMatchIndex].ratings.push(ratingValue);
+
+    ratingMessageDiv.innerHTML = '<div class="message success">Thanks for your rating! You can <button id="new-match-btn">Find another match</button>.</div>';
+    submitRatingBtn.disabled = true;
+    ratingSelect.disabled = true;
+
+    document.getElementById('new-match-btn').addEventListener('click', () => {
+      // Reset and go back to match screen
+      sessionSection.style.display = 'none';
+      matchSection.style.display = 'block';
+      matchResultDiv.innerHTML = '';
+      submitRatingBtn.disabled = false;
+      ratingSelect.disabled = false;
+      ratingMessageDiv.innerHTML = '';
+      currentMatchIndex = null;
+    });
+  });
+</script>
+</body>
+</html>
+```
+  
+This simple single-page app lets a user register with teach/learn skills, find a mutual match based on overlapping skills, and then simulate a session with rating submission. It's an MVP with core flows and no backend — user data is stored only for the session in-memory. It shows the key functionality for SkillSwap's concept. From here you could add real user accounts, video/chat integration, scheduling, reminders, subscription logic, and persistent storage.

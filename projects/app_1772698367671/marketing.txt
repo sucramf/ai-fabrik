@@ -1,0 +1,31 @@
+Certainly! Here's a compelling SEO-optimized marketing text for QuickInvoice:
+
+---
+
+**QuickInvoice: The Fastest Way for Freelancers to Create, Send & Track Invoices**
+
+Are you a freelancer or solo entrepreneur tired of clunky, complicated invoicing software? Meet **QuickInvoice** — the ultra-simple micro SaaS designed to get your invoices out the door in under a minute.
+
+**Why QuickInvoice?**  
+Forget overwhelming accounting tools. QuickInvoice offers a minimalist, intuitive interface tailored just for freelancers who want fast, hassle-free invoicing without the bloat.
+
+**Key Features:**  
+- **Create & Customize Invoices:** Brand each invoice with your logo and colors to make a professional impression every time.  
+- **Save Client Info:** No more retyping! Quickly pull up client details and invoice history for speedy billing.  
+- **Send Invoices by Email:** Dispatch invoices directly from the app to your clients’ inboxes in seconds.  
+- **Track Invoice Status:** Know exactly when your invoices are sent, viewed, paid, or overdue with real-time tracking.  
+- **Integrated Payment Options:** Accept payments via Stripe or PayPal for faster cash flow.  
+- **Insightful Dashboard:** Monitor your total outstanding and paid amounts at a glance.
+
+**Perfect for Freelancers & Small Business Owners**  
+QuickInvoice is built by freelancers, for freelancers. It strips away unnecessary features and focuses on what matters: quick invoicing that keeps your business moving.
+
+**Affordable & Scalable**  
+At just $5/month, QuickInvoice fits any budget. Plus, as your invoicing needs grow, premium features like tax calculations and detailed reports will be available to upgrade your workflow.
+
+**Get Started Today**  
+Save time, stay organized, and get paid faster with QuickInvoice — your simple invoicing companion.
+
+---
+
+If you'd like, I can also provide a rough tech stack outline or a minimal viable product (MVP) development plan to bring QuickInvoice to market quickly and effectively. Just let me know!

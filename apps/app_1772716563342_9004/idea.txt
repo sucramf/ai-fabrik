@@ -1,0 +1,1 @@
+A web tool that instantly generates clean, shareable meeting agendas from bullet points you type in, organizing them by priority and estimated time, with a one-click export to PDF or calendar invite.

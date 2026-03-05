@@ -1,0 +1,1 @@
+A SaaS tool that helps small retail businesses automate and optimize their inventory reorder process by integrating with their POS and supplier APIs, providing real-time inventory tracking, predictive demand forecasting, and automated purchase order generation to prevent stockouts and overstock with minimal manual effort.

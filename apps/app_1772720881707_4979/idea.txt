@@ -1,0 +1,1 @@
+A web tool that generates personalized daily gratitude prompts based on user interests and recent news, helping users build a consistent gratitude journaling habit with minimal effort.

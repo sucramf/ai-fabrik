@@ -1,0 +1,9 @@
+**SaaS Idea:** Meeting Summary & Action Item Extractor
+
+**Problem:** Professionals spend too much time writing meeting notes and tracking action items, leading to inefficiency and missed tasks.
+
+**Solution:** A web tool where users upload or link to meeting recordings (audio/video) or transcripts. The tool uses AI to automatically generate clear meeting summaries, highlight key decisions, and extract actionable tasks with assignees and deadlines.
+
+**User:** Remote teams, project managers, executives, and administrative assistants who attend frequent meetings.
+
+**Value:** Saves time on manual note-taking, ensures follow-up tasks aren’t missed, and improves meeting productivity with minimal effort.

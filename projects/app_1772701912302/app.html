@@ -1,0 +1,366 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Minute Maker - MVP</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 20px;
+    background: #f9f9f9;
+    color: #333;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  h1 {
+    margin: 0;
+    color: #0078D7;
+  }
+  form {
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+  input[type="text"],
+  input[type="date"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  button {
+    margin-top: 1.5rem;
+    background: #0078D7;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #005fa3;
+  }
+  #minutesList {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .minute {
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.05);
+  }
+  .minute h2 {
+    margin: 0 0 0.25rem 0;
+    color: #0078D7;
+  }
+  .minute .date {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.75rem;
+  }
+  .actions {
+    margin-top: 1rem;
+  }
+  .action-item {
+    border-left: 3px solid #0078D7;
+    padding-left: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .action-item.done {
+    text-decoration: line-through;
+    color: #888;
+    border-color: #4CAF50;
+  }
+  .summary {
+    white-space: pre-wrap;
+    margin-top: 0.5rem;
+  }
+  #searchInput {
+    max-width: 700px;
+    margin: 0 auto 1.5rem auto;
+    display: block;
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .no-minutes {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Meeting Minute Maker</h1>
+  <p>Quickly capture meeting notes & track action items</p>
+</header>
+
+<input type="text" id="searchInput" placeholder="Search meeting minutes..." />
+
+<form id="minuteForm" autocomplete="off">
+  <label for="meetingTitle">Meeting Title *</label>
+  <input type="text" id="meetingTitle" required placeholder="Project kickoff, Team sync..." />
+
+  <label for="meetingDate">Date *</label>
+  <input type="date" id="meetingDate" required />
+
+  <label for="notes">Meeting Notes *</label>
+  <textarea id="notes" required placeholder="Write key discussion points here..."></textarea>
+
+  <hr style="margin-top:2rem; margin-bottom:1rem;"/>
+
+  <fieldset style="border:1px solid #ccc; border-radius: 5px; padding: 0.75rem;">
+    <legend><strong>Action Items</strong></legend>
+    <div id="actionItemsContainer">
+      <!-- One action item input block -->
+      <div class="actionItem" style="margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+        <label>Task Description *</label>
+        <input type="text" class="actionTask" placeholder="What needs to be done?" required />
+
+        <label>Assign Owner *</label>
+        <input type="text" class="actionOwner" placeholder="Person responsible" required />
+
+        <label>Due Date *</label>
+        <input type="date" class="actionDue" required />
+
+        <button type="button" class="removeActionBtn" style="margin-top:0.25rem; background:#e74c3c;">Remove</button>
+      </div>
+    </div>
+    <button type="button" id="addActionBtn" style="margin-top: 0.5rem; background: #28a745;">+ Add Action Item</button>
+  </fieldset>
+
+  <button type="submit">Save Meeting Minutes</button>
+</form>
+
+<section id="minutesList">
+  <!-- Saved meeting minutes will appear here -->
+</section>
+
+<script>
+  // Data storage (localStorage simple proxy for MVP)
+  const STORAGE_KEY = 'meeting_minutes';
+
+  function saveMinutes(minutes) {
+    const all = getMinutes();
+    all.push(minutes);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  }
+
+  function getMinutes() {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (Array.isArray(data)) return data;
+    } catch {}
+    return [];
+  }
+
+  // Render minutes list
+  function renderMinutes(filterText = '') {
+    const container = document.getElementById('minutesList');
+    const minutes = getMinutes();
+
+    let filtered = minutes;
+    if(filterText.trim()) {
+      const ft = filterText.toLowerCase();
+      filtered = minutes.filter(m => 
+        m.meetingTitle.toLowerCase().includes(ft) ||
+        m.notes.toLowerCase().includes(ft) ||
+        m.actionItems.some(ai =>
+          ai.task.toLowerCase().includes(ft) ||
+          ai.owner.toLowerCase().includes(ft)
+        )
+      );
+    }
+
+    container.innerHTML = '';
+
+    if(filtered.length === 0) {
+      container.innerHTML = '<p class="no-minutes">No meeting minutes found.</p>';
+      return;
+    }
+
+    filtered.forEach((minute, idx) => {
+      const card = document.createElement('div');
+      card.className = 'minute';
+
+      card.innerHTML = `
+        <h2>${escapeHtml(minute.meetingTitle)}</h2>
+        <div class="date">${minute.meetingDate}</div>
+        <strong>Notes:</strong>
+        <p class="summary">${escapeHtml(minute.notes)}</p>
+        <strong>Action Items:</strong>
+        <div class="actions">
+          ${minute.actionItems.length === 0 ? '<p><em>No action items.</em></p>' : (
+            minute.actionItems.map(ai =>
+              `<div class="action-item${ai.done ? ' done' : ''}">
+                <strong>Task:</strong> ${escapeHtml(ai.task)}<br />
+                <strong>Owner:</strong> ${escapeHtml(ai.owner)}<br />
+                <strong>Due:</strong> ${ai.dueDate}
+              </div>`
+            ).join('')
+          )}
+        </div>
+        <button type="button" data-index="${idx}" class="markDoneBtn">Mark All Action Items Done</button>
+      `;
+      container.appendChild(card);
+    });
+
+    // Attach event listeners for mark done buttons
+    container.querySelectorAll('.markDoneBtn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const idx = +e.target.getAttribute('data-index');
+        markAllDone(idx);
+      });
+    });
+  }
+
+  // Mark all action items done for a minute
+  function markAllDone(index) {
+    const all = getMinutes();
+    if(all[index]) {
+      all[index].actionItems.forEach(ai => ai.done = true);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      renderMinutes(document.getElementById('searchInput').value);
+    }
+  }
+
+  // Escape HTML to prevent injection
+  function escapeHtml(text) {
+    return text.replace(/[&<>"']/g, function(m) {
+      return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[m];
+    });
+  }
+
+  // Handle add/remove action item inputs
+  function createActionItemInputs() {
+    const container = document.getElementById('actionItemsContainer');
+
+    function createActionItem() {
+      const div = document.createElement('div');
+      div.className = 'actionItem';
+      div.style.marginBottom = '1rem';
+      div.style.borderBottom = '1px solid #eee';
+      div.style.paddingBottom = '0.5rem';
+
+      div.innerHTML = `
+        <label>Task Description *</label>
+        <input type="text" class="actionTask" placeholder="What needs to be done?" required />
+        <label>Assign Owner *</label>
+        <input type="text" class="actionOwner" placeholder="Person responsible" required />
+        <label>Due Date *</label>
+        <input type="date" class="actionDue" required />
+        <button type="button" class="removeActionBtn" style="margin-top:0.25rem; background:#e74c3c;">Remove</button>
+      `;
+      // remove button handler
+      div.querySelector('.removeActionBtn').addEventListener('click', e => {
+        container.removeChild(div);
+      });
+      return div;
+    }
+
+    // Add initial one if empty
+    if(container.children.length === 0) {
+      container.appendChild(createActionItem());
+    }
+
+    // Add new one button
+    document.getElementById('addActionBtn').addEventListener('click', () => {
+      container.appendChild(createActionItem());
+    });
+  }
+
+  // On form submit
+  document.getElementById('minuteForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const meetingTitle = document.getElementById('meetingTitle').value.trim();
+    const meetingDate = document.getElementById('meetingDate').value;
+    const notes = document.getElementById('notes').value.trim();
+
+    if(!meetingTitle || !meetingDate || !notes) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+
+    // Gather action items
+    const actionTaskElems = [...document.querySelectorAll('.actionTask')];
+    const actionOwnerElems = [...document.querySelectorAll('.actionOwner')];
+    const actionDueElems = [...document.querySelectorAll('.actionDue')];
+
+    const actionItems = [];
+
+    for(let i=0; i < actionTaskElems.length; i++) {
+      const task = actionTaskElems[i].value.trim();
+      const owner = actionOwnerElems[i].value.trim();
+      const dueDate = actionDueElems[i].value;
+      if(task && owner && dueDate) {
+        actionItems.push({task, owner, dueDate, done: false});
+      } else {
+        alert('Please fill out all action item fields or remove empty ones.');
+        return;
+      }
+    }
+
+    // Construct record and save
+    const minuteRecord = {
+      meetingTitle,
+      meetingDate,
+      notes,
+      actionItems
+    };
+    saveMinutes(minuteRecord);
+
+    // Reset form
+    e.target.reset();
+    // reset action items container
+    const container = document.getElementById('actionItemsContainer');
+    container.innerHTML = '';
+    createActionItemInputs();
+
+    // Re-render minutes list
+    renderMinutes(document.getElementById('searchInput').value);
+  });
+
+  // Search functionality
+  document.getElementById('searchInput').addEventListener('input', e => {
+    renderMinutes(e.target.value);
+  });
+
+  // Initialize
+  createActionItemInputs();
+  renderMinutes();
+</script>
+
+</body>
+</html>
+```

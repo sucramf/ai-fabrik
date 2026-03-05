@@ -1,0 +1,1 @@
+A web tool that instantly converts messy text from emails, PDFs, or documents into clean, plain-text lists or outlines—perfect for organizing tasks, meeting notes, or key points. Users paste their text, and the tool detects bullets, numbers, and indentation to output a neat, editable list for easy copy-pasting or exporting.

@@ -1,0 +1,19 @@
+Idea: **Meeting Minute Minute**
+
+**Concept:**  
+A lightweight web app that helps small teams quickly create, organize, and share meeting minutes. Unlike complex project management tools, this app focuses solely on streamlining meeting notes with action items.
+
+**Key Features:**  
+- Quick meeting note templates (agenda, attendees, discussion points, action items)  
+- Real-time collaborative editing during meetings  
+- Automatic email summary of meeting minutes to attendees  
+- Task assignment with deadlines integrated into notes  
+- Searchable archive of past meeting minutes  
+- Lightweight, minimal UI for fast use without distractions
+
+**Why Profitable?**  
+- Small teams and freelancers pay for productivity tools but don’t need overly complex or expensive suites.  
+- Subscription pricing at $5–$10/user/month targets this niche effectively.  
+- Low maintenance costs with simple features and minimal integrations.
+
+Would you like a more detailed feature list or a simple tech stack suggestion?

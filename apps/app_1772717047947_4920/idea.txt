@@ -1,0 +1,1 @@
+A web tool that instantly converts any messy, unformatted text pasted into it into clean, easy-to-read bullet points or numbered lists. Users simply paste their text, click a button, and get a neatly structured list for emails, notes, or presentations.

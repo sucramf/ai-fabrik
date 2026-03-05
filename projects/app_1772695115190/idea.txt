@@ -1,0 +1,26 @@
+Here's a simple profitable web app idea:
+
+**Meeting Summary Bot**
+
+**Description:**  
+A web app where users upload their meeting audio recordings or upload meeting transcripts, and the app uses AI to generate concise meeting summaries, action items, and key points automatically. Users can download the summaries or share them with their team.
+
+**Why profitable?**  
+- Businesses spend a lot of time during and after meetings trying to capture actionable info.  
+- Saves time and improves productivity, so companies are willing to pay for it.  
+- Can target freelancers, startups, and SMEs initially, with subscriptions or pay-per-use.  
+- Minimal technical complexity leveraging existing speech-to-text and summarization APIs.
+
+**Features:**  
+- Upload audio or text file of meeting  
+- AI-generated summary, key points, and action items  
+- Export summary as PDF or shareable link  
+- User dashboard to manage summaries  
+- Optional integration with Zoom, Google Meet, or calendar apps
+
+**Monetization:**  
+- Freemium model with limited monthly uploads  
+- Paid tiers for more uploads and features  
+- API access for businesses to integrate into their tools
+
+Would you like help outlining a tech stack or marketing strategy for this?

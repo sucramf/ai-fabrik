@@ -1,0 +1,24 @@
+Sure! Here's a simple, profitable micro SaaS web app idea:
+
+**App Name:** CleanInbox
+
+**Description:**  
+A minimalist email inbox cleaner that helps users quickly unsubscribe from unwanted newsletters and promotional emails with one-click. It connects to their email account, analyzes the inbox for recurring promotional senders, and generates an easy-to-use unsubscribe list. Users can unsubscribe from multiple senders at once, reducing inbox clutter and saving time.
+
+**Key Features:**  
+- Connects securely to Gmail, Outlook, and other major email providers using OAuth  
+- Scans inbox for newsletters and promotional emails  
+- Displays a clean, actionable list of unsubscribe options  
+- One-click bulk unsubscribe  
+- Weekly summary reports of inbox health and new subscription trends  
+- Optional filters to exclude important senders from scans  
+
+**Monetization:**  
+- Freemium model: Free for up to 3 unsubscribes per month  
+- Paid plans with unlimited unsubscribes, weekly reports, and priority support ($5/month)  
+- Affiliate partnerships with email marketing services or productivity tools  
+
+**Why it’s profitable:**  
+Many people are overwhelmed by email and looking for easy ways to reduce clutter without manually unsubscribing from dozens of newsletters. This simple tool saves time and improves email productivity, justifying a low monthly fee. The technical scope is manageable, requiring mainly email API integration and a clean UI.
+
+Would you like a detailed feature breakdown or tech stack suggestions?

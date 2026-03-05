@@ -1,0 +1,1 @@
+MeetingMinuteAI: A SaaS tool that automatically transcribes, summarizes, and organizes meeting notes from video calls across platforms like Zoom, Google Meet, and Teams. Targeted at remote teams and freelancers, it saves time by generating clear action items, decisions, and follow-ups, integrated directly into calendar invites and project management tools.

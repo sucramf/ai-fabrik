@@ -1,0 +1,165 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meeting Minute Master | Simplify Your Team Meetings</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9fbfc;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: #3f51b5;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 0.25rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+    header p {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .cta-button {
+      background: #3f51b5;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.25rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 1rem;
+    }
+    .cta-button:hover {
+      background: #2c3a9f;
+    }
+    section.features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    section.features div {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    }
+    section.features h3 {
+      margin-top: 0;
+      color: #3f51b5;
+      font-weight: 600;
+    }
+    ul {
+      list-style: inside disc;
+      margin: 0.5rem 0 0 0;
+      padding: 0;
+    }
+    .pricing {
+      background: #eef1f7;
+      border-radius: 8px;
+      padding: 2rem 1rem;
+      margin: 3rem 0;
+      text-align: center;
+    }
+    .pricing h2 {
+      color: #3f51b5;
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    .pricing p {
+      font-size: 1.1rem;
+      margin: 0.25rem 0 1.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+    @media (max-width: 700px) {
+      section.features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Meeting Minute Master</h1>
+    <p>Simplify your team meetings &amp; never lose track of action items again.</p>
+    <button class="cta-button" onclick="window.location.href='#signup'">Get Started Free</button>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <p>
+        Meeting Minute Master is a lightweight web app built for small teams, startups, and freelancers who want 
+        to quickly create, organize, and share meeting minutes without the clutter of heavy project management tools.
+        Use simple templates, assign tasks, and get smart reminders — all in one easy-to-use platform.
+      </p>
+    </section>
+
+    <section class="features" aria-label="Key Features">
+      <div>
+        <h3>Simple, Editable Templates</h3>
+        <p>Quickly record notes using easy-to-fill meeting minute templates you can customize.</p>
+      </div>
+      <div>
+        <h3>Action Item Tracking</h3>
+        <p>Assign tasks with due dates and get automatic email reminders to keep your team accountable.</p>
+      </div>
+      <div>
+        <h3>Organized Archive</h3>
+        <p>Search and browse past meeting notes anytime to find what you need fast.</p>
+      </div>
+      <div>
+        <h3>Easy Sharing & Export</h3>
+        <p>Export notes as PDFs or share them instantly via a secure web link with your team.</p>
+      </div>
+      <div>
+        <h3>Integrations</h3>
+        <p>Connect with Google Calendar and Slack to schedule meetings and get notifications seamlessly.</p>
+      </div>
+      <div>
+        <h3>User-Friendly Interface</h3>
+        <p>Capture quick notes during meetings with an interface designed for speed and clarity.</p>
+      </div>
+    </section>
+
+    <section class="pricing" id="signup" aria-label="Pricing and Sign Up">
+      <h2>Start For Free — Upgrade Anytime</h2>
+      <p>
+        Use Meeting Minute Master free with up to 3 active projects. Need more? Unlock unlimited projects, premium templates, 
+        and custom branding for just $5/month.
+      </p>
+      <button class="cta-button" onclick="window.location.href='https://yourappdomain.com/signup'">Create Your Free Account</button>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2024 Meeting Minute Master. All rights reserved.
+  </footer>
+</body>
+</html>
+```

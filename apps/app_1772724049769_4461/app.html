@@ -1,0 +1,489 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SnapSign - Lightweight Contract & E-Signature Builder</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    /* Custom scrollbar for textarea */
+    textarea::-webkit-scrollbar {
+      width: 8px;
+    }
+    textarea::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background-color: #a0aec0; 
+      border-radius: 4px;
+    }
+    /* Signature pad styles */
+    #signature-pad {
+      border: 2px dashed #cbd5e1;
+      border-radius: 0.5rem;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold text-indigo-600 select-none">SnapSign</a>
+      <ul class="hidden md:flex gap-8 text-gray-600 font-medium">
+        <li><a href="#features" class="hover:text-indigo-600 transition">Features</a></li>
+        <li><a href="#tool" class="hover:text-indigo-600 transition">Tool</a></li>
+        <li><a href="#footer" class="hover:text-indigo-600 transition">Contact</a></li>
+      </ul>
+      <button id="open-menu" aria-label="Open Menu" class="md:hidden text-indigo-600 focus:ring-2 ring-indigo-500 rounded">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+    </nav>
+    <div id="mobile-menu" class="md:hidden bg-white px-6 pb-4 hidden">
+      <ul class="flex flex-col gap-3 text-gray-600 font-medium">
+        <li><a href="#features" class="block py-2 hover:text-indigo-600 transition">Features</a></li>
+        <li><a href="#tool" class="block py-2 hover:text-indigo-600 transition">Tool</a></li>
+        <li><a href="#footer" class="block py-2 hover:text-indigo-600 transition">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-indigo-600 text-white py-20">
+    <div class="container mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-10 md:gap-20">
+      <div class="md:w-1/2 max-w-lg">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg">Build Contracts & Agreements Easily. Sign Digitally.</h1>
+        <p class="mt-6 text-indigo-200 text-lg leading-relaxed">SnapSign is your lightweight contract and agreement builder with integrated e-signature support. Generate legally simple contracts and get them signed securely — all in one place, fast and hassle-free.</p>
+        <a href="#tool" class="inline-block mt-8 bg-white text-indigo-600 font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-indigo-50 transition">Try the Tool</a>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/2921/2921222.png" alt="Contract Signing Illustration" class="w-64 md:w-80" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="container mx-auto px-6 py-20">
+    <h2 class="text-3xl font-bold text-center mb-14">Why SnapSign?</h2>
+    <div class="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto text-center text-gray-700">
+      <div class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+        <svg class="mx-auto mb-4 w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"></path><path d="M21 12c0 5.523-4.477 10-10 10S1 17.523 1 12 5.477 2 11 2 21 6.477 21 12z"></path></svg>
+        <h3 class="font-semibold text-xl mb-2">Simple & Fast Template Builder</h3>
+        <p>Create contract templates with placeholders and easily customize terms on the fly.</p>
+      </div>
+      <div class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+        <svg class="mx-auto mb-4 w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M16 7a4 4 0 10-8 0v4a4 4 0 008 0V7z"></path><path d="M12 19v2"></path></svg>
+        <h3 class="font-semibold text-xl mb-2">Integrated E-Signature</h3>
+        <p>Sign contracts directly with a smooth canvas signature, no installation needed.</p>
+      </div>
+      <div class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+        <svg class="mx-auto mb-4 w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 21v-2a6 6 0 016-6h8"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
+        <h3 class="font-semibold text-xl mb-2">Export & Share</h3>
+        <p>Download contracts as PDF or share them directly via a generated URL.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool Section -->
+  <section id="tool" class="bg-white py-20 shadow-inner">
+    <div class="container mx-auto px-6 max-w-5xl">
+      <h2 class="text-3xl font-bold mb-10 text-center">Contract Builder & E-Signature Tool</h2>
+      <div class="flex flex-col md:flex-row gap-10">
+
+        <!-- Builder / Template + Preview -->
+        <div class="md:w-1/2 flex flex-col gap-6">
+          <label for="contract-title" class="font-semibold text-gray-700">Contract Title <span class="text-red-500">*</span></label>
+          <input id="contract-title" type="text" placeholder="Agreement for Services" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+          
+          <label for="contract-content" class="font-semibold text-gray-700">Contract Content <span class="text-red-500">*</span></label>
+          <textarea id="contract-content" rows="10" placeholder="Write your contract here...
+Use placeholders like {{Name}}, {{Date}}, {{Company}} which will be replaced in customization." 
+            class="px-4 py-3 border border-gray-300 rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" required></textarea>
+
+          <button id="previewBtn" class="self-start bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition">Preview Contract</button>
+
+          <div id="previewContainer" class="mt-6 bg-gray-50 p-4 border border-gray-300 rounded-lg min-h-[10rem] overflow-auto hidden select-text whitespace-pre-wrap font-sans text-gray-800" aria-live="polite" aria-atomic="true"></div>
+        </div>
+
+        <!-- Custom Fields & Signature -->
+        <div class="md:w-1/2 flex flex-col gap-6">
+          <h3 class="font-semibold text-gray-700">Customize Fields</h3>
+          <form id="fieldsForm" class="flex flex-col gap-4 max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-lg bg-gray-50">
+
+            <!-- Dynamic fields inserted here -->
+
+          </form>
+
+          <h3 class="font-semibold mt-6 mb-2 text-gray-700">Sign Contract</h3>
+          <canvas id="signature-pad" width="400" height="180" class="w-full max-w-full h-[180px] bg-white rounded"></canvas>
+          <div class="flex gap-4 mt-2">
+            <button id="clear-signature" type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition flex-1">Clear Signature</button>
+          </div>
+
+          <button id="exportPdf" type="button" class="mt-8 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">Download PDF</button>
+          <p id="exportStatus" class="mt-2 text-sm text-green-700 hidden">PDF generated! Check your downloads.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-indigo-900 text-indigo-200 py-12 mt-auto">
+    <div class="container mx-auto px-6 max-w-5xl flex flex-col md:flex-row justify-between">
+      <div class="mb-6 md:mb-0">
+        <h4 class="font-bold text-lg mb-2">SnapSign</h4>
+        <p>Your lightweight contract &amp; e-signature builder.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Contact</h4>
+        <p>Email: support@snapsign.io</p>
+        <p>© 2024 SnapSign. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Dependencies (jsPDF for PDF generation) -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <script>
+    // Mobile menu toggle
+    const openMenuBtn = document.getElementById('open-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    openMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Core Elements
+    const contractTitleInput = document.getElementById('contract-title');
+    const contractContentTextarea = document.getElementById('contract-content');
+    const previewBtn = document.getElementById('previewBtn');
+    const previewContainer = document.getElementById('previewContainer');
+    const fieldsForm = document.getElementById('fieldsForm');
+    const signaturePadCanvas = document.getElementById('signature-pad');
+    const clearSignatureBtn = document.getElementById('clear-signature');
+    const exportPdfBtn = document.getElementById('exportPdf');
+    const exportStatusText = document.getElementById('exportStatus');
+
+    // Utilities
+    // Extract unique placeholders from contract content, e.g. {{Name}}, {{Date}}
+    function extractPlaceholders(text) {
+      const regex = /{{\s*([A-Za-z0-9_ ]+)\s*}}/g;
+      const placeholders = new Set();
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        placeholders.add(match[1].trim());
+      }
+      return [...placeholders];
+    }
+
+    // Render fields inputs for placeholders
+    function renderFieldsInputs(placeholders) {
+      fieldsForm.innerHTML = '';
+      if(placeholders.length === 0) {
+        fieldsForm.innerHTML = '<p class="text-gray-500">No customizable fields detected in the contract content.</p>';
+        return;
+      }
+      placeholders.forEach(ph => {
+        const fieldDiv = document.createElement('div');
+        fieldDiv.className = 'flex flex-col gap-1';
+
+        const label = document.createElement('label');
+        label.htmlFor = `field-${ph}`;
+        label.className = 'font-medium text-gray-700';
+        label.textContent = ph;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `field-${ph}`;
+        input.name = ph;
+        input.placeholder = `Enter value for ${ph}`;
+        input.className = 'px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500';
+
+        fieldDiv.appendChild(label);
+        fieldDiv.appendChild(input);
+        fieldsForm.appendChild(fieldDiv);
+      });
+    }
+
+    // Replace placeholders with user input values
+    function replacePlaceholders(text, values) {
+      return text.replace(/{{\s*([A-Za-z0-9_ ]+)\s*}}/g, (match, p1) => {
+        const key = p1.trim();
+        return values[key] !== undefined && values[key] !== '' ? values[key] : match;
+      });
+    }
+
+    // Generate text preview
+    previewBtn.addEventListener('click', () => {
+      const content = contractContentTextarea.value.trim();
+      const title = contractTitleInput.value.trim();
+      if (!title) {
+        alert('Contract title is required.');
+        contractTitleInput.focus();
+        return;
+      }
+      if (!content) {
+        alert('Contract content is required.');
+        contractContentTextarea.focus();
+        return;
+      }
+
+      // Extract placeholders and render fields
+      const placeholders = extractPlaceholders(content);
+      renderFieldsInputs(placeholders);
+
+      // Compose preview
+      previewContainer.classList.remove('hidden');
+      previewContainer.textContent = title + '\n\n' + content;
+
+      // Clear signature and disable export PDF until signed
+      clearSignature();
+      exportPdfBtn.disabled = true;
+      exportStatusText.classList.add('hidden');
+    });
+
+    // Update preview dynamically when field values are changed
+    fieldsForm.addEventListener('input', () => {
+      if (previewContainer.classList.contains('hidden')) return;
+      const inputs = fieldsForm.querySelectorAll('input');
+      const values = {};
+      inputs.forEach(input => {
+        values[input.name] = input.value;
+      });
+      const title = contractTitleInput.value.trim();
+      const originalContent = contractContentTextarea.value.trim();
+      const replacedText = replacePlaceholders(originalContent, values);
+      previewContainer.textContent = title + '\n\n' + replacedText;
+    });
+
+    // Signature Pad Implementation
+    let ctx = signaturePadCanvas.getContext('2d');
+    let drawing = false;
+    let points = [];
+
+    function resizeCanvas() {
+      // save current signature
+      const data = ctx.getImageData(0, 0, signaturePadCanvas.width, signaturePadCanvas.height);
+      // resize canvas (set width and height attributes according to container width)
+      const ratio = window.devicePixelRatio || 1;
+      signaturePadCanvas.width = signaturePadCanvas.clientWidth * ratio;
+      signaturePadCanvas.height = signaturePadCanvas.clientHeight * ratio;
+      signaturePadCanvas.style.width = signaturePadCanvas.clientWidth + 'px';
+      signaturePadCanvas.style.height = signaturePadCanvas.clientHeight + 'px';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(ratio, ratio);
+      // restore saved signature
+      ctx.putImageData(data, 0, 0);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function startDrawing(event) {
+      drawing = true;
+      points.push(getPointFromEvent(event));
+      drawPoints();
+      event.preventDefault();
+    }
+    function draw(event) {
+      if (!drawing) return;
+      points.push(getPointFromEvent(event));
+      drawPoints();
+      event.preventDefault();
+    }
+    function endDrawing(event) {
+      drawing = false;
+      // When finished, enable PDF export if contract previewed and signed
+      checkExportAvailability();
+      event.preventDefault();
+    }
+
+    function getPointFromEvent(event) {
+      const rect = signaturePadCanvas.getBoundingClientRect();
+      let x, y;
+      if (event.touches && event.touches.length > 0) {
+        x = event.touches[0].clientX - rect.left;
+        y = event.touches[0].clientY - rect.top;
+      } else {
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+      }
+      return { x, y };
+    }
+
+    // Draw lines connecting points with smoothing
+    function drawPoints() {
+      ctx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height);
+      ctx.lineJoin = ctx.lineCap = 'round';
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = '#4c51bf'; // indigo-600
+
+      if (points.length < 2) {
+        if(points[0]) {
+          const p = points[0];
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#4c51bf';
+          ctx.fill();
+          ctx.closePath();
+        }
+        return;
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+
+      for (let i = 1; i < points.length - 2; i++) {
+        const c = (points[i].x + points[i + 1].x) / 2;
+        const d = (points[i].y + points[i + 1].y) / 2;
+        ctx.quadraticCurveTo(points[i].x, points[i].y, c, d);
+      }
+
+      // For the last two points
+      const lastSecond = points[points.length - 2];
+      const last = points[points.length - 1];
+      ctx.quadraticCurveTo(lastSecond.x, lastSecond.y, last.x, last.y);
+      ctx.stroke();
+    }
+
+    // Clear signature pad
+    function clearSignature() {
+      points = [];
+      ctx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height);
+      exportPdfBtn.disabled = true;
+      exportStatusText.classList.add('hidden');
+    }
+    clearSignatureBtn.addEventListener('click', () => {
+      clearSignature();
+    });
+
+    // Check if export PDF can be enabled
+    function checkExportAvailability() {
+      const title = contractTitleInput.value.trim();
+      const content = contractContentTextarea.value.trim();
+      const hasContent = title && content;
+      const signatureExists = points.length > 0;
+
+      if (hasContent && signatureExists && !previewContainer.classList.contains('hidden')) {
+        exportPdfBtn.disabled = false;
+      } else {
+        exportPdfBtn.disabled = true;
+      }
+    }
+
+    // Listen on canvas signing to enable export button if valid
+    signaturePadCanvas.addEventListener('mousedown', startDrawing);
+    signaturePadCanvas.addEventListener('mousemove', draw);
+    signaturePadCanvas.addEventListener('mouseup', endDrawing);
+    signaturePadCanvas.addEventListener('mouseout', endDrawing);
+    signaturePadCanvas.addEventListener('touchstart', startDrawing);
+    signaturePadCanvas.addEventListener('touchmove', draw);
+    signaturePadCanvas.addEventListener('touchend', endDrawing);
+    signaturePadCanvas.addEventListener('touchcancel', endDrawing);
+
+    // Export contract + signature as PDF
+    exportPdfBtn.addEventListener('click', async () => {
+      exportPdfBtn.disabled = true;
+      exportStatusText.classList.add('hidden');
+
+      const { jsPDF } = window.jspdf;
+
+      const title = contractTitleInput.value.trim();
+      const originalContent = contractContentTextarea.value.trim();
+
+      // Collect placeholders values
+      const inputs = fieldsForm.querySelectorAll('input');
+      const values = {};
+      inputs.forEach(input => {
+        values[input.name] = input.value;
+      });
+      const replacedContent = replacePlaceholders(originalContent, values);
+
+      try {
+        const pdf = new jsPDF({
+          unit: 'pt',
+          format: 'a4'
+        });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 40;
+        const maxLineWidth = pageWidth - margin * 2;
+        const lineHeight = 14;
+        let cursorY = margin;
+
+        // Title
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(22);
+        pdf.text(title, margin, cursorY);
+        cursorY += 30;
+
+        // Contract text (wrap lines)
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        const splitText = pdf.splitTextToSize(replacedContent, maxLineWidth);
+        splitText.forEach(line => {
+          if(cursorY + lineHeight > pdf.internal.pageSize.getHeight() - margin) {
+            pdf.addPage();
+            cursorY = margin;
+          }
+          pdf.text(line, margin, cursorY);
+          cursorY += lineHeight;
+        });
+
+        // Signature Title
+        if (cursorY + 50 > pdf.internal.pageSize.getHeight() - margin) {
+          pdf.addPage();
+          cursorY = margin;
+        }
+        cursorY += 40;
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Signature:', margin, cursorY);
+        cursorY += 10;
+
+        // Signature Image
+        const ratio = window.devicePixelRatio || 1;
+        const sigWidth = signaturePadCanvas.width / ratio;
+        const sigHeight = signaturePadCanvas.height / ratio;
+
+        // Scale signature to fit pdf width with max width 300pt
+        const maxSigWidth = 300;
+        let drawWidth = sigWidth;
+        let drawHeight = sigHeight;
+        if(drawWidth > maxSigWidth){
+          const scale = maxSigWidth / drawWidth;
+          drawWidth = maxSigWidth;
+          drawHeight = drawHeight * scale;
+        }
+
+        const signatureURL = signaturePadCanvas.toDataURL('image/png');
+        if(drawHeight + cursorY > pdf.internal.pageSize.getHeight() - margin) {
+          pdf.addPage();
+          cursorY = margin;
+        }
+        pdf.addImage(signatureURL, 'PNG', margin, cursorY, drawWidth, drawHeight);
+
+        // Footer text with date
+        const exportDate = new Date();
+        const dateString = exportDate.toLocaleDateString() + ' ' + exportDate.toLocaleTimeString();
+        pdf.setFontSize(9);
+        pdf.setTextColor(100);
+        pdf.text(`Generated by SnapSign on ${dateString}`, margin, pdf.internal.pageSize.getHeight() - 20);
+
+        pdf.save(`${title.replace(/\s+/g, '_')}_Contract.pdf`);
+        exportStatusText.classList.remove('hidden');
+      } catch (err) {
+        alert('An error occurred while generating the PDF. Please try again.');
+        console.error(err);
+      } finally {
+        // Slight delay to re-enable button
+        setTimeout(() => {
+          exportPdfBtn.disabled = false;
+        }, 500);
+      }
+    });
+  </script>
+
+</body>
+</html>
+```

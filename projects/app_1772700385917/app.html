@@ -1,0 +1,910 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QuickInvoiceBot — Instant Invoices for Freelancers</title>
+<style>
+  :root {
+    --primary-color: #2a9d8f;
+    --secondary-color: #264653;
+    --bg-color: #fefefe;
+    --text-color: #333;
+    --muted-color: #666;
+    --border-radius: 6px;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body {
+    margin:0; padding: 0; background: var(--bg-color); color: var(--text-color);
+    font-family: var(--font-family);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  main {
+    flex: 1;
+    max-width: 900px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+  }
+  h2 {
+    margin-top: 0;
+    color: var(--secondary-color);
+  }
+  label {
+    font-weight: 600;
+    display: block;
+    margin: 0.6rem 0 0.2rem 0;
+  }
+  input[type="text"], input[type="email"], input[type="date"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+  }
+  textarea {
+    resize: vertical;
+  }
+  .row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .row > * {
+    flex: 1 1 200px;
+  }
+  .half {
+    flex: 1 1 48%;
+  }
+  button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+  button:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
+  button:hover:not(:disabled) {
+    background: #21867a;
+  }
+  .invoice-preview {
+    margin-top: 2rem;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    background: white;
+  }
+  .invoice-header,
+  .invoice-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .invoice-logo {
+    max-height: 60px;
+    max-width: 180px;
+    object-fit: contain;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+  th, td {
+    border: 1px solid #bbb;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+  }
+  th {
+    background: var(--primary-color);
+    color: white;
+  }
+  .text-right {
+    text-align: right;
+  }
+  .color-picker {
+    width: 40px;
+    height: 32px;
+    border: 1px solid #ccc;
+    padding: 0;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  .section-divider {
+    border-top: 1px solid #ddd;
+    margin: 2rem 0 1.5rem 0;
+  }
+  small {
+    color: var(--muted-color);
+  }
+  #storageStatus {
+    font-size: 0.85rem;
+    color: green;
+    margin-top: 0.2rem;
+  }
+  .email-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .email-row input[type="email"] {
+    flex: 1 1 100%;
+  }
+  .premium-promo {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: #f9f0f0;
+    border-left: 4px solid #d9534f;
+    color: #a94442;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+  }
+  footer {
+    margin-top: auto;
+    background: var(--secondary-color);
+    color: white;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1rem;
+  }
+  /* Scrollbar for long table */
+  .invoice-preview table {
+    max-height: 300px;
+    display: block;
+    overflow-y: auto;
+  }
+</style>
+</head>
+<body>
+<header>QuickInvoiceBot</header>
+<main>
+  <h2>Invoice Details</h2>
+  <form id="invoiceForm" autocomplete="off" spellcheck="false" novalidate>
+    <fieldset>
+      <legend><strong>Your Info</strong></legend>
+      <label for="senderName">Your Name / Company</label>
+      <input id="senderName" type="text" placeholder="John Doe Freelance" required minlength="2" />
+      <label for="senderAddress">Address</label>
+      <textarea id="senderAddress" rows="3" placeholder="123 Freelancer Street&#10;City, Country"></textarea>
+      <label for="senderEmail">Email</label>
+      <input id="senderEmail" type="email" placeholder="your@email.com" required />
+      <label for="logoDataUrl">Logo (PNG/JPG, optional)</label>
+      <input id="logoDataUrl" type="file" accept="image/png, image/jpeg" />
+      <small>Logo will appear on the invoice header.</small>
+    </fieldset>
+
+    <fieldset style="margin-top:1rem;">
+      <legend><strong>Client Info</strong></legend>
+      <label for="clientName">Client Name</label>
+      <input id="clientName" type="text" placeholder="Client or Company" required minlength="2" />
+      <label for="clientAddress">Client Address</label>
+      <textarea id="clientAddress" rows="3" placeholder="Client address or notes"></textarea>
+      <label for="clientEmail">Client Email</label>
+      <input id="clientEmail" type="email" placeholder="client@email.com" required />
+    </fieldset>
+
+    <fieldset style="margin-top:1rem;">
+      <legend><strong>Invoice Info</strong></legend>
+      <div class="row">
+        <div class="half">
+          <label for="invoiceNumber">Invoice Number</label>
+          <input id="invoiceNumber" type="text" pattern="^[a-zA-Z0-9\-_.]+$" title="Alphanumeric with optional dash, dot or underscore" />
+          <small>Auto-increments on save.</small>
+        </div>
+        <div class="half">
+          <label for="invoiceDate">Date</label>
+          <input id="invoiceDate" type="date" />
+        </div>
+      </div>
+      <label for="paymentTerms">Payment Terms</label>
+      <select id="paymentTerms">
+        <option value="Due on Receipt">Due on Receipt</option>
+        <option value="Net 7">Net 7</option>
+        <option value="Net 15">Net 15</option>
+        <option value="Net 30" selected>Net 30</option>
+        <option value="Net 60">Net 60</option>
+      </select>
+    </fieldset>
+
+    <fieldset style="margin-top:1rem;">
+      <legend><strong>Services / Items</strong></legend>
+      <table id="itemsTable" aria-label="Invoice items">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th style="width:85px;">Quantity</th>
+            <th style="width:110px;">Unit Price</th>
+            <th style="width:110px;">Line Total</th>
+            <th style="width:40px;">Remove</th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody">
+          <!-- Rows here -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5">
+              <button type="button" id="addItemBtn" style="width:100%;">+ Add Item</button>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </fieldset>
+
+    <fieldset style="margin-top:1rem;">
+      <legend><strong>Customization</strong></legend>
+      <label for="themeColor">Primary Color</label>
+      <input id="themeColor" type="color" class="color-picker" value="#2a9d8f" title="Choose primary color" />
+      <small>Customize your invoice accent color.</small>
+    </fieldset>
+
+    <fieldset style="margin-top:1rem;">
+      <legend><strong>Email Invoice (Optional)</strong></legend>
+      <div class="email-row">
+        <input id="emailTo" type="email" placeholder="Send invoice to (client email or others)" />
+        <button type="button" id="sendEmailBtn">Send Email</button>
+      </div>
+      <small>Uses your default email client with invoice PDF attached (premium feature placeholder).</small>
+      <div class="premium-promo" title="Email sending is premium feature">
+        Email sending coming soon in Premium!
+      </div>
+    </fieldset>
+
+    <fieldset style="margin-top:1rem;">
+      <button type="button" id="saveBtn">Save Invoice Data</button>
+      <button type="button" id="downloadPdfBtn" disabled>Download PDF</button>
+      <button type="button" id="clearSavedBtn" style="background:#d9534f; margin-left: 0.8rem;">Clear Saved Data</button>
+      <div id="storageStatus" aria-live="polite"></div>
+    </fieldset>
+  </form>
+
+  <div class="section-divider"></div>
+
+  <section aria-label="Invoice preview">
+    <h2>Invoice Preview</h2>
+    <div id="invoicePreview" class="invoice-preview" tabindex="0" aria-live="polite" aria-atomic="true">
+      <!-- Preview content generated by JS -->
+    </div>
+  </section>
+</main>
+<footer>
+  © 2024 QuickInvoiceBot. Simple invoicing for freelancers. &nbsp;|&nbsp; <small>Premium features coming soon.</small>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(() => {
+  'use strict';
+
+  // Elements
+  const form = document.getElementById('invoiceForm');
+  const senderName = form.querySelector('#senderName');
+  const senderAddress = form.querySelector('#senderAddress');
+  const senderEmail = form.querySelector('#senderEmail');
+  const logoInput = form.querySelector('#logoDataUrl');
+  const clientName = form.querySelector('#clientName');
+  const clientAddress = form.querySelector('#clientAddress');
+  const clientEmail = form.querySelector('#clientEmail');
+  const invoiceNumber = form.querySelector('#invoiceNumber');
+  const invoiceDate = form.querySelector('#invoiceDate');
+  const paymentTerms = form.querySelector('#paymentTerms');
+  const itemsBody = form.querySelector('#itemsBody');
+  const addItemBtn = form.querySelector('#addItemBtn');
+  const themeColor = form.querySelector('#themeColor');
+  const saveBtn = form.querySelector('#saveBtn');
+  const downloadPdfBtn = form.querySelector('#downloadPdfBtn');
+  const clearSavedBtn = form.querySelector('#clearSavedBtn');
+  const storageStatus = form.querySelector('#storageStatus');
+  const invoicePreview = document.getElementById('invoicePreview');
+
+  // Premium feature email send placeholders
+  const emailTo = form.querySelector('#emailTo');
+  const sendEmailBtn = form.querySelector('#sendEmailBtn');
+
+  // State
+  let logoDataUrl = null;
+
+  // Local Storage Key
+  const STORAGE_KEY = 'quickinvoicebot_invoice_data_v1';
+
+  // Util: Format price
+  function formatCurrency(val) {
+    return '$' + val.toFixed(2);
+  }
+  // Util: Format date YYYY-MM-DD to readable
+  function formatDate(d) {
+    if (!d) return '';
+    const dt = new Date(d);
+    if (isNaN(dt)) return d;
+    return dt.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+  }
+
+  // Util: Next invoice number logic
+  function incrementInvoiceNumber(numStr) {
+    if (!numStr) return 'INV-1';
+    const m = numStr.match(/^(.*?)(\d+)$/);
+    if (!m) return numStr + '-1';
+    const prefix = m[1];
+    const num = parseInt(m[2], 10);
+    return prefix + (num + 1);
+  }
+
+  // Create new blank item row
+  function createItemRow(desc = '', quantity = 1, unitPrice = 0) {
+    const tr = document.createElement('tr');
+
+    const descTd = document.createElement('td');
+    const descInput = document.createElement('input');
+    descInput.type = 'text';
+    descInput.required = true;
+    descInput.value = desc;
+    descInput.placeholder = 'Service description';
+    descInput.style.width = '100%';
+    descTd.appendChild(descInput);
+
+    const qtyTd = document.createElement('td');
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.min = '0';
+    qtyInput.step = '1';
+    qtyInput.required = true;
+    qtyInput.value = quantity;
+    qtyInput.style.width = '100%';
+    qtyTd.appendChild(qtyInput);
+
+    const priceTd = document.createElement('td');
+    const priceInput = document.createElement('input');
+    priceInput.type = 'number';
+    priceInput.min = '0';
+    priceInput.step = '0.01';
+    priceInput.required = true;
+    priceInput.value = unitPrice.toFixed(2);
+    priceInput.style.width = '100%';
+    priceTd.appendChild(priceInput);
+
+    const lineTotalTd = document.createElement('td');
+    lineTotalTd.classList.add('text-right');
+    lineTotalTd.textContent = formatCurrency(quantity * unitPrice);
+
+    const removeTd = document.createElement('td');
+    removeTd.style.textAlign = 'center';
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.textContent = '×';
+    removeBtn.title = 'Remove item';
+    removeBtn.setAttribute('aria-label', 'Remove this item');
+    removeBtn.style.color = '#d9534f';
+    removeBtn.style.fontWeight = '700';
+    removeBtn.style.cursor = 'pointer';
+    removeBtn.style.border = 'none';
+    removeBtn.style.background = 'transparent';
+    removeBtn.style.fontSize = '1.2rem';
+    removeBtn.addEventListener('click', () => {
+      tr.remove();
+      updateTotalsAndPreview();
+    });
+    removeTd.appendChild(removeBtn);
+
+    // Update line total on qty or price change
+    function onInputChange() {
+      const q = Number(qtyInput.value);
+      const p = Number(priceInput.value);
+      const total = (q && p) ? q * p : 0;
+      lineTotalTd.textContent = formatCurrency(total);
+      updateTotalsAndPreview();
+    }
+    qtyInput.addEventListener('input', onInputChange);
+    priceInput.addEventListener('input', onInputChange);
+    descInput.addEventListener('input', updateTotalsAndPreview);
+
+    tr.append(descTd, qtyTd, priceTd, lineTotalTd, removeTd);
+    return tr;
+  }
+
+  // Add a new empty item row
+  function addItem() {
+    const row = createItemRow();
+    itemsBody.appendChild(row);
+    row.querySelector('input[type="text"]').focus();
+  }
+
+  // Collect all item data from DOM
+  function getItemsData() {
+    const rows = itemsBody.querySelectorAll('tr');
+    const items = [];
+    for (const row of rows) {
+      const inputs = row.querySelectorAll('input');
+      if (inputs.length < 3) continue;
+      const desc = inputs[0].value.trim();
+      let quantity = parseInt(inputs[1].value, 10);
+      quantity = isNaN(quantity) || quantity < 0 ? 0 : quantity;
+      let unitPrice = parseFloat(inputs[2].value);
+      unitPrice = isNaN(unitPrice) || unitPrice < 0 ? 0 : unitPrice;
+      if(desc === '' && quantity === 0 && unitPrice === 0) continue; // skip empty lines
+      items.push({desc, quantity, unitPrice});
+    }
+    return items;
+  }
+
+  // Update totals and invoice preview
+  function updateTotalsAndPreview() {
+    const items = getItemsData();
+    const subtotal = items.reduce((sum, i) => sum + (i.quantity * i.unitPrice), 0);
+    const color = themeColor.value;
+    const sender = {
+      name: senderName.value.trim(),
+      address: senderAddress.value.trim(),
+      email: senderEmail.value.trim(),
+    };
+    const client = {
+      name: clientName.value.trim(),
+      address: clientAddress.value.trim(),
+      email: clientEmail.value.trim(),
+    };
+    const invNumberVal = invoiceNumber.value.trim() || '(Auto)';
+    const dateStr = invoiceDate.value || (new Date()).toISOString().slice(0,10);
+    const dateReadable = formatDate(dateStr);
+    const payment = paymentTerms.value;
+
+    // Build preview HTML
+    // Logo image if loaded from file
+    let logoHtml = '';
+    if(logoDataUrl){
+      logoHtml = `<img src="${logoDataUrl}" alt="Your Logo" class="invoice-logo" />`;
+    }
+
+    // Format items rows
+    let itemsRowsHtml = '';
+    if(items.length === 0){
+      itemsRowsHtml = `
+        <tr><td colspan="4" style="text-align:center; font-style:italic; color:#999;">No items added</td></tr>
+      `;
+    }else{
+      itemsRowsHtml = items.map(
+        item => `<tr>
+          <td>${item.desc}</td>
+          <td class="text-right">${item.quantity}</td>
+          <td class="text-right">${formatCurrency(item.unitPrice)}</td>
+          <td class="text-right">${formatCurrency(item.quantity * item.unitPrice)}</td>
+        </tr>`
+      ).join('');
+    }
+
+    const previewHtml = `
+      <div style="border-bottom: 2px solid ${color}; margin-bottom: 1rem; padding-bottom: 0.75rem;">
+        <div class="invoice-header">
+          <div>${logoHtml || ''}<h1 style="color:${color}; margin:0; font-weight:700;">INVOICE</h1></div>
+          <div style="text-align:right; font-weight:600;">
+            <div>Invoice #: ${invNumberVal}</div>
+            <div>Date: ${dateReadable}</div>
+            <div>Payment Terms: ${payment}</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom: 1rem; font-size:0.95rem;">
+        <div>
+          <h3 style="margin-bottom:0.2rem; color:${color};">From:</h3>
+          <div><strong>${sender.name || '[Your Name]'}</strong></div>
+          <div>${sender.address.replace(/\n/g,'<br>') || '-'}</div>
+          <div>${sender.email || '-'}</div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:0.2rem; color:${color};">Bill To:</h3>
+          <div><strong>${client.name || '[Client Name]'}</strong></div>
+          <div>${client.address.replace(/\n/g,'<br>') || '-'}</div>
+          <div>${client.email || '-'}</div>
+        </div>
+      </div>
+      <table aria-label="Invoice items preview" style="width:100%; border-collapse:collapse; border: 1px solid #bbb;">
+        <thead style="background-color:${color}; color:#fff;">
+          <tr>
+            <th style="padding: 0.4rem 0.6rem; text-align:left;">Description</th>
+            <th style="padding: 0.4rem 0.6rem; text-align:right; width:80px;">Quantity</th>
+            <th style="padding: 0.4rem 0.6rem; text-align:right; width:110px;">Unit Price</th>
+            <th style="padding: 0.4rem 0.6rem; text-align:right; width:110px;">Line Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsRowsHtml}
+        </tbody>
+      </table>
+      <div style="text-align:right; margin-top: 0.8rem; font-weight:700; font-size:1.2rem; color:${color};">
+        Subtotal: ${formatCurrency(subtotal)}
+      </div>
+      <div style="margin-top: 1rem; font-size: 0.85rem; color: #555;">
+        <em>Payment terms: Please pay within the agreed timeline. Thank you for your business!</em>
+      </div>
+    `;
+
+    invoicePreview.innerHTML = previewHtml;
+
+    // Enable Download only if items and required fields present
+    const canDownload = senderName.value.trim() && senderEmail.value.trim() && clientName.value.trim() && clientEmail.value.trim() && items.length > 0;
+    downloadPdfBtn.disabled = !canDownload;
+  }
+
+  // Save data to localStorage
+  function saveInvoiceData() {
+    const data = {
+      senderName: senderName.value.trim(),
+      senderAddress: senderAddress.value.trim(),
+      senderEmail: senderEmail.value.trim(),
+      logoDataUrl,
+      clientName: clientName.value.trim(),
+      clientAddress: clientAddress.value.trim(),
+      clientEmail: clientEmail.value.trim(),
+      invoiceNumber: invoiceNumber.value.trim(),
+      invoiceDate: invoiceDate.value || (new Date()).toISOString().slice(0,10),
+      paymentTerms: paymentTerms.value,
+      items: getItemsData(),
+      themeColor: themeColor.value,
+    };
+    // Auto-increment invoice number for next time
+    if(data.invoiceNumber){
+      data.invoiceNumber = incrementInvoiceNumber(data.invoiceNumber);
+      invoiceNumber.value = data.invoiceNumber;
+    } else {
+      data.invoiceNumber = 'INV-1';
+      invoiceNumber.value = data.invoiceNumber;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      storageStatus.textContent = 'Invoice data saved locally 👍';
+      storageStatus.style.color = 'green';
+    } catch(e) {
+      storageStatus.textContent = 'Error saving data: ' + e.message;
+      storageStatus.style.color = 'red';
+    }
+  }
+
+  // Load saved data from localStorage, if any
+  function loadInvoiceData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return false;
+      const data = JSON.parse(raw);
+      if(data.senderName) senderName.value = data.senderName;
+      if(data.senderAddress) senderAddress.value = data.senderAddress;
+      if(data.senderEmail) senderEmail.value = data.senderEmail;
+      if(data.logoDataUrl) {
+        logoDataUrl = data.logoDataUrl;
+        // No input file settable programmatically for security, but preview set
+      } else {
+        logoDataUrl = null;
+      }
+      if(data.clientName) clientName.value = data.clientName;
+      if(data.clientAddress) clientAddress.value = data.clientAddress;
+      if(data.clientEmail) clientEmail.value = data.clientEmail;
+      if(data.invoiceNumber) invoiceNumber.value = data.invoiceNumber;
+      if(data.invoiceDate) invoiceDate.value = data.invoiceDate;
+      if(data.paymentTerms) paymentTerms.value = data.paymentTerms;
+      if(data.themeColor) themeColor.value = data.themeColor;
+
+      // Clear items table first
+      itemsBody.innerHTML = '';
+      if(data.items && Array.isArray(data.items) && data.items.length > 0){
+        data.items.forEach(item => {
+          itemsBody.appendChild(createItemRow(item.desc || '', item.quantity || 1, item.unitPrice || 0));
+        });
+      } else {
+        addItem();
+      }
+      storageStatus.textContent = 'Loaded saved invoice data.';
+      storageStatus.style.color = 'green';
+      return true;
+    } catch(e){
+      storageStatus.textContent = '';
+      return false;
+    }
+  }
+
+  // Clear localStorage data
+  function clearSavedData() {
+    if(!confirm('Are you sure you want to clear all saved invoice data? This cannot be undone.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    storageStatus.textContent = 'Saved invoice data cleared.';
+    storageStatus.style.color = 'red';
+    // Reset form and preview
+    form.reset();
+    itemsBody.innerHTML = '';
+    addItem();
+    logoDataUrl = null;
+    updateTotalsAndPreview();
+  }
+
+  // Generate PDF using jsPDF
+  async function generatePdf() {
+    if(downloadPdfBtn.disabled) return;
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF({
+      unit: 'pt',
+      format: 'a4'
+    });
+    const margin = 40;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    const primaryColor = themeColor.value;
+
+    const sender = {
+      name: senderName.value.trim(),
+      address: senderAddress.value.trim(),
+      email: senderEmail.value.trim(),
+    };
+    const client = {
+      name: clientName.value.trim(),
+      address: clientAddress.value.trim(),
+      email: clientEmail.value.trim(),
+    };
+    const invNumberVal = invoiceNumber.value.trim() || '';
+    const dateStr = invoiceDate.value || (new Date()).toISOString().slice(0,10);
+    const dateReadable = formatDate(dateStr);
+    const payment = paymentTerms.value;
+    const items = getItemsData();
+    const subtotal = items.reduce((sum, i) => sum + (i.quantity * i.unitPrice), 0);
+
+    let yOffset = margin;
+
+    // Draw logo if exists (resize max width 120px max height 60px)
+    if(logoDataUrl){
+      try {
+        await new Promise((res, rej) => {
+          const img = new Image();
+          img.onload = () => {
+            const ratio = img.width / img.height;
+            let w = 120;
+            let h = w / ratio;
+            if(h > 60){
+              h = 60;
+              w = h * ratio;
+            }
+            doc.addImage(img, 'PNG', margin, yOffset, w, h);
+            res();
+          };
+          img.onerror = () => {
+            res();
+          };
+          img.src = logoDataUrl;
+        });
+      } catch {}
+    }
+
+    // Invoice Title & Header
+    doc.setFontSize(28);
+    doc.setFont('helvetica', 'bold');
+    const titleX = pageWidth - margin - 120;
+    doc.setTextColor(primaryColor);
+    doc.text('INVOICE', titleX, yOffset + 30);
+
+    yOffset += 65;
+
+    // Invoice meta info (number, date, terms)
+    doc.setFontSize(11);
+    doc.setTextColor('#000000');
+    doc.setFont('helvetica', 'normal');
+
+    doc.text(`Invoice #: ${invNumberVal}`, margin, yOffset);
+    doc.text(`Date: ${dateReadable}`, margin, yOffset + 15);
+    doc.text(`Payment Terms: ${payment}`, margin, yOffset + 30);
+
+    yOffset += 50;
+
+    // Sender & Client info side by side
+    const colWidth = (pageWidth - margin*2) / 2 - 10;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(primaryColor);
+    doc.text('From:', margin, yOffset);
+    doc.text('Bill To:', margin + colWidth + 20, yOffset);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor('#000');
+    const senderText = `${sender.name}\n${sender.address}\n${sender.email}`;
+    const clientText = `${client.name}\n${client.address}\n${client.email}`;
+
+    const senderLines = senderText.split('\n');
+    const clientLines = clientText.split('\n');
+
+    const lineHeight = 14;
+    for(let i=0; i<Math.max(senderLines.length, clientLines.length); i++){
+      const sLine = senderLines[i] || '';
+      const cLine = clientLines[i] || '';
+      doc.text(sLine, margin, yOffset + lineHeight*(i+1));
+      doc.text(cLine, margin + colWidth + 20, yOffset + lineHeight*(i+1));
+    }
+    yOffset += lineHeight * (Math.max(senderLines.length, clientLines.length) + 1);
+
+    yOffset += 10;
+    doc.setDrawColor(primaryColor);
+    doc.setLineWidth(1.5);
+    doc.line(margin, yOffset, pageWidth - margin, yOffset);
+    yOffset += 15;
+
+    // Items table header
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor('#fff');
+    doc.setFillColor(...hexToRgb(primaryColor));
+    doc.rect(margin, yOffset-11, pageWidth - margin*2, 20, 'F');
+
+    const headers = ['Description', 'Qty', 'Unit Price', 'Line Total'];
+    const colPositions = [margin + 5, pageWidth - margin - 260, pageWidth - margin - 160, pageWidth - margin - 60];
+    const colWidths = [colPositions[1]-colPositions[0]-10, 40, 80, 80];
+
+    for(let i=0; i<headers.length; i++){
+      doc.text(headers[i], colPositions[i], yOffset + 4);
+    }
+    yOffset += 18;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor('#000');
+    doc.setFillColor(255,255,255);
+
+    // Draw items rows with wrapping & pagination if needed
+    const rowHeight = 20;
+    for(let i=0; i<items.length; i++){
+      const item = items[i];
+      if(yOffset + rowHeight > pageHeight - margin - 40){
+        doc.addPage();
+        yOffset = margin;
+      }
+      // Background stripe for table row (optional)
+      if(i % 2 === 0){
+        doc.setFillColor(245,245,245);
+        doc.rect(margin, yOffset - 13, pageWidth - margin*2, rowHeight, 'F');
+        doc.setFillColor(255,255,255);
+      }
+      // Description with truncation (to avoid overflow)
+      let descText = item.desc;
+      // We do simple truncation to ~65 chars
+      if(descText.length > 65) descText = descText.slice(0,62) + '...';
+      doc.text(descText, colPositions[0], yOffset);
+      doc.text(String(item.quantity), colPositions[1], yOffset, { align:'right' });
+      doc.text(formatCurrency(item.unitPrice), colPositions[2] + 70, yOffset, { align:'right' });
+      doc.text(formatCurrency(item.quantity * item.unitPrice), colPositions[3] + 70, yOffset, { align:'right' });
+      yOffset += rowHeight;
+    }
+
+    yOffset += 8;
+    doc.setDrawColor(primaryColor);
+    doc.setLineWidth(1);
+    doc.line(margin, yOffset, pageWidth - margin, yOffset);
+    yOffset += 15;
+
+    // Subtotal
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(primaryColor);
+    doc.text('Subtotal:', pageWidth - margin - 140, yOffset);
+    doc.text(formatCurrency(subtotal), pageWidth - margin - 60, yOffset, { align:'right' });
+
+    yOffset += 40;
+
+    // Payment terms / footer note
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor('#555555');
+    const footerNote = "Payment terms: Please pay within the agreed timeline. Thank you for your business!";
+    const splitText = doc.splitTextToSize(footerNote, pageWidth - margin*2);
+    doc.text(splitText, margin, yOffset);
+
+    // Save file with filename including invoice number and date
+    const safeInvNumber = invNumberVal.replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
+    const filename = `Invoice_${safeInvNumber}_${dateStr}.pdf`;
+    doc.save(filename);
+  }
+
+  // hex to rgb array helper for jsPDF
+  function hexToRgb(hex) {
+    const aRgbHex = hex.replace('#','').match(/.{1,2}/g);
+    if(!aRgbHex) return [42,157,143]; // fallback color
+    return aRgbHex.map(h => parseInt(h,16));
+  }
+
+  // Listen events
+  addItemBtn.addEventListener('click', () => {
+    addItem();
+    updateTotalsAndPreview();
+  });
+
+  form.addEventListener('input', () => {
+    updateTotalsAndPreview();
+  });
+
+  themeColor.addEventListener('input', () => {
+    document.documentElement.style.setProperty('--primary-color', themeColor.value);
+    updateTotalsAndPreview();
+  });
+
+  logoInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    if(!file.type.startsWith('image/')){
+      alert('Please select an image file (PNG or JPG)');
+      logoInput.value = null;
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      logoDataUrl = ev.target.result;
+      updateTotalsAndPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  saveBtn.addEventListener('click', () => {
+    // Validate minimum required fields before saving
+    if(!form.checkValidity()){
+      alert('Please fill all required fields correctly before saving.');
+      return;
+    }
+    if(getItemsData().length === 0){
+      alert('Please add at least one service/item.');
+      return;
+    }
+    saveInvoiceData();
+  });
+
+  downloadPdfBtn.addEventListener('click', () => {
+    generatePdf();
+  });
+
+  clearSavedBtn.addEventListener('click', () => {
+    clearSavedData();
+  });
+
+  // Premium email send demo placeholder (opens mailto with subject and body - no attachment)
+  sendEmailBtn.addEventListener('click', () => {
+    alert('Email sending is a premium feature coming soon!');
+  });
+
+  // Setup default date to today on load if empty
+  function setDefaultDate() {
+    if(!invoiceDate.value){
+      invoiceDate.value = (new Date()).toISOString().slice(0,10);
+    }
+  }
+
+  // Initialization
+  function init() {
+    // Load saved or start fresh
+    if(!loadInvoiceData()){
+      addItem();
+      invoiceNumber.value = 'INV-1';
+    }
+    setDefaultDate();
+    updateTotalsAndPreview();
+  }
+
+  init();
+
+})();
+</script>
+</body>
+</html>
+```

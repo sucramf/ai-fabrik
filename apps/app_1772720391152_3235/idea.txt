@@ -1,0 +1,1 @@
+A straightforward web tool that converts any recipe’s ingredient amounts to different serving sizes instantly—just enter the original servings and desired servings, and it recalculates the quantities automatically. Perfect for home cooks scaling recipes up or down without manual math.

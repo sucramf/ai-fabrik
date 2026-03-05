@@ -1,0 +1,310 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meeting Minute Maker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #0052cc;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    main {
+      flex: 1;
+      padding: 1rem 2rem;
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+      border-radius: 8px;
+      margin-top: 2rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    select, input[type=text], textarea {
+      width: 100%;
+      padding: 0.5rem; 
+      margin-top: 0.3rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 150px;
+      resize: vertical;
+      font-family: monospace, monospace;
+      white-space: pre-wrap;
+    }
+    button {
+      margin-top: 1rem;
+      background: #0052cc;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+    #actionItems {
+      margin-top: 1rem;
+      background: #eef6ff;
+      padding: 1rem;
+      border-radius: 6px;
+    }
+    #archive {
+      margin-top: 2rem;
+    }
+    .archive-item {
+      border-bottom: 1px solid #ccc;
+      padding: 0.5rem 0;
+      cursor: pointer;
+    }
+    .archive-item:hover {
+      background: #f0f8ff;
+    }
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      color: #777;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+    #collabMsg {
+      color: green;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Meeting Minute Maker</h1>
+  </header>
+
+  <main>
+    <label for="template">Choose a Meeting Template:</label>
+    <select id="template">
+      <option value="">-- Select Template --</option>
+      <option value="standup">Daily Standup</option>
+      <option value="client">Client Meeting</option>
+      <option value="kickoff">Project Kickoff</option>
+    </select>
+
+    <label for="minutes">Meeting Minutes:</label>
+    <textarea id="minutes" placeholder="Write your meeting minutes here..."></textarea>
+
+    <button id="extractBtn" disabled>Extract Action Items</button>
+
+    <section id="actionItems">
+      <h3>Action Items & Deadlines</h3>
+      <ul id="itemsList">No action items extracted yet.</ul>
+    </section>
+
+    <button id="saveBtn" disabled>Save Meeting Minutes</button>
+    <button id="exportBtn" disabled>Export as PDF</button>
+
+    <section id="archive">
+      <h3>Archived Meeting Minutes</h3>
+      <input type="text" id="searchInput" placeholder="Search archived minutes..." />
+      <div id="archiveList">No archived meeting minutes yet.</div>
+    </section>
+  </main>
+
+  <div class="footer">
+    &copy; 2024 Meeting Minute Maker &nbsp;—&nbsp; Simple, fast, collaborative meeting notes.
+  </div>
+
+<script>
+  // Pre-built templates content:
+  const templates = {
+    standup: `# Daily Standup Meeting\n\n- What did you do yesterday?\n- What will you do today?\n- Any blockers?\n`,
+    client: `# Client Meeting\n\n## Attendees:\n\n## Agenda:\n\n## Discussion:\n\n## Action Items:\n- \n`,
+    kickoff: `# Project Kickoff Meeting\n\n## Goals:\n\n## Timeline:\n\n## Roles & Responsibilities:\n\n## Action Items:\n- \n`
+  };
+
+  const templateSelect = document.getElementById('template');
+  const minutesTextarea = document.getElementById('minutes');
+  const extractBtn = document.getElementById('extractBtn');
+  const itemsList = document.getElementById('itemsList');
+  const saveBtn = document.getElementById('saveBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const archiveList = document.getElementById('archiveList');
+  const searchInput = document.getElementById('searchInput');
+
+  // Load from localStorage archive
+  function loadArchive() {
+    const data = JSON.parse(localStorage.getItem('meetingMinutesArchive') || '[]');
+    renderArchive(data);
+  }
+
+  function renderArchive(data) {
+    if (!data.length) {
+      archiveList.textContent = 'No archived meeting minutes yet.';
+      return;
+    }
+    archiveList.innerHTML = '';
+    data.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'archive-item';
+      div.textContent = `${new Date(item.date).toLocaleString()} - ${item.template} meeting`;
+      div.title = item.minutes.substring(0, 100) + (item.minutes.length > 100 ? '...' : '');
+      div.onclick = () => {
+        minutesTextarea.value = item.minutes;
+        templateSelect.value = item.template;
+        extractActionItems();
+      };
+      archiveList.appendChild(div);
+    });
+  }
+
+  // Insert template content when selected
+  templateSelect.addEventListener('change', () => {
+    const selected = templateSelect.value;
+    if (selected && templates[selected]) {
+      minutesTextarea.value = templates[selected];
+    } else {
+      minutesTextarea.value = '';
+    }
+    extractBtn.disabled = minutesTextarea.value.trim().length === 0;
+    saveBtn.disabled = true;
+    exportBtn.disabled = true;
+    itemsList.innerHTML = 'No action items extracted yet.';
+  });
+
+  // Enable extract button if text area has content
+  minutesTextarea.addEventListener('input', () => {
+    extractBtn.disabled = minutesTextarea.value.trim().length === 0;
+    saveBtn.disabled = true;
+    exportBtn.disabled = true;
+    itemsList.innerHTML = 'No action items extracted yet.';
+  });
+
+  // Extract action items from minutes text
+  function extractActionItems() {
+    const text = minutesTextarea.value;
+    // Simple heuristic:
+    // Lines starting with "-" or "*" or "•" or starting with "Action:" or "TODO:"
+    // Also detect deadlines by date-like strings or phrases like "by Friday"
+    const lines = text.split('\n');
+    const actionItems = [];
+
+    const deadlineRegex = /(by|due|deadline|before|on)\s+([\w\s,/-]+)/i;
+    const dateRegex = /\b(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\b\w{3,9}\s\d{1,2}(st|nd|rd|th)?(,?\s\d{4})?)/i;
+
+    lines.forEach((line, idx) => {
+      const trimmed = line.trim();
+      if (
+        trimmed.startsWith('-') ||
+        trimmed.startsWith('*') ||
+        trimmed.startsWith('•') ||
+        trimmed.toLowerCase().startsWith('action:') ||
+        trimmed.toLowerCase().startsWith('todo:')
+      ) {
+        let actionText = trimmed.replace(/^[-*•]\s*/, '')
+                                .replace(/^action:\s*/i, '')
+                                .replace(/^todo:\s*/i, '');
+
+        let deadline = null;
+        const deadlineMatch = deadlineRegex.exec(actionText);
+        if (deadlineMatch) {
+          deadline = deadlineMatch[2].trim();
+        } else {
+          const dateMatch = dateRegex.exec(actionText);
+          if (dateMatch) deadline = dateMatch[1];
+        }
+
+        actionItems.push({ text: actionText, deadline });
+      }
+    });
+
+    if (!actionItems.length) {
+      itemsList.innerHTML = 'No action items found in the notes.';
+      saveBtn.disabled = true;
+      exportBtn.disabled = true;
+      return;
+    }
+
+    itemsList.innerHTML = '';
+    actionItems.forEach(({text, deadline}, i) => {
+      const li = document.createElement('li');
+      li.textContent = text + (deadline ? ` (Deadline: ${deadline})` : '');
+      itemsList.appendChild(li);
+    });
+
+    saveBtn.disabled = false;
+    exportBtn.disabled = false;
+  }
+
+  extractBtn.addEventListener('click', extractActionItems);
+
+  // Save minutes + metadata into localStorage archive
+  saveBtn.addEventListener('click', () => {
+    const archive = JSON.parse(localStorage.getItem('meetingMinutesArchive') || '[]');
+    archive.unshift({
+      date: new Date().toISOString(),
+      template: templateSelect.value || 'custom',
+      minutes: minutesTextarea.value
+    });
+    localStorage.setItem('meetingMinutesArchive', JSON.stringify(archive));
+    alert('Meeting minutes saved to archive.');
+    loadArchive();
+    saveBtn.disabled = true;
+  });
+
+  // Export minutes as PDF using jsPDF (cdn)
+  exportBtn.addEventListener('click', () => {
+    const minutesText = minutesTextarea.value.trim();
+    if (!minutesText) return;
+    import('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js').then(jsPDFModule => {
+      const { jsPDF } = jsPDFModule;
+      const doc = new jsPDF();
+      const splitText = doc.splitTextToSize(minutesText, 180);
+      doc.text(splitText, 10, 10);
+      doc.save('MeetingMinutes.pdf');
+    }).catch(() => {
+      alert('Failed to load PDF export library.');
+    });
+  });
+
+  // Search archive filtering
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    const archive = JSON.parse(localStorage.getItem('meetingMinutesArchive') || '[]');
+    const filtered = archive.filter(item =>
+      item.minutes.toLowerCase().includes(query) ||
+      (item.template && item.template.toLowerCase().includes(query))
+    );
+    renderArchive(filtered);
+  });
+
+  // On page load
+  loadArchive();
+</script>
+</body>
+</html>
+```

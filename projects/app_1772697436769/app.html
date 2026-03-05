@@ -1,0 +1,217 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Automated Meeting Summary Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #283e4a;
+      color: white;
+      padding: 1em 2em;
+      text-align: center;
+    }
+    main {
+      flex-grow: 1;
+      max-width: 600px;
+      margin: 2em auto;
+      background: white;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+      border-radius: 8px;
+      padding: 2em;
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      color: #283e4a;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2em;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 0.3em;
+      display: block;
+    }
+    select, input[type=email], button {
+      padding: 0.6em;
+      font-size: 1em;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background: #1b74e4;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover:enabled {
+      background: #155dbf;
+    }
+    button:disabled {
+      background: #a0b4d4;
+      cursor: not-allowed;
+    }
+    .summary {
+      background: #e9f0ff;
+      border-left: 4px solid #1b74e4;
+      padding: 1em;
+      margin-top: 2em;
+      border-radius: 4px;
+      white-space: pre-line;
+      font-family: Consolas, monospace;
+      font-size: 0.95em;
+    }
+    footer {
+      text-align: center;
+      padding: 1em;
+      font-size: 0.9em;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Automated Meeting Summary Generator</h1>
+  </header>
+  <main>
+    <p>Simulate an automated meeting summary. Select your calendar and conferencing platform, enter your email, and upload your meeting transcript file (TXT) to get a concise summary with key points and action items.</p>
+
+    <form id="summaryForm">
+      <label for="calendar">Calendar Platform</label>
+      <select id="calendar" name="calendar" required>
+        <option value="">Select calendar platform</option>
+        <option value="google">Google Calendar</option>
+        <option value="outlook">Microsoft Outlook</option>
+        <option value="apple">Apple Calendar</option>
+      </select>
+
+      <label for="conference">Video Conferencing Tool</label>
+      <select id="conference" name="conference" required>
+        <option value="">Select conferencing tool</option>
+        <option value="zoom">Zoom</option>
+        <option value="googleMeet">Google Meet</option>
+        <option value="teams">Microsoft Teams</option>
+        <option value="webex">Cisco Webex</option>
+      </select>
+
+      <label for="email">Your Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+      <label for="transcript">Upload Meeting Transcript (TXT)</label>
+      <input type="file" id="transcript" name="transcript" accept=".txt" required />
+
+      <button type="submit">Generate Summary</button>
+    </form>
+
+    <div id="result" class="summary" aria-live="polite"></div>
+  </main>
+  <footer>
+    &copy; 2024 Meeting Summary Generator
+  </footer>
+
+  <script>
+    // Simple demo: parse uploaded transcript and generate a rudimentary summary.
+    // This is NOT AI-powered, just simulates key point & action items extraction.
+
+    function extractKeyPoints(text) {
+      // We'll take first 3 lines with some keywords as "key points"
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const keywords = ['discussed', 'agreed', 'decided', 'noted', 'plan', 'next step', 'update', 'milestone'];
+      let keyPoints = [];
+
+      for (const line of lines) {
+        if (keywords.some(k => line.toLowerCase().includes(k))) {
+          keyPoints.push(line);
+        }
+        if (keyPoints.length >= 3) break;
+      }
+      if (keyPoints.length === 0 && lines.length > 0) {
+        keyPoints = lines.slice(0,3);
+      }
+      return keyPoints;
+    }
+
+    function extractActions(text) {
+      // Find lines containing action words or assignments
+      // Keywords: "will", "to do", "assign", "action", "task", "responsible", "@"
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const actionKeywords = ['will', 'to do', 'assign', 'action', 'task', 'responsible', '@', 'follow up'];
+      let actions = [];
+
+      for (const line of lines) {
+        if (actionKeywords.some(k => line.toLowerCase().includes(k))) {
+          actions.push(line);
+        }
+        if (actions.length >= 3) break;
+      }
+      return actions;
+    }
+
+    document.getElementById('summaryForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const button = e.target.querySelector('button[type="submit"]');
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = '';
+      button.disabled = true;
+      button.textContent = 'Generating summary...';
+
+      const calendar = e.target.calendar.value;
+      const conference = e.target.conference.value;
+      const email = e.target.email.value;
+      const file = e.target.transcript.files[0];
+
+      if (!file) {
+        resultDiv.textContent = 'Please upload a transcript file.';
+        button.disabled = false;
+        button.textContent = 'Generate Summary';
+        return;
+      }
+
+      try {
+        const text = await file.text();
+
+        // Simulate summary generation
+        const keyPoints = extractKeyPoints(text);
+        const actions = extractActions(text);
+
+        const summaryLines = [
+          `Meeting Summary (${calendar} + ${conference})`,
+          `Prepared for: ${email}`,
+          '',
+          'Key Points:',
+          ...keyPoints.map((pt,i) => `  ${i+1}. ${pt}`),
+          '',
+          'Action Items:',
+          ...(actions.length > 0 ? actions.map((act,i) => `  ${i+1}. ${act}`) : ['  No action items detected.']),
+          '',
+          '----- End of Summary -----'
+        ];
+
+        resultDiv.textContent = summaryLines.join('\n');
+      } catch (err) {
+        resultDiv.textContent = 'Error reading transcript file.';
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Generate Summary';
+      }
+    });
+  </script>
+</body>
+</html>
+```

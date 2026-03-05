@@ -1,0 +1,1573 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QuickInvoiceGen - Invoice Generator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  :root {
+    --primary-color: #2a9d8f;
+    --primary-light: #52b69a;
+    --accent-color: #e76f51;
+    --bg-light: #f0f4f8;
+    --text-dark: #264653;
+    --text-light: #fff;
+  }
+  body {
+    margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark);
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  header {
+    background: var(--primary-color); color: var(--text-light);
+    padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between;
+  }
+  header h1 {
+    margin: 0; font-weight: 600; font-size: 1.5rem;
+  }
+  main {
+    flex: 1; overflow-y: auto; max-width: 1024px; margin: 1rem auto; padding: 0 1rem;
+  }
+  .section {
+    background:#fff; border-radius: 8px; box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+    padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .section h2 {
+    margin-top: 0; font-weight: 600; color: var(--primary-color);
+  }
+  form label {
+    display: block; font-weight: 600; margin: 0.5rem 0 0.25rem;
+  }
+  input[type=text], input[type=email], input[type=tel], input[type=number], select {
+    width: 100%; padding: 0.35rem 0.5rem; border: 1px solid #ccc; border-radius: 4px;
+    box-sizing: border-box; font-size: 1rem; transition: border-color 0.3s;
+  }
+  input[type=text]:focus, input[type=email]:focus, input[type=tel]:focus, input[type=number]:focus, select:focus {
+    outline: none; border-color: var(--primary-light);
+  }
+  table {
+    width: 100%; border-collapse: collapse; margin-top: 0.75rem;
+  }
+  table thead {
+    background: var(--primary-light); color: #fff;
+  }
+  table thead th {
+    padding: 0.5rem; text-align: left;
+  }
+  table tbody td {
+    padding: 0.5rem; border-bottom: 1px solid #ddd;
+  }
+  .line-items-container {
+    max-height: 250px; overflow-y: auto; margin-top: 0.5rem;
+  }
+  button, .btn {
+    background: var(--primary-color); color: var(--text-light); border: none;
+    padding: 0.6rem 1.2rem; font-weight: 600; font-size: 1rem; border-radius: 5px;
+    cursor: pointer; transition: background 0.3s;
+  }
+  button:hover, .btn:hover {
+    background: var(--primary-light);
+  }
+  .btn-secondary {
+    background: #a0a0a0;
+  }
+  .btn-secondary:hover {
+    background: #888;
+  }
+  .flex-row {
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+  }
+  .flex-grow {
+    flex: 1 1 auto;
+  }
+  .client-select {
+    margin-bottom: 0.5rem;
+  }
+  .inline-inputs > * {
+    display: inline-block; vertical-align: middle;
+  }
+  .inline-inputs input,
+  .inline-inputs select {
+    width: auto; min-width: 80px; margin-right: 0.5rem;
+  }
+  .error {
+    color: #d22; font-weight: 600; margin-top: 0.25rem;
+    font-size: 0.9rem;
+  }
+  .status-badge {
+    display: inline-block; font-size: 0.85rem; padding: 2px 6px;
+    border-radius: 12px; color: #fff; font-weight: 600;
+  }
+  .status-sent { background-color: #2196F3; }
+  .status-paid { background-color: #4CAF50; }
+  .status-overdue { background-color: #F44336; }
+  .template-preview {
+    border: 1px solid #ddd; border-radius: 8px; padding: 1rem; background: #fafafa;
+    max-height: 300px; overflow: auto; font-family: monospace; white-space: pre-wrap;
+  }
+  footer {
+    text-align: center; font-size: 0.9rem; color: #666; padding: 1rem 0;
+  }
+  label.checkbox-label {
+    font-weight: 500;
+    user-select: none;
+  }
+  input[type=checkbox] {
+    margin-right: 0.3rem;
+    vertical-align: middle;
+  }
+  .plan-info {
+    background: #f9f9f9; padding: 0.75rem 1rem; margin-bottom: 1rem; border-left: 5px solid var(--accent-color);
+  }
+  .invoice-list {
+    max-height: 220px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px;
+  }
+  .invoice-item {
+    padding: 0.5rem 1rem; display: flex; justify-content: space-between; border-bottom: 1px solid #eee;
+    align-items: center;
+  }
+  .invoice-item:last-child {
+    border-bottom: none;
+  }
+  .invoice-item .info {
+    flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .small-text {
+    font-size: 0.85rem; color: #555;
+  }
+  .email-section {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: 0.5rem;
+  }
+  .email-section input[type=email] {
+    flex-grow: 1; min-width: 200px;
+  }
+  .recurring-section {
+    margin-top: 0.5rem;
+  }
+  .recurring-section label {
+    margin-top: 0.25rem;
+    font-weight: 500;
+  }
+  .analytics-charts {
+    display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;
+  }
+  .chart-container {
+    background: #fff; border-radius: 8px; box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+    padding: 1rem; width: 300px; text-align: center;
+  }
+  /* Scrollbar for line items */
+  .line-items-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .line-items-container::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 4px;
+  }
+  .line-items-container::-webkit-scrollbar-track {
+    background: #eee;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>QuickInvoiceGen</h1>
+  <nav aria-label="Main navigation">
+    <button id="nav-new-invoice" class="btn">New Invoice</button>
+    <button id="nav-clients" class="btn btn-secondary">Clients</button>
+    <button id="nav-invoices" class="btn btn-secondary">Invoices</button>
+    <button id="nav-analytics" class="btn btn-secondary">Analytics</button>
+    <button id="nav-settings" class="btn btn-secondary">Settings</button>
+  </nav>
+</header>
+<main>
+  <!-- New Invoice Section -->
+  <section id="section-new-invoice" class="section" hidden>
+    <h2>Create New Invoice</h2>
+    <div class="plan-info" id="plan-info">
+      Loading plan info...
+    </div>
+    <label for="select-client">Select Client</label>
+    <select id="select-client" class="client-select" aria-describedby="client-help">
+      <option value="">-- New Client --</option>
+    </select>
+    <small id="client-help" class="small-text">Pick existing client or enter new below</small>
+
+    <form id="invoice-form" novalidate>
+      <fieldset style="border:none; padding:0; margin:1rem 0 1rem 0;">
+        <legend><strong>Client Details</strong></legend>
+        <label for="client-name">Name *</label>
+        <input type="text" id="client-name" name="clientName" autocomplete="off" required />
+        <label for="client-email">Email *</label>
+        <input type="email" id="client-email" name="clientEmail" autocomplete="off" required />
+        <label for="client-address">Address</label>
+        <input type="text" id="client-address" name="clientAddress" autocomplete="off" placeholder="Optional" />
+        <label for="client-phone">Phone</label>
+        <input type="tel" id="client-phone" name="clientPhone" autocomplete="off" placeholder="Optional" />
+      </fieldset>
+
+      <fieldset style="border:none; padding:0; margin:1rem 0;">
+        <legend><strong>Invoice Details</strong></legend>
+        <label for="invoice-number">Invoice Number *</label>
+        <input type="text" id="invoice-number" name="invoiceNumber" autocomplete="off" required />
+        <label for="invoice-date">Date *</label>
+        <input type="date" id="invoice-date" name="invoiceDate" required />
+        <label for="due-date">Due Date</label>
+        <input type="date" id="due-date" name="dueDate" />
+      </fieldset>
+
+      <fieldset style="border:none; padding:0; margin:1rem 0;">
+        <legend><strong>Branding & Template</strong></legend>
+        <label for="logo-upload">Upload Logo (optional)</label>
+        <input type="file" accept="image/*" id="logo-upload" aria-describedby="logo-help" />
+        <small id="logo-help" class="small-text">Max 2MB. Used on invoices.</small>
+        <label for="color-primary">Primary Color *</label>
+        <input type="color" id="color-primary" name="colorPrimary" value="#2a9d8f" required />
+        <label for="template-select">Template *</label>
+        <select id="template-select" name="templateSelect" required>
+          <option value="clean">Clean (Free)</option>
+          <option value="modern">Modern (Pro)</option>
+          <option value="classic">Classic (Pro)</option>
+        </select>
+      </fieldset>
+
+      <fieldset style="border:none; padding:0; margin:1rem 0;">
+        <legend><strong>Line Items</strong></legend>
+        <div class="line-items-container" role="list" id="line-items-list" aria-label="Invoice line items">
+          <!-- Dynamic line items -->
+        </div>
+        <button type="button" id="add-line-item" class="btn btn-secondary" aria-label="Add line item">+ Add Line Item</button>
+      </fieldset>
+
+      <fieldset style="border:none; padding:0; margin:1rem 0;">
+        <legend><strong>Summary</strong></legend>
+        <div>
+          <div class="flex-row" style="max-width: 300px;">
+            <label for="discount" class="flex-grow">Discount (%)</label>
+            <input type="number" id="discount" name="discount" min="0" max="100" step="0.1" value="0" />
+          </div>
+          <div class="flex-row" style="max-width: 300px; margin-top: 0.3rem;">
+            <label for="tax" class="flex-grow">Tax Rate (%)</label>
+            <input type="number" id="tax" name="tax" min="0" max="100" step="0.1" value="0" />
+          </div>
+        </div>
+        <div style="margin-top: 1rem;">
+          <strong>Subtotal:</strong> $<span id="subtotal">0.00</span><br />
+          <strong>Discount:</strong> -$<span id="discount-amount">0.00</span><br />
+          <strong>Tax:</strong> $<span id="tax-amount">0.00</span><br />
+          <strong>Total:</strong> $<span id="total">0.00</span>
+        </div>
+      </fieldset>
+
+      <fieldset class="recurring-section" style="border:none; padding:0; margin:1rem 0;">
+        <label class="checkbox-label"><input type="checkbox" id="recurring" name="recurring" /> Recurring Invoice</label>
+        <div id="recurring-options" hidden>
+          <label for="recurring-interval">Interval *</label>
+          <select id="recurring-interval" name="recurringInterval">
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Biweekly</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+          <label for="recurring-duration">Duration (months, 0 = unlimited)</label>
+          <input type="number" id="recurring-duration" name="recurringDuration" min="0" max="120" step="1" value="0" />
+        </div>
+      </fieldset>
+
+      <fieldset style="border:none; padding:0;">
+        <legend><strong>Email Invoice</strong></legend>
+        <label for="send-email-to">Send to email (optional, for Pro users)</label>
+        <input type="email" id="send-email-to" placeholder="client@example.com" />
+        <small class="small-text">Emails are only available in Pro tier.</small>
+      </fieldset>
+
+      <div style="margin-top: 1rem;">
+        <button type="submit" id="generate-pdf" class="btn">Generate PDF Invoice</button>
+        <button type="button" id="save-client" class="btn btn-secondary">Save/Update Client Profile</button>
+      </div>
+
+      <div id="form-error" class="error" role="alert" aria-live="assertive"></div>
+      <div id="form-success" style="color:green; font-weight:600; margin-top:0.5rem;" role="alert" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <!-- Clients Section -->
+  <section id="section-clients" class="section" hidden>
+    <h2>Clients</h2>
+    <div id="clients-list" role="list" aria-label="List of saved clients">
+      <!-- Dynamic clients -->
+    </div>
+  </section>
+
+  <!-- Invoices Section -->
+  <section id="section-invoices" class="section" hidden>
+    <h2>Invoices</h2>
+    <button id="clear-invoices" class="btn btn-secondary" title="Clear all invoices (Dev/testing)">Clear All Invoices</button>
+    <div class="invoice-list" id="invoices-list" role="list" aria-label="List of generated invoices">
+      <!-- Dynamic invoices -->
+    </div>
+  </section>
+
+  <!-- Analytics Section -->
+  <section id="section-analytics" class="section" hidden>
+    <h2>Analytics</h2>
+    <div class="analytics-charts">
+      <div class="chart-container" aria-label="Total earnings">
+        <strong>Total Earnings</strong>
+        <div id="total-earnings" style="font-size: 1.75rem; margin-top: 0.5rem;">$0.00</div>
+      </div>
+      <div class="chart-container" aria-label="Invoice summary by status">
+        <strong>Invoices by Status</strong>
+        <canvas id="invoices-status-chart" width="280" height="220" role="img" aria-label="Chart showing invoices by status"></canvas>
+      </div>
+      <div class="chart-container" aria-label="Earnings over last 6 months">
+        <strong>Earnings: Last 6 Months</strong>
+        <canvas id="earnings-monthly-chart" width="280" height="220" role="img" aria-label="Chart showing earnings over last 6 months"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Settings Section -->
+  <section id="section-settings" class="section" hidden>
+    <h2>Settings & Subscription</h2>
+    <div id="subscription-info">
+      Loading subscription info...
+    </div>
+    <button id="btn-toggle-subscription" class="btn" aria-live="polite">Upgrade / Downgrade Plan</button>
+  </section>
+
+  <!-- Invoice Output Section (PDF Preview and Download) -->
+  <section id="section-invoice-output" class="section" hidden>
+    <h2>Invoice Preview & Download</h2>
+    <iframe id="pdf-preview" style="width:100%; height:600px; border: 1px solid #ccc; border-radius: 8px;"></iframe>
+    <div style="margin-top: 1rem;">
+      <button id="download-pdf" class="btn" aria-label="Download invoice PDF">Download PDF</button>
+      <button id="send-email" class="btn btn-secondary" aria-label="Send invoice email" disabled>Send Invoice Email</button>
+      <button id="close-preview" class="btn btn-secondary">Close Preview</button>
+    </div>
+    <div id="email-status" style="margin-top: 0.5rem;"></div>
+  </section>
+</main>
+<footer>
+  &copy; 2024 QuickInvoiceGen &mdash; Simple invoicing for freelancers & small businesses
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+<script>
+(() => {
+  'use strict';
+
+  // Util: format currency
+  function formatCurrency(num) {
+    return num.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  // Get today's date yyyy-mm-dd
+  function todayISO() {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  // Simple ID generator
+  function genID() {
+    return 'id-' + Math.random().toString(36).substr(2, 9);
+  }
+
+  // ---- Storage Keys ----
+  const STORAGE_KEYS = {
+    CLIENTS: 'qig_clients',
+    INVOICES: 'qig_invoices',
+    SETTINGS: 'qig_settings'
+  };
+
+  // ---- Default Settings ----
+  const DEFAULT_SETTINGS = {
+    plan: 'free', // free or pro
+    maxFreeInvoices: 5,
+    branding: {
+      logo: null,
+      primaryColor: '#2a9d8f',
+      template: 'clean'
+    }
+  };
+
+  // ---- State ----
+  let clients = [];
+  let invoices = [];
+  let settings = {...DEFAULT_SETTINGS};
+
+  // Currently edited invoice data cache
+  let currentInvoice = {
+    id: null,
+    lineItems: []
+  };
+
+  // Cached DOM Elements
+  const sections = {
+    newInvoice: document.getElementById('section-new-invoice'),
+    clients: document.getElementById('section-clients'),
+    invoices: document.getElementById('section-invoices'),
+    analytics: document.getElementById('section-analytics'),
+    settings: document.getElementById('section-settings'),
+    invoiceOutput: document.getElementById('section-invoice-output')
+  };
+
+  const navButtons = {
+    newInvoice: document.getElementById('nav-new-invoice'),
+    clients: document.getElementById('nav-clients'),
+    invoices: document.getElementById('nav-invoices'),
+    analytics: document.getElementById('nav-analytics'),
+    settings: document.getElementById('nav-settings')
+  };
+
+  const form = document.getElementById('invoice-form');
+  const selectClient = document.getElementById('select-client');
+  const lineItemsList = document.getElementById('line-items-list');
+  const addLineItemBtn = document.getElementById('add-line-item');
+
+  const subtotalElem = document.getElementById('subtotal');
+  const discountElem = document.getElementById('discount-amount');
+  const taxElem = document.getElementById('tax-amount');
+  const totalElem = document.getElementById('total');
+
+  const discountInput = document.getElementById('discount');
+  const taxInput = document.getElementById('tax');
+  const recurringCheckbox = document.getElementById('recurring');
+  const recurringOptions = document.getElementById('recurring-options');
+  const recurringIntervalSelect = document.getElementById('recurring-interval');
+  const recurringDurationInput = document.getElementById('recurring-duration');
+
+  const sendEmailInput = document.getElementById('send-email-to');
+  const generatePdfBtn = document.getElementById('generate-pdf');
+  const saveClientBtn = document.getElementById('save-client');
+  const formError = document.getElementById('form-error');
+  const formSuccess = document.getElementById('form-success');
+  const planInfo = document.getElementById('plan-info');
+
+  const clientsListDiv = document.getElementById('clients-list');
+  const invoicesListDiv = document.getElementById('invoices-list');
+  const clearInvoicesBtn = document.getElementById('clear-invoices');
+
+  const subscriptionInfoDiv = document.getElementById('subscription-info');
+  const toggleSubscriptionBtn = document.getElementById('btn-toggle-subscription');
+
+  const pdfPreviewIframe = document.getElementById('pdf-preview');
+  const downloadPdfBtn = document.getElementById('download-pdf');
+  const closePreviewBtn = document.getElementById('close-preview');
+  const sendEmailBtn = document.getElementById('send-email');
+  const emailStatusDiv = document.getElementById('email-status');
+
+  // Charts
+  let invoicesStatusChart = null;
+  let earningsMonthlyChart = null;
+  const totalEarningsDiv = document.getElementById('total-earnings');
+
+  // PDF generated content cache
+  let generatedPdfBlobUrl = null;
+  let lastGeneratedInvoice = null;
+
+  // Templates info (which are pro and which free)
+  const TEMPLATES = {
+    clean: { pro: false, label: "Clean (Free)" },
+    modern: { pro: true, label: "Modern (Pro)" },
+    classic: { pro: true, label: "Classic (Pro)" }
+  };
+
+  // -------------------------------------------------------------------
+  // Initialize App
+  // -------------------------------------------------------------------
+  function init() {
+    loadSettings();
+    loadClients();
+    loadInvoices();
+    setupEventListeners();
+    updatePlanDisplay();
+    showSection('newInvoice');
+    setDefaultsForNewInvoice();
+    refreshClientsOptions();
+    updateLineItemsUI();
+    updateTotals();
+    renderClientsList();
+    renderInvoicesList();
+    updateSubscriptionInfo();
+    initCharts();
+    updateAnalytics();
+  }
+
+  // Load Settings from localStorage
+  function loadSettings() {
+    try {
+      const s = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+      if (s) {
+        settings = JSON.parse(s);
+        settings.branding = settings.branding || {...DEFAULT_SETTINGS.branding};
+        if (!settings.plan) settings.plan = 'free';
+      }
+    } catch (e) {
+      settings = {...DEFAULT_SETTINGS};
+    }
+  }
+  // Save Settings
+  function saveSettings() {
+    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+  }
+
+  // Load Clients
+  function loadClients() {
+    try {
+      const c = localStorage.getItem(STORAGE_KEYS.CLIENTS);
+      clients = c ? JSON.parse(c) : [];
+    } catch(e) {
+      clients = [];
+    }
+  }
+  // Save Clients
+  function saveClients() {
+    localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
+  }
+
+  // Load Invoices
+  function loadInvoices() {
+    try {
+      const i = localStorage.getItem(STORAGE_KEYS.INVOICES);
+      invoices = i ? JSON.parse(i) : [];
+    } catch (e) {
+      invoices = [];
+    }
+  }
+  // Save Invoices
+  function saveInvoices() {
+    localStorage.setItem(STORAGE_KEYS.INVOICES, JSON.stringify(invoices));
+  }
+
+  // Show one section by key and hide others
+  function showSection(key) {
+    Object.entries(sections).forEach(([k, sec]) => {
+      sec.hidden = (k !== key);
+    });
+    // Reset messages
+    formError.textContent = '';
+    formSuccess.textContent = '';
+    emailStatusDiv.textContent = '';
+    // Clear preview cache on hiding
+    if (key !== 'invoiceOutput') clearPdfPreview();
+  }
+
+  // Set default date / invoice number for new invoice
+  function setDefaultsForNewInvoice() {
+    form.reset();
+    formError.textContent = '';
+    formSuccess.textContent = '';
+    currentInvoice.lineItems = [];
+    updateLineItemsUI();
+
+    document.getElementById('invoice-date').value = todayISO();
+    document.getElementById('due-date').value = '';
+    document.getElementById('invoice-number').value = generateInvoiceNumber();
+    discountInput.value = '0';
+    taxInput.value = '0';
+    recurringCheckbox.checked = false;
+    recurringOptions.hidden = true;
+    sendEmailInput.value = '';
+    // Branding defaults from settings
+    document.getElementById('color-primary').value = settings.branding.primaryColor || '#2a9d8f';
+    document.getElementById('template-select').value = settings.branding.template || 'clean';
+
+    // Logo preview removed, just clear the file inputs
+    document.getElementById('logo-upload').value = '';
+
+    selectClient.value = '';
+    clearClientFields();
+
+    updateTotals();
+  }
+
+  // Generate invoice number (simple YYYYMMDD + random 3 digits)
+  function generateInvoiceNumber() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = (now.getMonth() + 1).toString().padStart(2, '0');
+    const d = now.getDate().toString().padStart(2, '0');
+    const rnd = Math.floor(100 + Math.random() * 900);
+    return `${y}${m}${d}-${rnd}`;
+  }
+
+  // Clear client detail input fields
+  function clearClientFields() {
+    document.getElementById('client-name').value = '';
+    document.getElementById('client-email').value = '';
+    document.getElementById('client-address').value = '';
+    document.getElementById('client-phone').value = '';
+  }
+
+  // Refresh client select options
+  function refreshClientsOptions() {
+    // Keep current selection
+    const currentVal = selectClient.value;
+
+    // Remove old options (except first)
+    while (selectClient.options.length > 1) selectClient.remove(1);
+
+    clients.forEach(client => {
+      const option = document.createElement('option');
+      option.value = client.id;
+      option.textContent = client.name + (client.email ? ` (${client.email})` : '');
+      selectClient.appendChild(option);
+    });
+
+    // Restore selection if possible
+    selectClient.value = currentVal || '';
+  }
+
+  // When client selected from dropdown: fill fields
+  function onSelectClientChange() {
+    const id = selectClient.value;
+    if (!id) {
+      clearClientFields();
+      return;
+    }
+    const c = clients.find(cl => cl.id === id);
+    if (c) {
+      document.getElementById('client-name').value = c.name || '';
+      document.getElementById('client-email').value = c.email || '';
+      document.getElementById('client-address').value = c.address || '';
+      document.getElementById('client-phone').value = c.phone || '';
+    }
+  }
+
+  // Save or update client profile from input fields
+  function saveClientProfile() {
+    const name = document.getElementById('client-name').value.trim();
+    const email = document.getElementById('client-email').value.trim();
+    const address = document.getElementById('client-address').value.trim();
+    const phone = document.getElementById('client-phone').value.trim();
+    if (!name || !email) {
+      formError.textContent = "Client Name and Email are required to save client profile.";
+      formSuccess.textContent = '';
+      return;
+    }
+    // Check if client selected (update) or add new
+    if (selectClient.value) {
+      // Update existing
+      const idx = clients.findIndex(c => c.id === selectClient.value);
+      if (idx !== -1) {
+        clients[idx] = {id: selectClient.value, name, email, address, phone};
+        saveClients();
+        formSuccess.textContent = "Client profile updated.";
+        formError.textContent = '';
+      }
+    } else {
+      // Create new
+      const id = genID();
+      clients.push({id, name, email, address, phone});
+      saveClients();
+      refreshClientsOptions();
+      selectClient.value = id;
+      formSuccess.textContent = "New client profile saved.";
+      formError.textContent = '';
+    }
+    renderClientsList();
+  }
+
+  // Render clients list for Clients Section
+  function renderClientsList() {
+    clientsListDiv.innerHTML = '';
+    if (clients.length === 0) {
+      clientsListDiv.textContent = 'No clients saved yet.';
+      return;
+    }
+    clients.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'invoice-item';
+      div.tabIndex = 0;
+      div.setAttribute('role', 'listitem');
+
+      const info = document.createElement('div');
+      info.className = 'info';
+      info.textContent = `${c.name} - ${c.email}`;
+      if(c.phone) info.textContent += ` - ${c.phone}`;
+      if(c.address) info.textContent += ` - ${c.address}`;
+
+      const btnEdit = document.createElement('button');
+      btnEdit.className = 'btn btn-secondary';
+      btnEdit.textContent = 'Use';
+      btnEdit.title = 'Populate client in invoice form';
+      btnEdit.onclick = () => {
+        selectClient.value = c.id;
+        onSelectClientChange();
+        showSection('newInvoice');
+      };
+
+      const btnDelete = document.createElement('button');
+      btnDelete.className = 'btn btn-secondary';
+      btnDelete.title = 'Delete client';
+      btnDelete.textContent = 'Delete';
+      btnDelete.onclick = () => {
+        if(confirm(`Delete client ${c.name}? This cannot be undone.`)) {
+          clients = clients.filter(cl => cl.id !== c.id);
+          saveClients();
+          refreshClientsOptions();
+          renderClientsList();
+        }
+      };
+
+      div.appendChild(info);
+      div.appendChild(btnEdit);
+      div.appendChild(btnDelete);
+      clientsListDiv.appendChild(div);
+    });
+  }
+
+  // Render invoices list for Invoices Section
+  function renderInvoicesList() {
+    invoicesListDiv.innerHTML = '';
+    if (invoices.length === 0) {
+      invoicesListDiv.textContent = 'No invoices created yet.';
+      sendEmailBtn.disabled = true;
+      return;
+    }
+    invoices.slice().reverse().forEach(inv => {
+      const div = document.createElement('div');
+      div.className = 'invoice-item';
+      div.tabIndex = 0;
+      div.setAttribute('role', 'listitem');
+
+      const info = document.createElement('div');
+      info.className = 'info';
+      const clientName = inv.clientName || '(Unknown Client)';
+      info.innerHTML = `<strong>${inv.invoiceNumber}</strong> - ${clientName} - $${formatCurrency(inv.total || 0)}`;
+      if(inv.dueDate) info.innerHTML += ` - Due: ${inv.dueDate}`;
+      info.innerHTML += ` <span class="status-badge status-${inv.status}">${inv.status.charAt(0).toUpperCase()+inv.status.slice(1)}</span>`;
+
+      // Buttons: View, Mark Paid, Delete
+      const btnView = document.createElement('button');
+      btnView.className = 'btn btn-secondary';
+      btnView.textContent = 'View';
+      btnView.title = 'View invoice PDF';
+      btnView.onclick = () => { previewInvoicePDF(inv); };
+
+      const btnMarkPaid = document.createElement('button');
+      btnMarkPaid.className = 'btn btn-secondary';
+      btnMarkPaid.textContent = 'Mark Paid';
+      btnMarkPaid.title = 'Mark invoice as paid';
+      btnMarkPaid.disabled = (inv.status === 'paid');
+      btnMarkPaid.onclick = () => { 
+        markInvoicePaid(inv.id); 
+        renderInvoicesList(); 
+        updateAnalytics();
+      };
+
+      const btnDelete = document.createElement('button');
+      btnDelete.className = 'btn btn-secondary';
+      btnDelete.textContent = 'Delete';
+      btnDelete.title = 'Delete this invoice';
+      btnDelete.onclick = () => {
+        if(confirm(`Delete invoice ${inv.invoiceNumber}?`)) {
+          invoices = invoices.filter(i => i.id !== inv.id);
+          saveInvoices();
+          renderInvoicesList();
+          updateAnalytics();
+        }
+      };
+
+      div.appendChild(info);
+      div.appendChild(btnView);
+      div.appendChild(btnMarkPaid);
+      div.appendChild(btnDelete);
+      invoicesListDiv.appendChild(div);
+    });
+  }
+
+  // Mark invoice paid by ID
+  function markInvoicePaid(id) {
+    const inv = invoices.find(i => i.id === id);
+    if(inv) {
+      inv.status = 'paid';
+      saveInvoices();
+      alert(`Invoice ${inv.invoiceNumber} marked as Paid.`);
+    }
+  }
+
+  // Setup event listeners for main UI
+  function setupEventListeners() {
+    navButtons.newInvoice.addEventListener('click', () => {
+      showSection('newInvoice');
+      setDefaultsForNewInvoice();
+    });
+    navButtons.clients.addEventListener('click', () => {
+      showSection('clients');
+      renderClientsList();
+    });
+    navButtons.invoices.addEventListener('click', () => {
+      showSection('invoices');
+      renderInvoicesList();
+    });
+    navButtons.analytics.addEventListener('click', () => {
+      showSection('analytics');
+      updateAnalytics();
+    });
+    navButtons.settings.addEventListener('click', () => {
+      showSection('settings');
+      updateSubscriptionInfo();
+    });
+
+    selectClient.addEventListener('change', onSelectClientChange);
+
+    addLineItemBtn.addEventListener('click', () => {
+      addLineItem();
+      updateTotals();
+    });
+
+    discountInput.addEventListener('input', updateTotals);
+    taxInput.addEventListener('input', updateTotals);
+
+    recurringCheckbox.addEventListener('change', () => {
+      recurringOptions.hidden = !recurringCheckbox.checked;
+    });
+
+    form.addEventListener('submit', onGeneratePdfSubmit);
+
+    saveClientBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      saveClientProfile();
+    });
+
+    clearInvoicesBtn.addEventListener('click', () => {
+      if(confirm("Delete all invoices? This cannot be undone.")) {
+        invoices = [];
+        saveInvoices();
+        renderInvoicesList();
+        updateAnalytics();
+        alert("All invoices deleted.");
+      }
+    });
+
+    toggleSubscriptionBtn.addEventListener('click', () => {
+      toggleSubscription();
+      updateSubscriptionInfo();
+      updatePlanDisplay();
+    });
+
+    downloadPdfBtn.addEventListener('click', () => {
+      downloadGeneratedPdf();
+    });
+
+    closePreviewBtn.addEventListener('click', () => {
+      showSection('newInvoice');
+    });
+
+    sendEmailBtn.addEventListener('click', () => {
+      sendInvoiceEmail();
+    });
+  }
+
+  // Add a blank line item to currentInvoice
+  function addLineItem(item = null) {
+    if(!item) {
+      item = {
+        id: genID(),
+        description: '',
+        quantity: 1,
+        unitPrice: 0,
+        total: 0
+      };
+    }
+    currentInvoice.lineItems.push(item);
+    updateLineItemsUI();
+  }
+
+  // Remove line item by id
+  function removeLineItem(id) {
+    currentInvoice.lineItems = currentInvoice.lineItems.filter(it => it.id !== id);
+    updateLineItemsUI();
+    updateTotals();
+  }
+
+  // Update one line item total and cache
+  function updateLineItem(id) {
+    const descInput = document.querySelector(`input[data-id="${id}"][data-field="description"]`);
+    const qtyInput = document.querySelector(`input[data-id="${id}"][data-field="quantity"]`);
+    const priceInput = document.querySelector(`input[data-id="${id}"][data-field="unitPrice"]`);
+    const totalSpan = document.querySelector(`span[data-id="${id}"][data-field="total"]`);
+    if(!descInput || !qtyInput || !priceInput || !totalSpan) return;
+
+    const description = descInput.value.trim();
+    let quantity = parseFloat(qtyInput.value);
+    let unitPrice = parseFloat(priceInput.value);
+    quantity = isNaN(quantity) || quantity < 0 ? 0 : quantity;
+    unitPrice = isNaN(unitPrice) || unitPrice < 0 ? 0 : unitPrice;
+
+    const total = quantity * unitPrice;
+    totalSpan.textContent = formatCurrency(total);
+
+    // Update in cache
+    const item = currentInvoice.lineItems.find(it => it.id === id);
+    if(item) {
+      item.description = description;
+      item.quantity = quantity;
+      item.unitPrice = unitPrice;
+      item.total = total;
+    }
+    updateTotals();
+  }
+
+  // Update line items UI from currentInvoice.lineItems
+  function updateLineItemsUI() {
+    lineItemsList.innerHTML = '';
+    if(currentInvoice.lineItems.length === 0) {
+      addLineItem();
+    }
+    currentInvoice.lineItems.forEach(item => {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.gap = '0.5rem';
+      div.style.marginBottom = '0.5rem';
+      div.style.alignItems = 'center';
+
+      const descInput = document.createElement('input');
+      descInput.type = 'text';
+      descInput.placeholder = 'Description';
+      descInput.value = item.description;
+      descInput.setAttribute('aria-label', 'Line item description');
+      descInput.setAttribute('data-id', item.id);
+      descInput.setAttribute('data-field', 'description');
+      descInput.style.flexGrow = '3';
+      descInput.addEventListener('input', () => updateLineItem(item.id));
+
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.min = '0';
+      qtyInput.value = item.quantity;
+      qtyInput.setAttribute('aria-label', 'Quantity');
+      qtyInput.setAttribute('data-id', item.id);
+      qtyInput.setAttribute('data-field', 'quantity');
+      qtyInput.style.width = '60px';
+      qtyInput.addEventListener('input', () => updateLineItem(item.id));
+
+      const priceInput = document.createElement('input');
+      priceInput.type = 'number';
+      priceInput.min = '0';
+      priceInput.step = '0.01';
+      priceInput.value = item.unitPrice;
+      priceInput.setAttribute('aria-label', 'Unit price');
+      priceInput.setAttribute('data-id', item.id);
+      priceInput.setAttribute('data-field', 'unitPrice');
+      priceInput.style.width = '80px';
+      priceInput.addEventListener('input', () => updateLineItem(item.id));
+
+      const totalSpan = document.createElement('span');
+      totalSpan.textContent = formatCurrency(item.total);
+      totalSpan.setAttribute('aria-label', 'Line item total');
+      totalSpan.setAttribute('data-id', item.id);
+      totalSpan.setAttribute('data-field', 'total');
+      totalSpan.style.width = '90px';
+      totalSpan.style.textAlign = 'right';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.setAttribute('aria-label', 'Remove line item');
+      removeBtn.textContent = '🗑️';
+      removeBtn.title = 'Remove this line item';
+      removeBtn.style.width = '34px';
+      removeBtn.addEventListener('click', () => {
+        removeLineItem(item.id);
+      });
+
+      div.appendChild(descInput);
+      div.appendChild(qtyInput);
+      div.appendChild(priceInput);
+      div.appendChild(totalSpan);
+      div.appendChild(removeBtn);
+
+      lineItemsList.appendChild(div);
+    });
+  }
+
+  // Calculate totals based on line items, discount & tax inputs
+  function updateTotals() {
+    let subtotal = currentInvoice.lineItems.reduce((acc, it) => acc + it.total, 0);
+    let discountRate = parseFloat(discountInput.value);
+    let taxRate = parseFloat(taxInput.value);
+    discountRate = isNaN(discountRate) || discountRate < 0 ? 0 : discountRate;
+    taxRate = isNaN(taxRate) || taxRate < 0 ? 0 : taxRate;
+
+    let discountAmount = (subtotal * discountRate) / 100;
+    let taxableAmount = subtotal - discountAmount;
+    taxableAmount = taxableAmount < 0 ? 0 : taxableAmount;
+    let taxAmount = (taxableAmount * taxRate) / 100;
+    let total = taxableAmount + taxAmount;
+
+    subtotalElem.textContent = formatCurrency(subtotal);
+    discountElem.textContent = formatCurrency(discountAmount);
+    taxElem.textContent = formatCurrency(taxAmount);
+    totalElem.textContent = formatCurrency(total);
+  }
+
+  // Validate invoice form & data on generate PDF submit
+  function onGeneratePdfSubmit(evt) {
+    evt.preventDefault();
+    formError.textContent = '';
+    formSuccess.textContent = '';
+
+    if(settings.plan === 'free' && invoices.length >= settings.maxFreeInvoices) {
+      formError.textContent = `Free tier allows maximum ${settings.maxFreeInvoices} invoices per month. Please upgrade to Pro for unlimited invoices.`;
+      return;
+    }
+
+    // Validate client fields
+    const clientName = document.getElementById('client-name').value.trim();
+    const clientEmail = document.getElementById('client-email').value.trim();
+    if(!clientName) {
+      formError.textContent = 'Client Name is required.';
+      return;
+    }
+    if(!validateEmail(clientEmail)) {
+      formError.textContent = 'Valid Client Email is required.';
+      return;
+    }
+
+    // Validate invoice fields
+    const invoiceNumber = document.getElementById('invoice-number').value.trim();
+    if(!invoiceNumber) {
+      formError.textContent = 'Invoice Number is required.';
+      return;
+    }
+    const invoiceDate = document.getElementById('invoice-date').value;
+    if(!invoiceDate) {
+      formError.textContent = 'Invoice Date is required.';
+      return;
+    }
+
+    // Validate line items: at least one with description and positive total
+    let validItemExists = false;
+    for(const item of currentInvoice.lineItems) {
+      if(item.description.trim() !== '' && item.total > 0) {
+        validItemExists = true;
+        break;
+      }
+    }
+    if(!validItemExists) {
+      formError.textContent = 'Add at least one line item with description and positive total.';
+      return;
+    }
+
+    // Template restrictions in free/pro plan
+    const templateSelect = document.getElementById('template-select').value;
+    if(TEMPLATES[templateSelect].pro && settings.plan !== 'pro') {
+      formError.textContent = 'Selected template requires Pro plan.';
+      return;
+    }
+
+    // If sending email, check plan and email validity
+    const recipientEmail = sendEmailInput.value.trim();
+    if(recipientEmail !== '') {
+      if(settings.plan !== 'pro') {
+        formError.textContent = 'Emailing invoices is available only in Pro plan.';
+        return;
+      }
+      if(!validateEmail(recipientEmail)) {
+        formError.textContent = 'Please enter a valid email address to send invoice.';
+        return;
+      }
+    }
+
+    // passed validation, generate invoice object
+    const discountRate = parseFloat(discountInput.value) || 0;
+    const taxRate = parseFloat(taxInput.value) || 0;
+
+    const invoiceData = {
+      id: genID(),
+      invoiceNumber,
+      invoiceDate,
+      dueDate: document.getElementById('due-date').value || null,
+      clientName,
+      clientEmail,
+      clientAddress: document.getElementById('client-address').value.trim(),
+      clientPhone: document.getElementById('client-phone').value.trim(),
+      lineItems: currentInvoice.lineItems.filter( it => it.description.trim() !== '' && it.total > 0 ),
+      discountRate,
+      taxRate,
+      total: parseFloat(totalElem.textContent.replace(/,/g, '')) || 0,
+      subtotal: parseFloat(subtotalElem.textContent.replace(/,/g, '')) || 0,
+      discountAmount: parseFloat(discountElem.textContent.replace(/,/g, '')) || 0,
+      taxAmount: parseFloat(taxElem.textContent.replace(/,/g, '')) || 0,
+      branding: {
+        logoDataUrl: settings.branding.logo || null,
+        primaryColor: document.getElementById('color-primary').value || '#2a9d8f',
+        template: templateSelect
+      },
+      recurring: false,
+      recurringInterval: null,
+      recurringDuration: 0,
+      status: 'sent', // default status
+      createdAt: new Date().toISOString()
+    };
+
+    if(recurringCheckbox.checked) {
+      if(settings.plan !== 'pro') {
+        formError.textContent = 'Recurring invoicing available only on Pro plan.';
+        return;
+      }
+      invoiceData.recurring = true;
+      invoiceData.recurringInterval = recurringIntervalSelect.value;
+      const dur = parseInt(recurringDurationInput.value);
+      invoiceData.recurringDuration = isNaN(dur) ? 0 : dur;
+    }
+
+    // If logo uploaded in this form, save it locally (overrides current logo)
+    const logoFileInput = document.getElementById('logo-upload');
+    const logoFile = logoFileInput.files[0];
+    if(logoFile) {
+      if(logoFile.size > 2 * 1024 * 1024) {
+        formError.textContent = 'Logo image size exceeds 2MB limit.';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const logoDataUrl = evt.target.result;
+        settings.branding.logo = logoDataUrl;
+        settings.branding.primaryColor = invoiceData.branding.primaryColor;
+        settings.branding.template = invoiceData.branding.template;
+        saveSettings();
+
+        invoiceData.branding.logoDataUrl = logoDataUrl;
+        saveAndShowInvoice(invoiceData, recipientEmail);
+      };
+      reader.readAsDataURL(logoFile);
+    } else {
+      // No logo change, save branding from form
+      settings.branding.primaryColor = invoiceData.branding.primaryColor;
+      settings.branding.template = invoiceData.branding.template;
+      saveSettings();
+      saveAndShowInvoice(invoiceData, recipientEmail);
+    }
+  }
+
+  // Save invoice in storage and show output
+  function saveAndShowInvoice(invoiceData, recipientEmail) {
+    invoices.push(invoiceData);
+    saveInvoices();
+    renderInvoicesList();
+    updateAnalytics();
+
+    lastGeneratedInvoice = invoiceData;
+    currentInvoice.lineItems = invoiceData.lineItems.map(it => ({...it}));
+    // Generate and show PDF preview
+    generateAndPreviewPDF(invoiceData);
+
+    // Enable email send if pro and email given
+    if(settings.plan === 'pro' && recipientEmail && recipientEmail.length > 0) {
+      sendEmailInput.value = recipientEmail;
+      sendEmailBtn.disabled = false;
+    } else {
+      sendEmailInput.value = '';
+      sendEmailBtn.disabled = true;
+    }
+    showSection('invoiceOutput');
+  }
+
+  // Utility: validate email. Simple regex
+  function validateEmail(email) {
+    // Simple pattern
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Generate PDF invoice & preview in iframe
+  async function generateAndPreviewPDF(invoiceData) {
+    // Use jsPDF to generate PDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 15;
+    let y = margin;
+
+    // Colors and fonts from branding
+    const primaryColor = invoiceData.branding.primaryColor || '#2a9d8f';
+    const logoDataUrl = invoiceData.branding.logoDataUrl || null;
+    const template = invoiceData.branding.template || 'clean';
+
+    // Header branding: Logo + "Invoice" Title + Invoice Number
+    if(logoDataUrl) {
+      try {
+        // Add logo (max height 25, width scale auto)
+        await new Promise((res, rej) => {
+          const img = new Image();
+          img.onload = () => {
+            const ratio = img.width / img.height;
+            const height = 25;
+            const width = height * ratio;
+            doc.addImage(img, 'PNG', margin, y, width, height);
+            y += height + 5;
+            res();
+          };
+          img.onerror = () => {
+            y += 30;
+            res();
+          };
+          img.src = logoDataUrl;
+        });
+      } catch(e) {
+        y += 30;
+      }
+    } else {
+      y += 30;
+    }
+
+    doc.setTextColor(primaryColor);
+    doc.setFontSize(20);
+    doc.text('INVOICE', pageWidth - margin - 50, margin + 15, {align: 'right'});
+
+    doc.setFontSize(12);
+    doc.setTextColor('#000');
+    doc.text(`Invoice #: ${invoiceData.invoiceNumber}`, pageWidth - margin - 50, margin + 25, {align: 'right'});
+    doc.text(`Date: ${invoiceData.invoiceDate}`, pageWidth - margin - 50, margin + 33, {align: 'right'});
+    if(invoiceData.dueDate) {
+      doc.text(`Due Date: ${invoiceData.dueDate}`, pageWidth - margin - 50, margin + 41, {align: 'right'});
+    }
+
+    y += 10;
+
+    // Client Info box
+    doc.setDrawColor(primaryColor);
+    doc.setFillColor(240);
+    doc.rect(margin, y, 90, 35, 'FD');
+    doc.setTextColor('#000');
+    doc.setFontSize(11);
+    doc.text('Bill To:', margin + 5, y + 10);
+    doc.setFontSize(10);
+    doc.text(invoiceData.clientName || '', margin + 5, y + 18);
+    if(invoiceData.clientAddress) doc.text(invoiceData.clientAddress, margin + 5, y + 26);
+    if(invoiceData.clientEmail) doc.text(invoiceData.clientEmail, margin + 5, y + 34);
+    if(invoiceData.clientPhone) doc.text(invoiceData.clientPhone, margin + 5, y + 42);
+    y += 45;
+
+    // Table headers
+    const colWidths = [85, 25, 30, 30];
+    const headings = ['Description','Qty','Unit Price','Total'];
+
+    doc.setFillColor(primaryColor);
+    doc.setTextColor('#fff');
+    doc.setFontSize(12);
+    let x = margin;
+    for(let i=0;i<headings.length;i++) {
+      const heading = headings[i];
+      doc.rect(x, y, colWidths[i], 10, 'F');
+      doc.text(heading, x+2, y+7);
+      x += colWidths[i];
+    }
+
+    y += 10;
+
+    // Table line items
+    doc.setFontSize(10);
+    doc.setTextColor('#000');
+    invoiceData.lineItems.forEach(item => {
+      let xline = margin;
+      const description = item.description || '';
+      const quantity = item.quantity || 0;
+      const unitPrice = item.unitPrice || 0;
+      const total = quantity * unitPrice;
+
+      doc.text(description, xline+2, y+7, { maxWidth: colWidths[0]-4 });
+      xline += colWidths[0];
+      doc.text(quantity.toString(), xline+7, y+7, {align: 'right'});
+      xline += colWidths[1];
+      doc.text(`$${formatCurrency(unitPrice)}`, xline+5, y+7, {align: 'right'});
+      xline += colWidths[2];
+      doc.text(`$${formatCurrency(total)}`, xline+5, y+7, {align: 'right'});
+
+      y += 10;
+      if(y > doc.internal.pageSize.getHeight() - margin - 40) {
+        doc.addPage();
+        y = margin + 10;
+      }
+    });
+
+    y += 5;
+
+    // Summary box on right side
+    const summaryX = pageWidth - margin - 90;
+    const summaryY = y;
+    doc.setFontSize(11);
+    doc.text('Subtotal:', summaryX, summaryY);
+    doc.text(`$${formatCurrency(invoiceData.subtotal)}`, summaryX + 75, summaryY, {align:'right'});
+
+    doc.text('Discount:', summaryX, summaryY + 8);
+    doc.text(`-$${formatCurrency(invoiceData.discountAmount)}`, summaryX + 75, summaryY + 8, {align:'right'});
+
+    doc.text('Tax:', summaryX, summaryY + 16);
+    doc.text(`$${formatCurrency(invoiceData.taxAmount)}`, summaryX + 75, summaryY + 16, {align:'right'});
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('Total:', summaryX, summaryY + 28);
+    doc.text(`$${formatCurrency(invoiceData.total)}`, summaryX + 75, summaryY + 28, {align:'right'});
+
+    doc.setFont('helvetica', 'normal');
+
+    // Footer
+    const footerText = 'Thank you for your business!';
+    doc.setTextColor(primaryColor);
+    doc.setFontSize(11);
+    doc.text(footerText, pageWidth/2, doc.internal.pageSize.getHeight() - margin, {align: 'center'});
+
+    // Produce PDF blob URL for previewing & download
+    const pdfBlob = doc.output('blob');
+
+    if(generatedPdfBlobUrl) {
+      URL.revokeObjectURL(generatedPdfBlobUrl);
+      generatedPdfBlobUrl = null;
+    }
+    generatedPdfBlobUrl = URL.createObjectURL(pdfBlob);
+
+    pdfPreviewIframe.src = generatedPdfBlobUrl;
+  }
+
+  // Download last generated PDF
+  function downloadGeneratedPdf() {
+    if(!generatedPdfBlobUrl || !lastGeneratedInvoice) {
+      alert('No invoice PDF available to download.');
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = generatedPdfBlobUrl;
+    a.download = `${lastGeneratedInvoice.invoiceNumber}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  // Clear PDF preview and blob
+  function clearPdfPreview() {
+    pdfPreviewIframe.src = 'about:blank';
+    if(generatedPdfBlobUrl) {
+      URL.revokeObjectURL(generatedPdfBlobUrl);
+      generatedPdfBlobUrl = null;
+    }
+    lastGeneratedInvoice = null;
+    sendEmailBtn.disabled = true;
+    emailStatusDiv.textContent = '';
+  }
+
+  // Preview existing invoice PDF by regenerating
+  function previewInvoicePDF(invoiceData) {
+    lastGeneratedInvoice = invoiceData;
+    generateAndPreviewPDF(invoiceData);
+    sendEmailInput.value = '';
+    sendEmailBtn.disabled = true;
+    emailStatusDiv.textContent = '';
+    showSection('invoiceOutput');
+  }
+
+  // Send invoice email (simulated)
+  function sendInvoiceEmail() {
+    emailStatusDiv.textContent = '';
+    const emailTo = sendEmailInput.value.trim();
+    if(!emailTo) {
+      emailStatusDiv.style.color = '#d22';
+      emailStatusDiv.textContent = 'Please enter recipient email address.';
+      return;
+    }
+    if(!validateEmail(emailTo)) {
+      emailStatusDiv.style.color = '#d22';
+      emailStatusDiv.textContent = 'Invalid email address.';
+      return;
+    }
+    if(!lastGeneratedInvoice) {
+      emailStatusDiv.style.color = '#d22';
+      emailStatusDiv.textContent = 'No invoice loaded for sending.';
+      return;
+    }
+    if(settings.plan !== 'pro') {
+      emailStatusDiv.style.color = '#d22';
+      emailStatusDiv.textContent = 'Emailing invoices available on Pro plan only.';
+      return;
+    }
+    // Simulate email sending with a delay
+    emailStatusDiv.style.color = '#444';
+    emailStatusDiv.textContent = 'Sending email...';
+
+    setTimeout(() => {
+      // Mark invoice as sent if not already
+      const inv = invoices.find(i => i.id === lastGeneratedInvoice.id);
+      if(inv) {
+        inv.status = inv.status === 'paid' ? 'paid' : 'sent';
+        saveInvoices();
+      }
+      emailStatusDiv.style.color = 'green';
+      emailStatusDiv.textContent = `Invoice sent to ${emailTo} (simulated).`;
+      renderInvoicesList();
+      updateAnalytics();
+    }, 1500);
+  }
+
+  // Toggle subscription plan between free and pro (simulated)
+  function toggleSubscription() {
+    if(settings.plan === 'free') {
+      settings.plan = 'pro';
+      alert('You upgraded to Pro plan! All features unlocked.');
+    } else {
+      settings.plan = 'free';
+      alert('You downgraded to Free plan. Some features are limited.');
+      // Enforce max invoices if needed by trimming
+      if(invoices.length > settings.maxFreeInvoices) {
+        invoices = invoices.slice(0, settings.maxFreeInvoices);
+        saveInvoices();
+      }
+    }
+    saveSettings();
+  }
+
+  // Update plan-related UI display text
+  function updatePlanDisplay() {
+    if(!planInfo) return;
+
+    let html = '';
+    if(settings.plan === 'free') {
+      html = `<strong>Free Tier:</strong> Up to ${settings.maxFreeInvoices} invoices/month, Clean template only, no email or recurring invoices.`;
+    } else {
+      html = `<strong>Pro Tier:</strong> Unlimited invoices, customizable branding, email invoices, recurring billing.`;
+    }
+    planInfo.innerHTML = html;
+  }
+
+  // Update subscription info in settings section
+  function updateSubscriptionInfo() {
+    if(!subscriptionInfoDiv) return;
+
+    if(settings.plan === 'free') {
+      subscriptionInfoDiv.innerHTML = `
+        <p>You are currently on the <strong>Free</strong> plan.</p>
+        <p>Limitations: Maximum ${settings.maxFreeInvoices} invoices per month, basic templates, no email or recurring functionality.</p>
+        <p>Upgrade to Pro for $7.99/month to unlock all features!</p>
+      `;
+      toggleSubscriptionBtn.textContent = 'Upgrade to Pro';
+    } else {
+      subscriptionInfoDiv.innerHTML = `
+        <p>You are subscribed to the <strong>Pro</strong> plan.</p>
+        <p>Unlimited invoices, customizable branding, email invoices, and recurring invoices enabled.</p>
+        <p>Cancel anytime to revert to Free plan.</p>
+      `;
+      toggleSubscriptionBtn.textContent = 'Downgrade to Free';
+    }
+  }
+
+  // Initialize Charts
+  function initCharts() {
+    if (!invoicesStatusChart) {
+      const ctxStatus = document.getElementById('invoices-status-chart').getContext('2d');
+      invoicesStatusChart = new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: ['Sent', 'Paid', 'Overdue'],
+          datasets: [{
+            label: 'Invoices by Status',
+            data: [0,0,0],
+            backgroundColor: ['#2196F3', '#4CAF50', '#F44336'],
+            hoverOffset: 20
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+          }
+        }
+      });
+    }
+    if(!earningsMonthlyChart) {
+      const ctxEarnings = document.getElementById('earnings-monthly-chart').getContext('2d');
+      earningsMonthlyChart = new Chart(ctxEarnings, {
+        type: 'bar',
+        data: {
+          labels: [], // months
+          datasets: [{
+            label: 'Earnings ($)',
+            data: [],
+            backgroundColor: settings.branding.primaryColor,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+  }
+
+  // Update analytics
+  function updateAnalytics() {
+    if(!invoicesStatusChart || !earningsMonthlyChart) return;
+
+    // Invoice Status counts
+    const counts = {sent:0, paid:0, overdue:0};
+    const now = new Date();
+
+    invoices.forEach(inv => {
+      if(inv.status === 'paid') counts.paid++;
+      else if(inv.status === 'sent') {
+        if(inv.dueDate && new Date(inv.dueDate) < now) {
+          counts.overdue++;
+        } else {
+          counts.sent++;
+        }
+      } else {
+        counts.sent++;
+      }
+    });
+
+    invoicesStatusChart.data.datasets[0].data = [counts.sent, counts.paid, counts.overdue];
+    invoicesStatusChart.update();
+
+    // Total earnings
+    const totalEarnings = invoices.reduce((acc, inv) => acc + (inv.status === 'paid' ? inv.total : 0), 0);
+    totalEarningsDiv.textContent = `$${formatCurrency(totalEarnings)}`;
+
+    // Earnings over last 6 months
+    const monthLabels = [];
+    const earningsByMonth = [];
+    const dateNow = new Date();
+    for(let i=5; i>=0; i--) {
+      const d = new Date(dateNow.getFullYear(), dateNow.getMonth()-i, 1);
+      const label = d.toLocaleString(undefined, {month: 'short', year:'2-digit'});
+      monthLabels.push(label);
+      earningsByMonth.push(0);
+    }
+
+    invoices.forEach(inv => {
+      if(inv.status !== 'paid') return;
+      if(!inv.invoiceDate) return;
+      const dateInv = new Date(inv.invoiceDate);
+      for(let i=0; i<6; i++) {
+        const d = new Date(dateNow.getFullYear(), dateNow.getMonth()-i, 1);
+        if(dateInv.getFullYear() === d.getFullYear() && dateInv.getMonth() === d.getMonth()) {
+          earningsByMonth[5 - i] += inv.total;
+        }
+      }
+    });
+
+    earningsMonthlyChart.data.labels = monthLabels;
+    earningsMonthlyChart.data.datasets[0].data = earningsByMonth;
+    earningsMonthlyChart.update();
+  }
+
+  // Update branding/logo preview on logo upload - not shown due to simple UI (can be extended)
+
+  // -------------------------------------------------------------------
+  // Initialize App
+  // -------------------------------------------------------------------
+  init();
+
+})();
+</script>
+</body>
+</html>
+```

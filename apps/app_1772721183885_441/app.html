@@ -1,0 +1,357 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CleanPage - Instant One-Page URL Summaries</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for the summary preview */
+    #summaryPreview {
+      scrollbar-width: thin;
+      scrollbar-color: #a0aec0 #f7fafc;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    #summaryPreview::-webkit-scrollbar {
+      width: 8px;
+    }
+    #summaryPreview::-webkit-scrollbar-track {
+      background: #f7fafc;
+    }
+    #summaryPreview::-webkit-scrollbar-thumb {
+      background-color: #a0aec0;
+      border-radius: 4px;
+      border: 2px solid #f7fafc;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-indigo-500 selection:text-white">
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-indigo-600 font-extrabold text-2xl tracking-tight select-none">CleanPage</a>
+      <ul class="hidden md:flex space-x-8 text-gray-600 font-medium">
+        <li><a href="#features" class="hover:text-indigo-600 transition">Features</a></li>
+        <li><a href="#tool" class="hover:text-indigo-600 transition">Try It</a></li>
+        <li><a href="#hero" class="hover:text-indigo-600 transition">Home</a></li>
+      </ul>
+      <button id="mobileMenuBtn" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none" aria-label="Toggle menu">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <div id="mobileMenu" class="md:hidden bg-white border-t border-gray-200 hidden py-2">
+      <ul class="space-y-2 px-6 text-gray-700 font-semibold">
+        <li><a href="#features" class="block hover:text-indigo-600 transition">Features</a></li>
+        <li><a href="#tool" class="block hover:text-indigo-600 transition">Try It</a></li>
+        <li><a href="#hero" class="block hover:text-indigo-600 transition">Home</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero" class="bg-indigo-50 py-24">
+    <div class="max-w-7xl mx-auto px-6 sm:px-12 text-center">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-indigo-700 leading-tight max-w-3xl mx-auto">
+        Instantly Convert Any URL Into a <span class="text-indigo-900">Clean, Printable One-Page Summary</span>
+      </h1>
+      <p class="mt-6 text-lg text-indigo-600 max-w-xl mx-auto">
+        Remove ads, sidebars, and clutter to get only the main content - perfect for easy reading, offline saving, and quick sharing.
+      </p>
+      <a href="#tool" class="inline-block mt-10 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition">
+        Try It Now — It's Free
+      </a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="max-w-7xl mx-auto px-6 sm:px-12 py-20">
+    <h2 class="text-center text-indigo-800 font-extrabold text-3xl mb-14">
+      Why Choose CleanPage?
+    </h2>
+    <div class="grid gap-12 md:grid-cols-3">
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+        <svg class="w-10 h-10 text-indigo-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M8 16l-4-4 4-4m8 8l4-4-4-4" />
+        </svg>
+        <h3 class="text-xl font-semibold text-indigo-700 mb-2">Clutter-Free Summaries</h3>
+        <p class="text-gray-600">Extract only the main content, discarding ads, sidebars, and distractions for a clean reading experience.</p>
+      </div>
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+        <svg class="w-10 h-10 text-indigo-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M8 12h8M12 8v8" />
+        </svg>
+        <h3 class="text-xl font-semibold text-indigo-700 mb-2">Instant & Easy</h3>
+        <p class="text-gray-600">Just paste a URL and get an instantly formatted summary—no account or sign-in required.</p>
+      </div>
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+        <svg class="w-10 h-10 text-indigo-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M12 6v6l4 2" />
+          <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="text-xl font-semibold text-indigo-700 mb-2">Save & Share</h3>
+        <p class="text-gray-600">Print or save your summaries offline and share clean links with friends, colleagues, or students.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool -->
+  <section id="tool" class="bg-white py-20">
+    <div class="max-w-4xl mx-auto px-6 sm:px-12">
+      <h2 class="text-indigo-800 font-extrabold text-3xl mb-8 text-center">
+        Paste Your URL to Generate a Clean Summary
+      </h2>
+
+      <form id="urlForm" class="flex flex-col sm:flex-row gap-4 mb-6">
+        <input
+          type="url"
+          id="urlInput"
+          placeholder="https://example.com/some-article"
+          required
+          class="flex-grow rounded-md border border-gray-300 px-4 py-3 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+          aria-label="URL input"
+        />
+        <button
+          type="submit"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-6 py-3 shadow-md transition focus:outline-none focus:ring-2 focus:ring-indigo-600"
+          aria-label="Generate Summary"
+        >
+          Generate Summary
+        </button>
+      </form>
+
+      <div class="space-y-4">
+        <div id="loading" class="hidden text-indigo-600 font-semibold flex justify-center items-center space-x-2" aria-live="polite" role="status">
+          <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>Loading summary...</span>
+        </div>
+
+        <div id="errorMsg" class="hidden text-red-600 font-semibold bg-red-100 border border-red-300 rounded-md p-3" role="alert"></div>
+
+        <div id="summaryContainer" class="bg-gray-50 rounded-md shadow-inner p-6 max-h-[450px] overflow-auto border border-gray-200 prose prose-indigo max-w-full">
+          <div id="summaryPreview" class="prose max-w-full"></div>
+        </div>
+
+        <button id="printBtn" class="hidden mt-4 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-6 py-3 shadow-md transition focus:outline-none focus:ring-2 focus:ring-indigo-600">
+          Print Summary
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-indigo-50 border-t border-indigo-200 py-8 mt-20">
+    <div class="max-w-7xl mx-auto px-6 sm:px-12 text-center text-indigo-700 font-medium text-sm select-none">
+      &copy; 2024 CleanPage. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Main functionality
+    const urlForm = document.getElementById('urlForm');
+    const urlInput = document.getElementById('urlInput');
+    const summaryPreview = document.getElementById('summaryPreview');
+    const summaryContainer = document.getElementById('summaryContainer');
+    const errorMsg = document.getElementById('errorMsg');
+    const loadingIndicator = document.getElementById('loading');
+    const printBtn = document.getElementById('printBtn');
+
+    // Helper: sanitize text
+    function escapeHTML(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Parse and extract main content with a simplistic heuristic
+    // Implementation note: Due to CORS, we cannot fetch arbitrary pages from frontend.
+    // Instead, we try a public CORS proxy (like 'https://api.allorigins.win/get?url=...') to fetch page content.
+    // Then parse the HTML text and extract main content.
+
+    async function fetchPageContent(fetchUrl) {
+      // Using AllOrigins proxy:
+      const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(fetchUrl);
+      const response = await fetch(proxyUrl);
+      if (!response.ok) throw new Error('Failed to fetch URL content');
+      const data = await response.json();
+      return data.contents;
+    }
+
+    // Extract main article content from HTML text heuristically
+    function extractMainContent(htmlString) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlString, 'text/html');
+
+      // Remove scripts, styles, ads, nav, footer, aside, form, noscript, etc.
+      const selectorsToRemove = ['script', 'style', 'nav', 'footer', 'aside', 'form', 'noscript', '[class*="advert"]', '[class*="ads"]', '[id*="advert"]', '[id*="ads"]', '[class*="sidebar"]', '[id*="sidebar"]'];
+      selectorsToRemove.forEach(sel => {
+        doc.querySelectorAll(sel).forEach(el => el.remove());
+      });
+
+      // Heuristic #1: Look for <article> tag
+      let mainContent = doc.querySelector('article');
+      if (mainContent && mainContent.textContent.trim().length > 200) {
+        return mainContent.innerHTML.trim();
+      }
+
+      // Heuristic #2: Find element with largest text content
+      let candidates = Array.from(doc.body.querySelectorAll('div, section, main, article, p'));
+      candidates = candidates.filter(el => el.textContent.trim().length > 100);
+      if (candidates.length === 0) return null;
+
+      // Sort by text length descending
+      candidates.sort((a, b) => b.textContent.trim().length - a.textContent.trim().length);
+
+      // Take top candidate
+      return candidates[0].innerHTML.trim();
+    }
+
+    // Clean formatting: remove inline styles and scripts within the extracted content
+    function cleanExtractedContent(html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Remove inline styles and on* attributes
+      const allElements = doc.querySelectorAll('*');
+      allElements.forEach(el => {
+        el.removeAttribute('style');
+        [...el.attributes].forEach(attr => {
+          if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
+          if (attr.name === 'class') {
+            // Only keep a subset of classes for default styling, or remove all, so it looks clean
+            el.removeAttribute('class');
+          }
+          if (attr.name === 'id') {
+            el.removeAttribute('id');
+          }
+          if (attr.name === 'width' || attr.name === 'height') {
+            el.removeAttribute(attr.name);
+          }
+          if (attr.name === 'srcset') {
+            el.removeAttribute('srcset');
+          }
+        });
+      });
+
+      return doc.body.innerHTML.trim();
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.remove('hidden');
+      summaryPreview.innerHTML = '';
+      printBtn.classList.add('hidden');
+    }
+
+    function clearError() {
+      errorMsg.textContent = '';
+      errorMsg.classList.add('hidden');
+    }
+
+    urlForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      clearError();
+      summaryPreview.innerHTML = '';
+      printBtn.classList.add('hidden');
+
+      let urlValue = urlInput.value.trim();
+      if (!urlValue) {
+        showError('Please enter a valid URL');
+        return;
+      }
+      try {
+        // Validate URL format
+        try {
+          new URL(urlValue);
+        } catch {
+          showError('Please enter a valid URL');
+          return;
+        }
+
+        loadingIndicator.classList.remove('hidden');
+
+        // Fetch page content through proxy
+        const fetchedHTML = await fetchPageContent(urlValue);
+        if (!fetchedHTML) {
+          showError('Could not fetch website content.');
+          loadingIndicator.classList.add('hidden');
+          return;
+        }
+
+        let mainHtml = extractMainContent(fetchedHTML);
+        if (!mainHtml || mainHtml.length < 50) {
+          showError('Could not find main content on this URL.');
+          loadingIndicator.classList.add('hidden');
+          return;
+        }
+
+        let cleanedHtml = cleanExtractedContent(mainHtml);
+
+        summaryPreview.innerHTML = cleanedHtml;
+        printBtn.classList.remove('hidden');
+      } catch (err) {
+        showError('An error occurred while generating the summary. Please try again.');
+        console.error(err);
+      } finally {
+        loadingIndicator.classList.add('hidden');
+      }
+    });
+
+    printBtn.addEventListener('click', () => {
+      if (!summaryPreview.innerHTML) return;
+
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Summary - CleanPage</title>
+            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.1/dist/tailwind.min.css" rel="stylesheet">
+            <style>
+              body {
+                padding: 2rem;
+              }
+              img {
+                max-width: 100%;
+                height: auto;
+              }
+              a {
+                color: #4338ca;
+                text-decoration: none;
+              }
+              a:hover {
+                text-decoration: underline;
+              }
+              /* Remove interactive elements if any */
+            </style>
+          </head>
+          <body>
+            <article class="prose prose-indigo max-w-none">
+              ${summaryPreview.innerHTML}
+            </article>
+            <script>
+              window.onload = () => {
+                window.print();
+              }
+            <\/script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    });
+  </script>
+</body>
+</html>
+```

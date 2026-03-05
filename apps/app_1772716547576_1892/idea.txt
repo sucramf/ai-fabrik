@@ -1,0 +1,1 @@
+A web tool that generates personalized daily to-do lists based on user-inputted goals and time availability, automatically prioritizing tasks and sending reminder notifications.

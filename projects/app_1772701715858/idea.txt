@@ -1,0 +1,29 @@
+Sure! Here’s a simple, profitable micro SaaS idea:
+
+**Meeting Minute Summarizer**
+
+### Problem
+People spend a lot of time writing notes and summarizing meetings. It’s tedious and often leads to unorganized or incomplete minutes.
+
+### Solution
+A lightweight web app where users upload meeting audio recordings or paste meeting transcripts, and the app automatically generates clear, concise meeting minutes with action items highlighted.
+
+### Key Features
+- Audio upload + automatic transcription (using third-party APIs like Google Speech-to-Text)
+- Paste or upload raw meeting transcripts
+- AI-powered summarization to extract key points and decisions
+- Action items highlighting and easy export to PDF or email
+- Simple user dashboard with history and recurring meeting templates
+
+### Monetization
+- Freemium model: Free tier with limits on transcription minutes and summaries
+- Paid tiers for higher usage, team collaboration features
+- Add-ons like calendar integrations, custom branding, or priority processing
+
+### Why It Can Be Profitable
+- Saves professionals, managers, and teams time on a repetitive, boring task
+- Appeals to remote teams, consultants, freelancers, and busy executives
+- Relatively low competition for lightweight, easy-to-use tools with AI summarization
+- High perceived value means customers are willing to pay monthly
+
+Would you like me to help you outline a simple MVP plan or suggest tech stack options?

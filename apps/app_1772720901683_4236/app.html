@@ -1,0 +1,447 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HydrateMe - Personalized Hydration Reminders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for notifications */
+    #notifications::-webkit-scrollbar {
+      width: 8px;
+    }
+    #notifications::-webkit-scrollbar-thumb {
+      background-color: #3b82f6;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="text-2xl font-bold text-blue-600 select-none">HydrateMe</a>
+      <ul class="hidden md:flex space-x-8 text-gray-700 text-sm font-medium">
+        <li><a href="#features" class="hover:text-blue-600 transition">Features</a></li>
+        <li><a href="#tool" class="hover:text-blue-600 transition">Generate Reminders</a></li>
+        <li><a href="#about" class="hover:text-blue-600 transition">About</a></li>
+      </ul>
+      <button id="btn-toggle-menu" aria-label="Toggle menu" class="md:hidden focus:outline-none focus:ring-2 focus:ring-blue-600 rounded">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="md:hidden hidden px-6 pb-4 space-y-3 border-t border-gray-200">
+      <a href="#features" class="block py-2 text-gray-700 font-medium hover:text-blue-600">Features</a>
+      <a href="#tool" class="block py-2 text-gray-700 font-medium hover:text-blue-600">Generate Reminders</a>
+      <a href="#about" class="block py-2 text-gray-700 font-medium hover:text-blue-600">About</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+    <div class="container mx-auto px-6 py-20 flex flex-col md:flex-row items-center gap-12">
+      <div class="max-w-xl text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4">Stay Hydrated, Stay Healthy</h1>
+        <p class="text-lg md:text-xl mb-6 leading-relaxed opacity-90">
+          HydrateMe generates personalized daily hydration reminders tailored to your weight, activity level, and local weather. Receive gentle notifications to keep you optimally hydrated — every day.
+        </p>
+        <a href="#tool" class="inline-block bg-white text-blue-600 font-semibold px-6 py-3 rounded-md shadow-md hover:bg-gray-100 transition">
+          Get Started
+        </a>
+      </div>
+      <div class="w-full max-w-lg">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Water glass with droplets" class="rounded-lg shadow-lg" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Features -->
+  <section id="features" class="container mx-auto px-6 py-20">
+    <h2 class="text-3xl font-bold text-center mb-12 text-gray-900">Why HydrateMe?</h2>
+    <div class="grid gap-12 md:grid-cols-3 max-w-5xl mx-auto">
+      <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-3 0-5-3-5-3s2-1 3-3c1 .6 3 3 3 3s-2 3-1 3z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a5 5 0 0110 0H7z" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Personalized For You</h3>
+        <p class="text-gray-600 leading-relaxed">Your weight and activity level are taken into account to tailor your hydration plan.</p>
+      </div>
+      <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 018 0 4 4 0 108 0 4 4 0 118 0" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 20v-4" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 16H8" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Weather Aware</h3>
+        <p class="text-gray-600 leading-relaxed">Adjusts your hydration needs dynamically based on local temperature and humidity.</p>
+      </div>
+      <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m4-2h-6" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 14H8v-2a4 4 0 118 0v2h-4z" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">Gentle Notifications</h3>
+        <p class="text-gray-600 leading-relaxed">Receive subtle reminders throughout your day so you never forget to drink water.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool -->
+  <section id="tool" class="bg-white py-20">
+    <div class="container mx-auto px-6 max-w-3xl">
+      <h2 class="text-3xl font-bold mb-6 text-center text-gray-900">Generate Your Daily Hydration Plan</h2>
+      <form id="hydration-form" class="space-y-8 bg-gray-50 p-10 rounded-lg shadow-md" novalidate>
+        <div>
+          <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">Your Weight (kg)</label>
+          <input
+            type="number"
+            id="weight"
+            name="weight"
+            min="20"
+            max="300"
+            step="1"
+            required
+            class="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="e.g. 70"
+          />
+          <p class="text-xs text-gray-400 mt-1">Needed to personalize water intake</p>
+        </div>
+
+        <div>
+          <label for="activity" class="block text-sm font-medium text-gray-700 mb-1">Activity Level</label>
+          <select
+            id="activity"
+            name="activity"
+            required
+            class="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="" disabled selected>Select your daily activity</option>
+            <option value="sedentary">Sedentary (little to no exercise)</option>
+            <option value="light">Light (light exercise/sports 1-3 days/week)</option>
+            <option value="moderate">Moderate (moderate exercise/sports 3-5 days/week)</option>
+            <option value="active">Active (hard exercise/sports 6-7 days a week)</option>
+            <option value="very-active">Very Active (very hard exercise & physical job)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Your City / Location</label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            required
+            placeholder="e.g. New York"
+            class="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+          <p class="text-xs text-gray-400 mt-1">Used to fetch your local weather data</p>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition-shadow shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Generate Plan
+        </button>
+      </form>
+
+      <!-- Results & Notifications -->
+      <div id="results" class="mt-12 bg-white p-8 rounded-lg shadow-md hidden">
+        <h3 class="text-2xl font-semibold mb-4 text-blue-600">Your Hydration Plan for Today</h3>
+        <p id="hydration-amount" class="text-lg mb-2"></p>
+        <p id="reminder-frequency" class="text-gray-700 mb-6"></p>
+        <button id="start-notifications" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md shadow-md transition focus:outline-none focus:ring-2 focus:ring-blue-500" type="button">
+          Start Notifications
+        </button>
+        <button id="stop-notifications" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md shadow-md transition focus:outline-none focus:ring-2 focus:ring-red-500 ml-4 hidden" type="button">
+          Stop Notifications
+        </button>
+        <section id="notifications" class="mt-8 max-h-48 overflow-y-auto border border-gray-200 rounded p-4 bg-gray-50 text-gray-800 space-y-2" aria-live="polite" aria-atomic="true"></section>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="container mx-auto px-6 py-20 max-w-4xl text-center text-gray-700">
+    <h2 class="text-3xl font-bold mb-6 text-gray-900">About HydrateMe</h2>
+    <p class="mb-4">
+      HydrateMe is dedicated to helping you maintain optimal hydration tailored specifically to your lifestyle and environment.
+      By combining your personal data with live weather information, our reminders seamlessly integrate into your daily routine, promoting well-being and productivity.
+    </p>
+    <p class="text-sm text-gray-500 italic">Developed with ♥ for healthier days.</p>
+  </section>
+
+  <footer class="bg-white border-t border-gray-200 py-6 text-center text-gray-500 text-sm select-none">
+    &copy; 2024 HydrateMe. All rights reserved.
+  </footer>
+
+  <script>
+    // Navbar toggle
+    const btnToggleMenu = document.getElementById('btn-toggle-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    btnToggleMenu.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Elements
+    const form = document.getElementById('hydration-form');
+    const results = document.getElementById('results');
+    const hydrationAmountEl = document.getElementById('hydration-amount');
+    const reminderFrequencyEl = document.getElementById('reminder-frequency');
+    const startBtn = document.getElementById('start-notifications');
+    const stopBtn = document.getElementById('stop-notifications');
+    const notificationsEl = document.getElementById('notifications');
+
+    let notifyIntervalId = null;
+    let hydrationPlan = null; 
+
+    // Activity level multipliers (approximate increase in ml water per kg)
+    const activityMultipliers = {
+      sedentary: 30,
+      light: 35,
+      moderate: 40,
+      active: 45,
+      'very-active': 50,
+    };
+
+    // Helper for showing notifications in the UI
+    function appendNotification(message) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const p = document.createElement('p');
+      p.className = "bg-blue-100 text-blue-800 rounded px-3 py-1 text-sm shadow-inner";
+      p.textContent = `[${time}] ${message}`;
+      notificationsEl.appendChild(p);
+      notificationsEl.scrollTop = notificationsEl.scrollHeight;
+    }
+
+    // Request weather data from OpenWeatherMap API
+    async function fetchWeather(location) {
+      const apiKey = 'b6907d289e10d714a6e88b30761fae22'; // OpenWeatherMap sample API key (demo, only for city "London")
+      // Since the free sample key doesn't work for arbitrary cities, we use open-meteo.com for no API key real data
+      // We will use open-meteo API instead:
+
+      // Geocoding to lat/lon using open-meteo geocoding API
+      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`);
+      if (!geoRes.ok) throw new Error('Failed to fetch geocoding data');
+      const geoData = await geoRes.json();
+      if (!geoData.results || geoData.results.length === 0) throw new Error('Location not found');
+
+      const { latitude, longitude } = geoData.results[0];
+      // Fetch current temperature and relative humidity from open-meteo current weather API
+      const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=relativehumidity_2m&timezone=auto`);
+      if (!weatherRes.ok) throw new Error('Failed to fetch weather data');
+      const weatherData = await weatherRes.json();
+
+      const currentTemp = weatherData.current_weather.temperature;
+      // Find current hour index and get humidity
+      const nowHour = new Date(weatherData.current_weather.time).getHours();
+      const hourIndex = weatherData.hourly.time.findIndex(t =>
+        new Date(t).getHours() === nowHour
+      );
+      const currentHumidity = hourIndex >= 0 ? weatherData.hourly.relativehumidity_2m[hourIndex] : 50;
+
+      return {
+        temperature: currentTemp,
+        humidity: currentHumidity,
+      }
+    }
+
+    // Calculate hydration amount based on weight (kg), activity level and weather (temp °C, humidity %)
+    function calculateHydration(weight, activity, temperature, humidity) {
+      // Base water intake = weight * base multiplier (ml)
+      // Adjusted by activity multiplier and weather conditions (hot/dry weather = more water)
+      let baseMlPerKg = 30; // conservative baseline
+      // Activity adjustment:
+      let activityMlPerKg = activityMultipliers[activity] || 30;
+
+      // Weather adjustment factor:
+      // More water for hotter or drier weather:
+      // - if temperature > 25°C add 10% per 5 degrees above 25
+      // - if humidity < 40% add 10%
+      let weatherFactor = 1;
+      if (temperature > 25) {
+        weatherFactor += 0.1 * Math.floor((temperature - 25) / 5 + 0.0001);
+      }
+      if (humidity < 40) {
+        weatherFactor += 0.1;
+      }
+
+      let totalMl = weight * activityMlPerKg * weatherFactor;
+
+      // Round to nearest 100ml
+      totalMl = Math.round(totalMl / 100) * 100;
+
+      return totalMl; // in ml
+    }
+
+    // Generate reminders to cover the day: from 8am to 8pm, evenly spaced
+    function generateReminderSchedule(totalMl) {
+      const startHour = 8;
+      const endHour = 20;
+      const remindersCount = 6; // number of reminders per day
+
+      // Divide totalMl by remindersCount for each reminder
+      const reminderAmount = Math.round(totalMl / remindersCount);
+
+      // Calculate interval in minutes between reminders
+      const totalMinutes = (endHour - startHour) * 60;
+      const interval = totalMinutes / (remindersCount - 1);
+
+      let schedule = [];
+      for (let i = 0; i < remindersCount; i++) {
+        const date = new Date();
+        date.setHours(startHour);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        // Add interval minutes * i
+        date.setMinutes(date.getMinutes() + i * interval);
+        schedule.push({ time: date, amount: reminderAmount });
+      }
+      return schedule;
+    }
+
+    // Show browser notification if permission granted
+    function sendBrowserNotification(message) {
+      if (!("Notification" in window)) return false;
+
+      if (Notification.permission === "granted") {
+        new Notification("HydrateMe Reminder 💧", {
+          body: message,
+          icon: "https://cdn-icons-png.flaticon.com/512/727/727790.png",
+          tag: "hydrate-reminder"
+        });
+      }
+    }
+
+    // Start notification interval based on schedule
+    function startNotifications(schedule) {
+      if (!("Notification" in window)) {
+        alert("This browser does not support desktop notifications.");
+        return false;
+      }
+
+      if (Notification.permission === "default") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") startNotifications(schedule);
+          else alert("Notifications permission denied. Reminders will only appear on screen.");
+        });
+        return;
+      }
+
+      if (Notification.permission === "denied") {
+        alert("You have blocked notifications. Please allow notifications if you want reminders.");
+        return;
+      }
+
+      // Clear previous intervals if any
+      if (notifyIntervalId) {
+        clearInterval(notifyIntervalId);
+        notifyIntervalId = null;
+      }
+
+      // We will simulate the schedule with setTimeouts for demo.
+      // Because real notification scheduling depends on service-worker (not in scope here).
+      // So we do reminders every X seconds (with index cycling), each reminder showing amount.
+      let currentIndex = 0;
+
+      function notifyNext() {
+        const now = new Date();
+        const reminder = schedule[currentIndex];
+        const formattedTime = reminder.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const message = `Time to drink about ${reminder.amount} ml of water. (${formattedTime})`;
+        appendNotification(message);
+        sendBrowserNotification(message);
+        currentIndex++;
+        if (currentIndex >= schedule.length) currentIndex = 0;
+      }
+
+      // First notify immediately, then every 15 seconds (demo speed)
+      notifyNext();
+      notifyIntervalId = setInterval(notifyNext, 15000);
+
+      startBtn.disabled = true;
+      stopBtn.classList.remove('hidden');
+      startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    // Stop notification interval
+    function stopNotifications() {
+      if (notifyIntervalId) {
+        clearInterval(notifyIntervalId);
+        notifyIntervalId = null;
+      }
+      startBtn.disabled = false;
+      stopBtn.classList.add('hidden');
+      startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      appendNotification("Notifications stopped.");
+    }
+
+    // Main event for form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      notificationsEl.innerHTML = '';
+
+      const weight = Number(form.weight.value);
+      const activity = form.activity.value;
+      const location = form.location.value.trim();
+
+      if (!weight || weight < 20 || weight > 300) {
+        alert('Please enter a valid weight between 20 and 300 kg.');
+        return;
+      }
+      if (!activity) {
+        alert('Please select your activity level.');
+        return;
+      }
+      if (!location) {
+        alert('Please enter your city or location.');
+        return;
+      }
+
+      hydrationAmountEl.textContent = 'Calculating hydration needs...';
+      reminderFrequencyEl.textContent = '';
+      results.classList.remove('hidden');
+      startBtn.disabled = true;
+      stopBtn.classList.add('hidden');
+
+      try {
+        const weather = await fetchWeather(location);
+        const totalMl = calculateHydration(weight, activity, weather.temperature, weather.humidity);
+
+        hydrationAmountEl.textContent = `Suggested daily water intake: ${totalMl.toLocaleString()} ml (~${(totalMl / 1000).toFixed(2)} liters).`;
+        reminderFrequencyEl.textContent = `Based on your activity level and local temperature of ${weather.temperature}°C with ${weather.humidity}% humidity. You will receive 6 reminders between 8am and 8pm.`;
+
+        hydrationPlan = {
+          totalMl,
+          schedule: generateReminderSchedule(totalMl),
+        };
+
+        appendNotification('Hydration plan generated. Click "Start Notifications" to begin reminders.');
+
+        startBtn.disabled = false;
+      } catch (err) {
+        hydrationAmountEl.textContent = '';
+        reminderFrequencyEl.textContent = '';
+        alert('Failed to fetch weather data or generate plan. Please check your location and try again.');
+        console.error(err);
+      }
+    });
+
+    startBtn.addEventListener('click', () => {
+      if (hydrationPlan && hydrationPlan.schedule) {
+        startNotifications(hydrationPlan.schedule);
+      }
+    });
+
+    stopBtn.addEventListener('click', () => {
+      stopNotifications();
+    });
+  </script>
+
+</body>
+</html>
+```

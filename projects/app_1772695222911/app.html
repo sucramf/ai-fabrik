@@ -1,0 +1,150 @@
+Here's a simple HTML web app prototype that focuses on the core user flow: uploading notes or recordings and generating an AI-powered meeting summary. This demo doesn’t do actual transcription or AI summarization (which requires backend/APIs) but shows how the UI and basic interactions could work.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Summary Automator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+    max-width: 700px;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-top: 1rem;
+  }
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    font-size: 1rem;
+    padding: 0.5rem;
+    resize: vertical;
+  }
+  input[type="file"] {
+    margin-top: 0.5rem;
+  }
+  button {
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  #summary {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    white-space: pre-wrap;
+  }
+  .loading {
+    font-style: italic;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+
+<h1>Meeting Summary Automator</h1>
+
+<form id="meeting-form">
+  <label for="calendar-select">Import Meeting From Calendar (Demo):</label>
+  <select id="calendar-select" name="calendar-select">
+    <option value="">-- Select a Meeting --</option>
+    <option value="team-sync">Team Sync: 2024-06-15 10:00 AM</option>
+    <option value="project-kickoff">Project Kickoff: 2024-06-16 2:00 PM</option>
+  </select>
+
+  <label for="recording-upload">Or Upload Meeting Recording (audio/video):</label>
+  <input type="file" id="recording-upload" accept="audio/*,video/*" />
+
+  <label for="notes-input">Or Type Your Meeting Notes:</label>
+  <textarea id="notes-input" placeholder="Type meeting notes here..."></textarea>
+
+  <button type="submit">Generate Summary</button>
+</form>
+
+<div id="summary-container" style="display:none;">
+  <h2>Meeting Summary</h2>
+  <div id="summary"></div>
+  <button id="share-email">Share via Email (Demo)</button>
+  <button id="share-slack">Share via Slack (Demo)</button>
+</div>
+
+<script>
+  const form = document.getElementById('meeting-form');
+  const summaryContainer = document.getElementById('summary-container');
+  const summaryDiv = document.getElementById('summary');
+  const calendarSelect = document.getElementById('calendar-select');
+  const recordingUpload = document.getElementById('recording-upload');
+  const notesInput = document.getElementById('notes-input');
+
+  // Example fake AI summary data per meeting for demo
+  const demoSummaries = {
+    'team-sync': `Meeting: Team Sync\nDate: 2024-06-15\n\nSummary:\n- Discussed weekly progress and blockers.\n- Reviewed sprint goals.\n- Agreed on updated deadlines.\n\nAction Items:\n- Alice to update project plan.\n- Bob to fix critical bugs.\n- Carol to prepare demo for next week.`,
+    'project-kickoff': `Meeting: Project Kickoff\nDate: 2024-06-16\n\nSummary:\n- Introduced project objectives.\n- Assigned roles and responsibilities.\n- Defined initial milestones.\n\nAction Items:\n- Dave to finalize requirements.\n- Eva to set up development environment.\n- Frank to create design mockups.`
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Clear previous summary
+    summaryDiv.textContent = '';
+    summaryContainer.style.display = 'none';
+
+    const selectedMeeting = calendarSelect.value;
+    const uploadedFile = recordingUpload.files[0];
+    const notesText = notesInput.value.trim();
+
+    if (!selectedMeeting && !uploadedFile && !notesText) {
+      alert('Please select a meeting, upload a recording, or type notes to generate a summary.');
+      return;
+    }
+
+    summaryDiv.textContent = 'Generating summary... (simulated)';
+    summaryContainer.style.display = 'block';
+
+    // Simulate AI processing delay
+    await new Promise(r => setTimeout(r, 1500));
+
+    if (selectedMeeting) {
+      // Use demo summary for selected meeting
+      summaryDiv.textContent = demoSummaries[selectedMeeting];
+    } else if (uploadedFile) {
+      // Fake transcription + summarization (demo)
+      summaryDiv.textContent = `Simulated transcription and summary for uploaded file:\nFile name: ${uploadedFile.name}\n\n[AI-generated meeting summary would appear here.]`;
+    } else if (notesText) {
+      // Simulate summarization of typed notes
+      summaryDiv.textContent = `Summary based on your notes:\n\n${notesText}\n\n[Summarized version would appear here.]`;
+    }
+  });
+
+  // These buttons just simulate sharing
+  document.getElementById('share-email').addEventListener('click', () => {
+    alert('Sharing summary via Email (demo) - functionality coming soon!');
+  });
+  document.getElementById('share-slack').addEventListener('click', () => {
+    alert('Sharing summary via Slack (demo) - functionality coming soon!');
+  });
+</script>
+
+</body>
+</html>
+```
+
+**How to use this demo:**  
+- Pick a meeting from the dropdown to simulate importing from a calendar.  
+- Or upload any audio/video file to simulate a recording upload.  
+- Or type notes directly into the textarea.  
+- Click "Generate Summary" to see a placeholder AI summary.  
+- Share buttons are non-functional and show alert placeholders.
+
+This is a minimal front-end prototype ready to be connected to real calendar APIs, transcription & summarization AI, and sharing integrations via backend services. Let me know if you'd like me to help design those next!

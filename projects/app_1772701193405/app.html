@@ -1,0 +1,981 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Minute Maker</title>
+<style>
+  /* Reset & base */
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background: #f5f7fa;
+    color: #222;
+  }
+  #app {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #0078d4;
+  }
+  nav button {
+    background: transparent;
+    border: none;
+    color: #0078d4;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 1rem;
+    font-size: 1rem;
+  }
+  nav button:disabled {
+    color: #999;
+    cursor: default;
+  }
+  main {
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+    padding: 1rem 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .hidden {
+    display: none;
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+  input[type=text], input[type=date], input[type=email], textarea, select {
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+    font-size: 1rem;
+    margin-top: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  textarea {
+    resize: vertical;
+  }
+  button.primary {
+    margin-top: 1.5rem;
+    background: #0078d4;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+  }
+  button.primary:disabled {
+    background: #80bfff;
+    cursor: not-allowed;
+  }
+  button.action-delete {
+    border: none;
+    background: none;
+    color: #c0392b;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+  }
+  .attendee-list, .action-list, .minutes-list {
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+  .attendee-item, .action-item, .minute-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .attendee-item span, .action-item span {
+    flex-grow: 1;
+  }
+  .attendee-item .delete-btn, .action-item .delete-btn {
+    margin-left: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: #e74c3c;
+    cursor: pointer;
+  }
+  .keypoints {
+    margin-top: 1rem;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem;
+    background: #fafafa;
+    list-style-position: inside;
+  }
+  .keypoint-input {
+    display: flex;
+    margin-top: 0.5rem;
+  }
+  .keypoint-input input {
+    flex-grow: 1;
+  }
+  .keypoint-input button {
+    margin-left: 0.5rem;
+  }
+  .search-bar {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+  .search-bar input {
+    flex-grow: 1;
+    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+  }
+  .export-buttons button {
+    margin-right: 0.75rem;
+    background: #0078d4;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .export-buttons button:disabled {
+    background: #80bfff;
+    cursor: not-allowed;
+  }
+  .meeting-summary {
+    white-space: pre-wrap;
+    font-family: monospace, monospace;
+    background: #f0f4f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  /* Scrollbar for keypoints and summary */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #0078d4;
+    border-radius: 4px;
+  }
+  /* Subscription banner */
+  #subscription-banner {
+    background: #fffae6;
+    border: 1px solid #ffe58f;
+    color: #997a00;
+    padding: 0.8rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
+    #app {
+      padding: 0.5rem;
+    }
+    main {
+      padding: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="app" role="main" aria-label="Meeting Minute Maker Application">
+  <header>
+    <h1>Meeting Minute Maker</h1>
+    <nav aria-label="Primary navigation">
+      <button id="btn-new" title="Create New Meeting">New Meeting</button>
+      <button id="btn-archive" title="View Past Meetings">Archive</button>
+      <button id="btn-subscription" title="Subscription & Plans">Plans</button>
+    </nav>
+  </header>
+  <main>
+    <!-- Subscription Banner -->
+    <section id="subscription-banner" class="hidden" role="alert" aria-live="polite"></section>
+
+    <!-- Meeting Editor -->
+    <section id="meeting-editor" aria-label="Meeting Editor">
+      <label for="meeting-title">Meeting Title *</label>
+      <input type="text" id="meeting-title" placeholder="Project Sync" autocomplete="off" required aria-required="true" />
+
+      <label for="meeting-date">Date *</label>
+      <input type="date" id="meeting-date" required aria-required="true" />
+
+      <label>Attendees (Add by name or email)</label>
+      <div style="display:flex; gap:0.5rem;">
+        <input type="text" id="attendee-input" placeholder="Add attendee..." aria-label="Add attendee by name or email" autocomplete="off" />
+        <button id="attendee-add-btn" aria-label="Add attendee">Add</button>
+      </div>
+      <ul id="attendee-list" class="attendee-list" aria-live="polite" aria-relevant="additions removals"></ul>
+
+      <label>Key Points</label>
+      <ul id="keypoint-list" class="keypoints" aria-live="polite" aria-relevant="additions removals"></ul>
+      <div class="keypoint-input">
+        <input type="text" id="keypoint-input" placeholder="Add a key point..." aria-label="Add a key point" autocomplete="off" />
+        <button id="keypoint-add-btn" aria-label="Add key point">Add</button>
+      </div>
+
+      <label>Action Items</label>
+      <ul id="action-list" class="action-list" aria-live="polite" aria-relevant="additions removals"></ul>
+      <div id="action-inputs" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+        <input type="text" id="action-desc" placeholder="Action description" aria-label="Action description" autocomplete="off" style="flex:2 1 250px;" />
+        <input type="text" id="action-owner" placeholder="Owner" aria-label="Assign owner" autocomplete="off" style="flex:1 1 120px;" />
+        <input type="date" id="action-duedate" aria-label="Due date" style="flex:1 1 130px;" />
+        <button id="action-add-btn" aria-label="Add action item" style="flex:0 1 80px;">Add</button>
+      </div>
+
+      <button id="save-meeting" class="primary" aria-label="Save Meeting">Save Meeting</button>
+    </section>
+
+    <!-- Meeting Summary and Export -->
+    <section id="meeting-summary-section" class="hidden" aria-label="Meeting Summary and Export Options" style="margin-top: 2rem;">
+      <h2>Meeting Summary Preview</h2>
+      <pre id="meeting-summary" class="meeting-summary" tabindex="0" aria-live="polite"></pre>
+      <div class="export-buttons" style="margin-top:1rem;">
+        <button id="export-pdf" aria-label="Export meeting summary as PDF">Export as PDF</button>
+        <button id="export-docx" aria-label="Export meeting summary as DOCX">Export as DOCX</button>
+        <button id="share-link" aria-label="Generate shareable link for meeting minutes">Generate Share Link</button>
+      </div>
+    </section>
+
+    <!-- Archive Section -->
+    <section id="archive-section" class="hidden" aria-label="Archive of Past Meetings" style="margin-top: 1rem;">
+      <label for="archive-search">Search Past Meetings</label>
+      <input type="search" id="archive-search" placeholder="Search by title, date or attendees..." aria-label="Search past meetings" autocomplete="off" />
+      <ul id="archive-list" class="minutes-list" aria-live="polite" aria-relevant="additions removals" style="margin-top: 0.5rem; max-height: 350px; overflow-y: auto; border: 1px solid #ccc; border-radius: 4px; padding: 0.5rem; background: #fff;"></ul>
+      <button id="archive-close" style="margin-top: 0.5rem;">Close Archive</button>
+    </section>
+
+    <!-- Subscription / Plans -->
+    <section id="subscription-section" class="hidden" aria-label="Subscription and Plans" style="margin-top: 1rem;">
+      <h2>Subscription Plans</h2>
+      <p>Welcome, <span id="user-email-display">Guest</span>!</p>
+      <p>Current plan: <strong id="current-plan">Free</strong></p>
+      <p><strong>Free Tier</strong>: Basic features, up to 5 saved meetings.</p>
+      <p><strong>Pro Plan</small> ($5/month): Unlimited meetings, advanced exports (PDF, DOCX), Google Calendar & Slack integrations.</p>
+      <p><strong>Team Plan</small> ($15/month): All Pro features plus user management and analytics.</p>
+      <button id="btn-upgrade" class="primary">Upgrade Plan</button>
+      <button id="btn-sub-back" style="margin-top: 1rem;">Back</button>
+    </section>
+
+    <!-- Modal overlay (for share link) -->
+    <div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title" style="position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+      <div style="background:white; border-radius: 8px; max-width: 600px; width: 90%; padding: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <h3 id="modal-title">Shareable Meeting Link</h3>
+        <textarea id="share-link-textarea" readonly style="width: 100%; height: 100px; margin-top: 0.5rem; font-family: monospace; font-size: 0.9rem;"></textarea>
+        <div style="margin-top:1rem; text-align: right;">
+          <button id="modal-copy-btn" class="primary">Copy Link</button>
+          <button id="modal-close-btn" style="margin-left: 0.5rem;">Close</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  // Utils
+  function saveToStorage(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+  function loadFromStorage(key, def=null) {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : def;
+  }
+  function formatDateISO(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
+  }
+  function formatDateHuman(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+  }
+  function isValidEmail(email) {
+    // simple regex for emails; not perfect but okay here
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+  function debounce(fn, delay=300) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), delay);
+    }
+  }
+
+  // Monetization & user state simulation
+  // For demo purposes, user login & plans are simplified and local only.
+  const PLANS = {
+    free: { maxMeetings: 5, advancedExports: false, integrations: false, analytics: false },
+    pro: { maxMeetings: Infinity, advancedExports: true, integrations: true, analytics: false },
+    team: { maxMeetings: Infinity, advancedExports: true, integrations: true, analytics: true }
+  };
+
+  // Simulated logged-in user
+  let currentUser = loadFromStorage('mmm_current_user') || { email:'guest@example.com', plan:'free' };
+
+  // Meeting Data model and storage
+  let meetings = loadFromStorage('mmm_meetings') || [];
+  // meetings = array of meeting objects:
+  /*
+  {
+    id: 'UUID',
+    title: string,
+    date: ISO string date,
+    attendees: [ string ],
+    keyPoints: [string],
+    actions: [ {description:string, owner:string, dueDate:string, done:boolean} ],
+    createdAt: ISO string datetime,
+  }
+  */
+
+  // Current meeting editing
+  let currentMeeting = null;
+
+  // DOM references
+  const btnNew = document.getElementById('btn-new');
+  const btnArchive = document.getElementById('btn-archive');
+  const btnSubscription = document.getElementById('btn-subscription');
+  const btnSaveMeeting = document.getElementById('save-meeting');
+  const btnUpgrade = document.getElementById('btn-upgrade');
+  const btnSubBack = document.getElementById('btn-sub-back');
+
+  const meetingEditor = document.getElementById('meeting-editor');
+  const archiveSection = document.getElementById('archive-section');
+  const subscriptionSection = document.getElementById('subscription-section');
+  const subscriptionBanner = document.getElementById('subscription-banner');
+
+  const inputTitle = document.getElementById('meeting-title');
+  const inputDate = document.getElementById('meeting-date');
+
+  const attendeeInput = document.getElementById('attendee-input');
+  const attendeeAddBtn = document.getElementById('attendee-add-btn');
+  const attendeeList = document.getElementById('attendee-list');
+
+  const keypointInput = document.getElementById('keypoint-input');
+  const keypointAddBtn = document.getElementById('keypoint-add-btn');
+  const keypointList = document.getElementById('keypoint-list');
+
+  const actionDescInput = document.getElementById('action-desc');
+  const actionOwnerInput = document.getElementById('action-owner');
+  const actionDueInput = document.getElementById('action-duedate');
+  const actionAddBtn = document.getElementById('action-add-btn');
+  const actionList = document.getElementById('action-list');
+
+  const meetingSummarySection = document.getElementById('meeting-summary-section');
+  const meetingSummaryPre = document.getElementById('meeting-summary');
+  const exportPdfBtn = document.getElementById('export-pdf');
+  const exportDocxBtn = document.getElementById('export-docx');
+  const shareLinkBtn = document.getElementById('share-link');
+
+  const archiveSearchInput = document.getElementById('archive-search');
+  const archiveList = document.getElementById('archive-list');
+  const archiveCloseBtn = document.getElementById('archive-close');
+
+  const userEmailDisplay = document.getElementById('user-email-display');
+  const currentPlanDisplay = document.getElementById('current-plan');
+
+  const modal = document.getElementById('modal');
+  const modalCloseBtn = document.getElementById('modal-close-btn');
+  const modalCopyBtn = document.getElementById('modal-copy-btn');
+  const shareLinkTextarea = document.getElementById('share-link-textarea');
+
+
+  // Helpers
+  function uuidv4() {
+    // simple UUID generator
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  function showSection(section) {
+    [meetingEditor, archiveSection, subscriptionSection, meetingSummarySection].forEach(s => {
+      s.classList.add('hidden');
+    });
+    if(section) section.classList.remove('hidden');
+  }
+
+  function renderAttendees() {
+    attendeeList.innerHTML = '';
+    (currentMeeting?.attendees || []).forEach((att, idx) => {
+      const li = document.createElement('li');
+      li.className = 'attendee-item';
+      li.tabIndex = 0;
+      li.textContent = att;
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.setAttribute('aria-label', `Remove attendee ${att}`);
+      delBtn.textContent = '✕';
+      delBtn.onclick = () => {
+        currentMeeting.attendees.splice(idx, 1);
+        renderAttendees();
+        updateSummaryPreview();
+      };
+      li.appendChild(delBtn);
+      attendeeList.appendChild(li);
+    });
+  }
+
+  function renderKeyPoints() {
+    keypointList.innerHTML = '';
+    (currentMeeting?.keyPoints || []).forEach((kp, idx) => {
+      const li = document.createElement('li');
+      li.style.display = 'flex';
+      li.style.justifyContent = 'space-between';
+      li.style.alignItems = 'center';
+      li.tabIndex = 0;
+      const span = document.createElement('span');
+      span.textContent = kp;
+      li.appendChild(span);
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.setAttribute('aria-label', `Remove key point: ${kp}`);
+      delBtn.textContent = '✕';
+      delBtn.onclick = () => {
+        currentMeeting.keyPoints.splice(idx, 1);
+        renderKeyPoints();
+        updateSummaryPreview();
+      };
+      li.appendChild(delBtn);
+      keypointList.appendChild(li);
+    });
+  }
+
+  function renderActions() {
+    actionList.innerHTML = '';
+    (currentMeeting?.actions || []).forEach((action, idx) => {
+      const li = document.createElement('li');
+      li.className = 'action-item';
+      li.tabIndex = 0;
+      const descSpan = document.createElement('span');
+      descSpan.textContent = `${action.description} (Owner: ${action.owner || 'Unassigned'}, Due: ${action.dueDate ? formatDateHuman(action.dueDate) : 'No date'})`;
+      if (action.done) {
+        descSpan.style.textDecoration = 'line-through';
+        descSpan.style.color = '#777';
+      }
+      li.appendChild(descSpan);
+
+      // Checkbox for done toggle
+      const doneCheckbox = document.createElement('input');
+      doneCheckbox.type = 'checkbox';
+      doneCheckbox.checked = action.done;
+      doneCheckbox.title = 'Mark action item as completed';
+      doneCheckbox.style.marginLeft = '0.5rem';
+      doneCheckbox.onchange = () => {
+        action.done = doneCheckbox.checked;
+        renderActions();
+        updateSummaryPreview();
+        updateAnalytics(); // Simulated analytics update
+      };
+      li.appendChild(doneCheckbox);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.setAttribute('aria-label', `Remove action item: ${action.description}`);
+      delBtn.textContent = '✕';
+      delBtn.onclick = () => {
+        currentMeeting.actions.splice(idx, 1);
+        renderActions();
+        updateSummaryPreview();
+      };
+      li.appendChild(delBtn);
+
+      actionList.appendChild(li);
+    });
+  }
+
+  function validateMeeting(meeting) {
+    if (!meeting.title?.trim()) return false;
+    if (!meeting.date) return false;
+    if (!meeting.attendees?.length) return false;
+    return true;
+  }
+
+  function resetEditor() {
+    currentMeeting = {
+      id: null,
+      title: '',
+      date: formatDateISO(new Date()),
+      attendees: [],
+      keyPoints: [],
+      actions: [],
+      createdAt: new Date().toISOString()
+    };
+    inputTitle.value = '';
+    inputDate.value = formatDateISO(new Date());
+    attendeeInput.value = '';
+    keypointInput.value = '';
+    actionDescInput.value = '';
+    actionOwnerInput.value = '';
+    actionDueInput.value = '';
+    renderAttendees();
+    renderKeyPoints();
+    renderActions();
+    meetingSummarySection.classList.add('hidden');
+    updateSubscriptionBanner();
+  }
+
+  function loadMeetingToEditor(meeting) {
+    currentMeeting = JSON.parse(JSON.stringify(meeting));
+    inputTitle.value = currentMeeting.title;
+    inputDate.value = formatDateISO(currentMeeting.date);
+    renderAttendees();
+    renderKeyPoints();
+    renderActions();
+    meetingSummarySection.classList.remove('hidden');
+    updateSummaryPreview();
+    updateSubscriptionBanner();
+  }
+
+  // Update meeting summary preview text
+  function generateSummaryText(meeting) {
+    if (!meeting) return '';
+    let txt = `Meeting Title: ${meeting.title}
+Date: ${formatDateHuman(meeting.date)}
+
+Attendees (${meeting.attendees.length}):
+${meeting.attendees.map(a => '- ' + a).join('\n')}
+
+Key Points:
+${meeting.keyPoints.length > 0 ? meeting.keyPoints.map(kp => '- ' + kp).join('\n') : 'None'}
+
+Action Items:
+${meeting.actions.length > 0 ? meeting.actions.map(a => {
+  const status = a.done ? '[Done]' : '[Pending]';
+  const dueStr = a.dueDate ? formatDateHuman(a.dueDate) : 'No due date';
+  const ownerStr = a.owner || 'Unassigned';
+  return `- ${a.description} (Owner: ${ownerStr}, Due: ${dueStr}) ${status}`;
+}).join('\n') : 'None'}
+`;
+    return txt;
+  }
+
+  function updateSummaryPreview() {
+    if (!currentMeeting) {
+      meetingSummaryPre.textContent = '';
+      meetingSummarySection.classList.add('hidden');
+      return;
+    }
+    meetingSummaryPre.textContent = generateSummaryText(currentMeeting);
+    meetingSummarySection.classList.remove('hidden');
+  }
+
+  // Save or update meeting in archive
+  function saveCurrentMeeting() {
+    if (!currentMeeting) return false;
+    currentMeeting.title = inputTitle.value.trim();
+    currentMeeting.date = inputDate.value;
+
+    if (!validateMeeting(currentMeeting)) {
+      alert('Please fill Meeting Title, Date and add at least one Attendee.');
+      return false;
+    }
+
+    const existingIdx = meetings.findIndex(m => m.id === currentMeeting.id);
+    if (existingIdx > -1) {
+      meetings[existingIdx] = currentMeeting;
+    } else {
+      currentMeeting.id = uuidv4();
+      currentMeeting.createdAt = new Date().toISOString();
+      meetings.push(currentMeeting);
+    }
+
+    // Enforce free plan meeting storage limit
+    if(currentUser.plan === 'free' && meetings.length > PLANS.free.maxMeetings) {
+      // Remove oldest meeting
+      meetings.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+      meetings.shift();
+      alert('Free plan limit reached. Oldest meeting removed.');
+    }
+
+    saveToStorage('mmm_meetings', meetings);
+    alert('Meeting saved successfully.');
+    updateSubscriptionBanner();
+    updateSummaryPreview();
+    return true;
+  }
+
+  // Render archive list filtered by search
+  function renderArchiveList(filter='') {
+    archiveList.innerHTML = '';
+    const lowerFilter = filter.trim().toLowerCase();
+
+    let filtered = meetings.filter(m => {
+      if (!lowerFilter) return true;
+      const txt = [m.title, m.date, ...(m.attendees || [])].join(' ').toLowerCase();
+      return txt.includes(lowerFilter);
+    });
+    if(filtered.length === 0) {
+      const li = document.createElement('li');
+      li.textContent = 'No meetings found.';
+      archiveList.appendChild(li);
+      return;
+    }
+
+    filtered.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+    filtered.forEach(m => {
+      const li = document.createElement('li');
+      li.className = 'minute-item';
+      li.tabIndex = 0;
+      li.style.cursor = 'pointer';
+      li.innerHTML = `<strong>${m.title}</strong> &mdash; ${formatDateHuman(m.date)} <br><small>Attendees: ${m.attendees.join(', ')}</small>`;
+      li.onclick = () => {
+        showSection(meetingEditor);
+        loadMeetingToEditor(m);
+      };
+      archiveList.appendChild(li);
+    });
+  }
+
+  // Export meeting summary as PDF using jsPDF
+  async function exportAsPDF() {
+    if (!currentMeeting) return;
+    if (!PLANS[currentUser.plan].advancedExports) {
+      alert('Upgrade to Pro plan to enable PDF export.');
+      return;
+    }
+    // Simple PDF export using jsPDF CDN insertion (will add via script injection)
+    if (!window.jsPDF) {
+      alert('Loading dependencies, please try again shortly.');
+      loadJsPDF().then(() => {
+        exportAsPDF();
+      });
+      return;
+    }
+    const doc = new window.jsPDF();
+    const text = generateSummaryText(currentMeeting);
+    const margin = 10;
+    const pageWidth = doc.internal.pageSize.getWidth() - margin * 2;
+    const splitText = doc.splitTextToSize(text, pageWidth);
+    doc.setFontSize(12);
+    doc.text(splitText, margin, 20);
+    doc.save((currentMeeting.title || 'meeting') + '.pdf');
+  }
+
+  // Export meeting summary as DOCX (basic) using docx.js
+  async function exportAsDOCX() {
+    if (!currentMeeting) return;
+    if (!PLANS[currentUser.plan].advancedExports) {
+      alert('Upgrade to Pro plan to enable DOCX export.');
+      return;
+    }
+    if (!window.docx) {
+      alert('Loading dependencies, please try again shortly.');
+      loadDocx().then(() => {
+        exportAsDOCX();
+      });
+      return;
+    }
+    const { Document, Packer, Paragraph, TextRun } = window.docx;
+    const text = generateSummaryText(currentMeeting);
+    const paragraphs = text.split('\n').map(line => new Paragraph(line));
+
+    const doc = new Document({
+      sections: [{
+        children: paragraphs
+      }]
+    });
+
+    const buffer = await Packer.toBlob(doc);
+    const fname = (currentMeeting.title || 'meeting') + '.docx';
+    saveBlob(buffer, fname);
+  }
+
+  // Save Blob helper
+  function saveBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  }
+
+  // Generate shareable link containing meeting data encoded in URL hash
+  function generateShareLink() {
+    if (!currentMeeting) return;
+    // Encode meeting data as base64 JSON -> URI component
+    const jsonStr = JSON.stringify(currentMeeting);
+    const encoded = btoa(encodeURIComponent(jsonStr));
+    const baseUrl = window.location.href.split('#')[0];
+    const shareUrl = baseUrl + '#shared=' + encoded;
+    shareLinkTextarea.value = shareUrl;
+    showModal();
+  }
+
+  function showModal() {
+    modal.classList.remove('hidden');
+    modalCopyBtn.focus();
+  }
+  function hideModal() {
+    modal.classList.add('hidden');
+  }
+
+  modalCloseBtn.onclick = () => {
+    hideModal();
+  };
+  modalCopyBtn.onclick = () => {
+    shareLinkTextarea.select();
+    document.execCommand('copy');
+    modalCopyBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      modalCopyBtn.textContent = 'Copy Link';
+    }, 1500);
+  };
+
+  // Attendee add handler
+  attendeeAddBtn.onclick = () => {
+    const val = attendeeInput.value.trim();
+    if (!val) return;
+    if (!currentMeeting.attendees.includes(val)) {
+      currentMeeting.attendees.push(val);
+      renderAttendees();
+      updateSummaryPreview();
+    }
+    attendeeInput.value = '';
+    attendeeInput.focus();
+  };
+  attendeeInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      attendeeAddBtn.click();
+    }
+  });
+
+  // Keypoint add handler
+  keypointAddBtn.onclick = () => {
+    const val = keypointInput.value.trim();
+    if (!val) return;
+    currentMeeting.keyPoints.push(val);
+    renderKeyPoints();
+    updateSummaryPreview();
+    keypointInput.value = '';
+    keypointInput.focus();
+  };
+  keypointInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      keypointAddBtn.click();
+    }
+  });
+
+  // Action add handler
+  actionAddBtn.onclick = () => {
+    const desc = actionDescInput.value.trim();
+    if (!desc) {
+      alert('Action description is required.');
+      return;
+    }
+    const owner = actionOwnerInput.value.trim();
+    const dueDate = actionDueInput.value;
+    currentMeeting.actions.push({ description: desc, owner, dueDate: dueDate || null, done: false });
+    renderActions();
+    updateSummaryPreview();
+    actionDescInput.value = '';
+    actionOwnerInput.value = '';
+    actionDueInput.value = '';
+    actionDescInput.focus();
+  };
+  actionDescInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      actionAddBtn.click();
+    }
+  });
+
+  // Save meeting btn
+  btnSaveMeeting.onclick = () => {
+    if(saveCurrentMeeting()) {
+      meetingSummarySection.classList.remove('hidden');
+    }
+  };
+
+  // Navigation buttons
+  btnNew.onclick = () => {
+    resetEditor();
+    showSection(meetingEditor);
+  };
+  btnArchive.onclick = () => {
+    showSection(archiveSection);
+    renderArchiveList();
+  };
+  btnSubscription.onclick = () => {
+    showSection(subscriptionSection);
+  };
+  btnSubBack.onclick = () => {
+    showSection(meetingEditor);
+  };
+  archiveCloseBtn.onclick = () => {
+    showSection(meetingEditor);
+  };
+
+  // Archive search handler (debounced)
+  archiveSearchInput.addEventListener('input', debounce(e => {
+    renderArchiveList(e.target.value);
+  }, 250));
+
+  exportPdfBtn.onclick = exportAsPDF;
+  exportDocxBtn.onclick = exportAsDOCX;
+  shareLinkBtn.onclick = generateShareLink;
+
+  // Load meeting from URL hash (share link)
+  function tryLoadSharedMeeting() {
+    if (!window.location.hash) return false;
+    const m = window.location.hash.match(/^#shared=(.+)/);
+    if (!m) return false;
+    try {
+      const decoded = decodeURIComponent(atob(m[1]));
+      const meeting = JSON.parse(decoded);
+      if (meeting && meeting.title && meeting.date) {
+        currentMeeting = meeting;
+        loadMeetingToEditor(meeting);
+        showSection(meetingEditor);
+        alert('Loaded shared meeting minutes from link.');
+        window.location.hash = '';
+        return true;
+      }
+    } catch {}
+    return false;
+  }
+
+  // Dependency loaders
+  function loadJsPDF() {
+    return new Promise((res, rej) => {
+      if(window.jsPDF) return res();
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.onload = () => {
+        window.jsPDF = window.jspdf.jsPDF;
+        res();
+      };
+      script.onerror = rej;
+      document.body.appendChild(script);
+    });
+  }
+  function loadDocx() {
+    return new Promise((res, rej) => {
+      if(window.docx) return res();
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/docx@7.0.0/build/index.js';
+      script.onload = () => {
+        // docx accessible on window.docx via global script
+        res();
+      };
+      script.onerror = rej;
+      document.body.appendChild(script);
+    });
+  }
+
+  // Subscription banner update
+  function updateSubscriptionBanner() {
+    if(currentUser.plan === 'free') {
+      const count = meetings.length;
+      const maxCount = PLANS.free.maxMeetings;
+      const remaining = maxCount - count;
+      subscriptionBanner.textContent = `Free plan: You can store up to ${maxCount} meetings. You have saved ${count}. ${remaining <= 0 ? 'Please upgrade to save more meetings.' : `You can save ${remaining} more.`}`;
+      subscriptionBanner.classList.remove('hidden');
+    } else {
+      subscriptionBanner.classList.add('hidden');
+    }
+    userEmailDisplay.textContent = currentUser.email;
+    currentPlanDisplay.textContent = currentUser.plan.charAt(0).toUpperCase() + currentUser.plan.slice(1);
+    // Export buttons enabling based on plan
+    const adv = PLANS[currentUser.plan].advancedExports;
+    exportPdfBtn.disabled = !adv;
+    exportDocxBtn.disabled = !adv;
+  }
+
+  // Upgrade plan handler (demo: cycles through plans)
+  btnUpgrade.onclick = () => {
+    if(currentUser.plan === 'free') {
+      currentUser.plan = 'pro';
+      alert('Upgraded to Pro Plan! Advanced exports and integrations enabled.');
+    } else if(currentUser.plan === 'pro') {
+      currentUser.plan = 'team';
+      alert('Upgraded to Team Plan! User management and analytics enabled.');
+    } else {
+      currentUser.plan = 'free';
+      alert('Downgraded to Free plan.');
+    }
+    saveToStorage('mmm_current_user', currentUser);
+    updateSubscriptionBanner();
+  };
+
+  // Analytics simulation: count percentage of completed action items in current meeting
+  function updateAnalytics() {
+    if(!currentMeeting || !PLANS[currentUser.plan].analytics) return;
+    const total = currentMeeting.actions.length;
+    if(total === 0) return;
+    const completed = currentMeeting.actions.filter(a => a.done).length;
+    const percent = Math.round((completed / total) * 100);
+    subscriptionBanner.textContent = `Team Plan Analytics: ${percent}% of action items completed in current meeting.`;
+    subscriptionBanner.classList.remove('hidden');
+  }
+
+  // Initialize app
+  function init() {
+    userEmailDisplay.textContent = currentUser.email || 'Guest';
+    currentPlanDisplay.textContent = currentUser.plan.charAt(0).toUpperCase() + currentUser.plan.slice(1);
+    updateSubscriptionBanner();
+
+    if(!tryLoadSharedMeeting()) {
+      resetEditor();
+      showSection(meetingEditor);
+    }
+  }
+
+  // Keyboard accessibility global
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') {
+      if(!modal.classList.contains('hidden')) {
+        hideModal();
+      }
+    }
+  });
+
+
+  // Run init
+  init();
+
+})();
+</script>
+
+</body>
+</html>
+```

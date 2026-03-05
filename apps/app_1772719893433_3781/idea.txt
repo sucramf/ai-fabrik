@@ -1,0 +1,3 @@
+Name: MeetingSync
+
+Idea: A simple SaaS tool that automatically consolidates all meeting notes, action items, and decisions from multiple team collaboration apps (Zoom, Teams, Slack, Google Meet) into a single, searchable dashboard. It uses AI to extract key points and deadlines, ensuring teams never lose track of what was discussed or agreed upon. Ideal for remote teams and project managers who struggle with dispersed meeting information.

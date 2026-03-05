@@ -1,0 +1,726 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>InvoiceBuddy - Easy Invoice Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for invoice list */
+    #invoice-list::-webkit-scrollbar {
+      width: 8px;
+    }
+    #invoice-list::-webkit-scrollbar-thumb {
+      background-color: #6366F1; /* Indigo-500 */
+      border-radius: 4px;
+    }
+    #invoice-list::-webkit-scrollbar-track {
+      background: #E0E7FF; /* Indigo-100 */
+      border-radius: 4px;
+    }
+
+    /* Line clamp fallback for older browsers */
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;  
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-extrabold text-indigo-600 flex items-center space-x-3 select-none" aria-label="InvoiceBuddy home">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-3-3v6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span>InvoiceBuddy</span>
+      </a>
+      <div class="hidden md:flex space-x-10 font-semibold text-gray-700">
+        <a href="#tool" class="hover:text-indigo-600 transition px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">Dashboard</a>
+        <a href="#pricing" class="hover:text-indigo-600 transition px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">Pricing</a>
+        <a href="#footer" class="hover:text-indigo-600 transition px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">Contact</a>
+      </div>
+      <button id="connect-button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle mobile menu" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-md md:hidden border-t border-gray-200 z-40" role="menu">
+        <a href="#tool" role="menuitem" class="block px-6 py-4 border-b border-gray-200 text-gray-700 hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none transition">Dashboard</a>
+        <a href="#pricing" role="menuitem" class="block px-6 py-4 border-b border-gray-200 text-gray-700 hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none transition">Pricing</a>
+        <a href="#footer" role="menuitem" class="block px-6 py-4 text-gray-700 hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none transition">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-tr from-indigo-700 to-indigo-500 text-white text-center pt-24 pb-32 px-6" aria-label="Hero section">
+    <h1 class="text-4xl md:text-5xl font-extrabold max-w-3xl mx-auto leading-tight drop-shadow-md">
+      Create, Send, and Track Professional Invoices Effortlessly
+    </h1>
+    <p class="mt-6 max-w-xl mx-auto text-lg md:text-xl opacity-90 leading-relaxed drop-shadow-sm">
+      InvoiceBuddy helps freelancers and small businesses get paid faster with easy invoice management, automated reminders, and insightful reports.
+    </p>
+    <a href="#tool" class="inline-block mt-12 bg-white text-indigo-700 font-semibold rounded-xl px-10 py-4 shadow-lg hover:bg-indigo-100 transition focus:outline-none focus:ring-4 focus:ring-indigo-300">
+      Get Started for Free
+    </a>
+  </section>
+
+  <!-- Tool UI -->
+  <main id="tool" class="max-w-7xl mx-auto flex-grow px-6 pb-20 -mt-24 sm:-mt-32">
+    <div class="bg-white shadow-2xl rounded-2xl p-10 flex flex-col md:flex-row gap-12 md:gap-16">
+
+      <!-- Left Panel: Invoice Form -->
+      <section aria-label="Create invoice form" class="md:w-1/2 flex flex-col">
+        <h2 class="text-3xl font-bold mb-6 text-indigo-600 select-none">Create Invoice</h2>
+        <form id="invoice-form" class="flex flex-col space-y-6 bg-gray-50 rounded-2xl p-8 shadow-inner border border-indigo-100" novalidate>
+          <fieldset class="flex flex-col sm:flex-row gap-5 sm:gap-8 items-center">
+            <label for="clientName" class="flex-1 min-w-[140px] font-semibold text-gray-700 select-none">Client Name<span aria-hidden="true" class="text-red-600">*</span></label>
+            <input id="clientName" name="clientName" type="text" autocomplete="off" required class="flex-grow rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="John Doe" />
+          </fieldset>
+          <fieldset class="flex flex-col sm:flex-row gap-5 sm:gap-8 items-center">
+            <label for="clientEmail" class="flex-1 min-w-[140px] font-semibold text-gray-700 select-none">Client Email<span aria-hidden="true" class="text-red-600">*</span></label>
+            <input id="clientEmail" name="clientEmail" type="email" autocomplete="email" required class="flex-grow rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="client@example.com" />
+          </fieldset>
+
+          <div class="flex flex-col sm:flex-row gap-6 sm:gap-10">
+            <fieldset class="flex flex-col sm:w-1/2">
+              <label for="invoiceDate" class="font-semibold mb-2 text-gray-700 select-none">Invoice Date<span aria-hidden="true" class="text-red-600">*</span></label>
+              <input id="invoiceDate" name="invoiceDate" type="date" required class="rounded-lg border border-gray-300 px-4 py-3 w-full max-w-[180px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+            </fieldset>
+            <fieldset class="flex flex-col sm:w-1/2">
+              <label for="dueDate" class="font-semibold mb-2 text-gray-700 select-none">Due Date<span aria-hidden="true" class="text-red-600">*</span></label>
+              <input id="dueDate" name="dueDate" type="date" required class="rounded-lg border border-gray-300 px-4 py-3 w-full max-w-[180px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+            </fieldset>
+          </div>
+
+          <!-- Line items -->
+          <div>
+            <h3 class="font-semibold mb-3 text-gray-800 select-none">Invoice Items<span aria-hidden="true" class="text-red-600">*</span></h3>
+            <div id="line-items" class="space-y-5 max-h-[280px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-indigo-400 scrollbar-track-indigo-100" aria-label="Invoice line items">
+
+              <div class="flex gap-4 items-center" data-index="0">
+                <input type="text" name="description" placeholder="Description" required class="flex-[3] rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" aria-label="Item description" />
+                <input type="number" name="quantity" min="1" step="1" value="1" required class="w-20 rounded-lg border border-gray-300 px-4 py-3 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" aria-label="Item quantity" />
+                <input type="number" name="price" min="0.01" step="0.01" value="0.00" required class="w-28 rounded-lg border border-gray-300 px-4 py-3 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" aria-label="Item price" />
+                <button type="button" class="remove-item text-red-600 hover:text-red-800 font-semibold select-none focus:outline-none focus:ring-2 focus:ring-red-500 rounded px-2 py-1" aria-label="Remove item">×</button>
+              </div>
+
+            </div>
+            <button type="button" id="add-item" class="mt-5 inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded select-none" aria-label="Add invoice item">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Add Item
+            </button>
+          </div>
+
+          <fieldset class="flex justify-between items-center border-t border-gray-300 pt-4 mt-6">
+            <label class="font-bold text-2xl text-gray-800 select-none">Total:</label>
+            <p id="total-amount" class="font-extrabold text-2xl text-indigo-600 select-text">$0.00</p>
+          </fieldset>
+
+          <div class="flex justify-end space-x-6 mt-8">
+            <button type="reset" class="px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition font-semibold select-none">
+              Reset
+            </button>
+            <button type="submit" class="px-8 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 transition select-none">
+              Save Invoice
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Panel: Invoice List & Reports -->
+      <section aria-label="Invoice dashboard" class="md:w-1/2 flex flex-col">
+        <h2 class="text-3xl font-bold mb-6 text-indigo-600 select-none">Your Invoices</h2>
+        <div id="invoice-list" tabindex="0" class="flex-grow overflow-y-auto max-h-[500px] border rounded-2xl bg-indigo-50 shadow-inner p-6 space-y-6 focus:outline-none focus:ring-4 focus:ring-indigo-300" aria-live="polite" aria-atomic="true" aria-relevant="additions removals" role="region" aria-label="List of invoices">
+          <!-- Invoice entries inserted here -->
+          <p class="text-center text-indigo-400 select-none">No invoices created yet.</p>
+        </div>
+        <div class="mt-12 bg-white rounded-2xl p-8 shadow-md border border-indigo-200">
+          <h3 class="text-xl font-semibold mb-4 text-indigo-700">Monthly Income Report</h3>
+          <p id="monthly-income" class="text-indigo-900 font-extrabold text-4xl select-text">$0.00</p>
+          <p class="text-indigo-800 text-sm mt-2 font-medium select-none">Sum of all paid invoices this month.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="bg-white mt-32 py-24 px-6 text-center" aria-label="Pricing plans">
+    <h2 class="text-4xl font-extrabold mb-8 text-indigo-600 select-none">Choose Your Plan</h2>
+    <p class="max-w-2xl mx-auto mb-16 text-gray-700 text-lg leading-relaxed font-medium">
+      Upgrade to premium for customizable templates, unlimited invoices, priority support, and seamless payment integrations.
+    </p>
+    <div class="max-w-6xl mx-auto grid gap-10 md:grid-cols-3 px-4 sm:px-0">
+
+      <div class="bg-indigo-50 rounded-3xl p-10 shadow-lg flex flex-col border border-indigo-200 hover:shadow-xl transition">
+        <h3 class="text-2xl font-semibold mb-6 text-indigo-700 select-none">Free</h3>
+        <p class="text-5xl font-extrabold mb-8 text-indigo-800">$0<span class="text-lg font-normal">/month</span></p>
+        <ul class="mb-10 flex-1 space-y-4 text-gray-700 text-left font-medium">
+          <li class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg select-none">✓</span> Up to 5 invoices per month
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg select-none">✓</span> Basic invoice templates
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg select-none">✓</span> Email reminders for overdue payments
+          </li>
+          <li class="flex items-center gap-3 opacity-40 select-none">
+            <span class="font-semibold text-red-600 text-lg">✗</span> Customizable templates
+          </li>
+          <li class="flex items-center gap-3 opacity-40 select-none">
+            <span class="font-semibold text-red-600 text-lg">✗</span> Unlimited invoices
+          </li>
+          <li class="flex items-center gap-3 opacity-40 select-none">
+            <span class="font-semibold text-red-600 text-lg">✗</span> Priority support
+          </li>
+          <li class="flex items-center gap-3 opacity-40 select-none">
+            <span class="font-semibold text-red-600 text-lg">✗</span> Payment platform integrations
+          </li>
+        </ul>
+        <button class="mt-auto bg-indigo-600 text-white py-4 rounded-xl font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 select-none cursor-default" aria-current="true" aria-label="Current plan">
+          Current Plan
+        </button>
+      </div>
+
+      <div class="bg-indigo-600 text-white rounded-3xl p-10 shadow-xl flex flex-col relative z-10 border-2 border-yellow-400 hover:shadow-2xl transition">
+        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-indigo-900 font-bold px-5 py-2 rounded-full text-sm tracking-wide shadow-lg select-none pointer-events-none">
+          Bestseller
+        </div>
+        <h3 class="text-2xl font-semibold mb-6">Pro</h3>
+        <p class="text-5xl font-extrabold mb-8">$25<span class="text-lg font-normal">/month</span></p>
+        <ul class="mb-10 flex-1 space-y-4 text-left font-medium">
+          <li class="flex items-center gap-3">
+            <span class="text-yellow-400 font-bold text-lg select-none">✓</span> Unlimited invoices
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-yellow-400 font-bold text-lg select-none">✓</span> Customizable templates
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-yellow-400 font-bold text-lg select-none">✓</span> Automated email reminders
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-yellow-400 font-bold text-lg select-none">✓</span> Monthly income reports
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-yellow-400 font-bold text-lg select-none">✓</span> Priority support
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-yellow-400 font-bold text-lg select-none">✓</span> Payment platform integrations
+          </li>
+        </ul>
+        <button id="subscribe-pro" class="mt-auto bg-yellow-400 text-indigo-900 py-4 rounded-xl font-semibold hover:bg-yellow-300 focus:outline-none focus:ring-4 focus:ring-yellow-400 select-none">
+          Subscribe
+        </button>
+      </div>
+
+      <div class="bg-indigo-50 rounded-3xl p-10 shadow-lg flex flex-col border border-indigo-200 hover:shadow-xl transition">
+        <h3 class="text-2xl font-semibold mb-6 text-indigo-700 select-none">Enterprise</h3>
+        <p class="text-4xl font-extrabold mb-8 text-indigo-800">Custom</p>
+        <ul class="mb-10 flex-1 space-y-4 text-gray-700 text-left font-medium">
+          <li class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg select-none">✓</span> Everything in Pro
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg select-none">✓</span> Dedicated account manager
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg select-none">✓</span> Custom integrations
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg select-none">✓</span> SLA & priority escalations
+          </li>
+        </ul>
+        <a href="#footer" class="mt-auto inline-block bg-indigo-600 text-white py-4 rounded-xl font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 select-none transition">
+          Contact Sales
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-indigo-900 text-indigo-200 py-14 px-6 mt-20">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center space-y-8 md:space-y-0">
+      <div>
+        <h2 class="text-white text-2xl font-bold mb-3 select-none">InvoiceBuddy</h2>
+        <p>Your friendly invoicing companion, making payments simple.</p>
+        <p class="mt-3 text-sm opacity-70 select-none">&copy; 2024 InvoiceBuddy Inc. All rights reserved.</p>
+      </div>
+      <nav class="flex flex-col md:flex-row gap-8 font-semibold text-indigo-300">
+        <a href="#tool" class="hover:text-white transition focus:outline-none focus:underline">Dashboard</a>
+        <a href="#pricing" class="hover:text-white transition focus:outline-none focus:underline">Pricing</a>
+        <a href="mailto:support@invoicebuddy.com" class="hover:text-white transition focus:outline-none focus:underline" target="_blank" rel="noopener noreferrer">support@invoicebuddy.com</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      // Mobile menu toggle with ARIA updates
+      const btn = document.getElementById('connect-button');
+      const menu = document.getElementById('mobile-menu');
+      btn.addEventListener('click', () => {
+        const isHidden = menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', !isHidden);
+      });
+
+      // Add & remove line items
+      const lineItemsContainer = document.getElementById('line-items');
+      const addItemBtn = document.getElementById('add-item');
+
+      function createLineItem(index) {
+        const div = document.createElement('div');
+        div.className = "flex gap-4 items-center";
+        div.dataset.index = index;
+
+        const descInput = document.createElement('input');
+        descInput.type = 'text';
+        descInput.name = 'description';
+        descInput.placeholder = 'Description';
+        descInput.required = true;
+        descInput.className = "flex-[3] rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition";
+        descInput.setAttribute('aria-label', 'Item description');
+
+        const qtyInput = document.createElement('input');
+        qtyInput.type = 'number';
+        qtyInput.name = 'quantity';
+        qtyInput.min = '1';
+        qtyInput.step = '1';
+        qtyInput.value = '1';
+        qtyInput.required = true;
+        qtyInput.className = "w-20 rounded-lg border border-gray-300 px-4 py-3 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition";
+        qtyInput.setAttribute('aria-label', 'Item quantity');
+
+        const priceInput = document.createElement('input');
+        priceInput.type = 'number';
+        priceInput.name = 'price';
+        priceInput.min = '0.01';
+        priceInput.step = '0.01';
+        priceInput.value = '0.00';
+        priceInput.required = true;
+        priceInput.className = "w-28 rounded-lg border border-gray-300 px-4 py-3 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition";
+        priceInput.setAttribute('aria-label', 'Item price');
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = "remove-item text-red-600 hover:text-red-800 font-semibold select-none focus:outline-none focus:ring-2 focus:ring-red-500 rounded px-3 py-1";
+        removeBtn.setAttribute('aria-label', 'Remove item');
+        removeBtn.textContent = '×';
+
+        removeBtn.addEventListener('click', () => {
+          if (lineItemsContainer.children.length > 1) {
+            div.remove();
+            updateTotal();
+          }
+        });
+
+        function onChange() {
+          updateTotal();
+        }
+
+        descInput.addEventListener('input', onChange);
+        qtyInput.addEventListener('input', onChange);
+        priceInput.addEventListener('input', onChange);
+
+        div.append(descInput, qtyInput, priceInput, removeBtn);
+        return div;
+      }
+
+      addItemBtn.addEventListener('click', () => {
+        const index = lineItemsContainer.children.length;
+        const newItem = createLineItem(index);
+        lineItemsContainer.appendChild(newItem);
+      });
+
+      // Calculate total amount
+      const totalAmountEl = document.getElementById('total-amount');
+      function updateTotal() {
+        const items = lineItemsContainer.querySelectorAll('div');
+        let total = 0;
+        items.forEach(item => {
+          const qty = parseFloat(item.querySelector('input[name="quantity"]').value) || 0;
+          const price = parseFloat(item.querySelector('input[name="price"]').value) || 0;
+          if (qty >= 0 && price >= 0) {
+            total += qty * price;
+          }
+        });
+        totalAmountEl.textContent = `$${total.toFixed(2)}`;
+      }
+
+      // Initial setup
+      updateTotal();
+
+      // Invoice storage & rendering
+      const form = document.getElementById('invoice-form');
+      const invoiceList = document.getElementById('invoice-list');
+      const monthlyIncomeEl = document.getElementById('monthly-income');
+
+      // Local storage keys
+      const STORAGE_KEY = 'invoicebuddy_invoices';
+      const PLAN_KEY = 'invoicebuddy_plan';
+
+      // Subscription plan - "free" or "pro"
+      let currentPlan = localStorage.getItem(PLAN_KEY) || 'free';
+
+      // Display the correct button state in pricing
+      function refreshPricingUI() {
+        const proBtn = document.getElementById('subscribe-pro');
+        if (currentPlan === 'pro') {
+          proBtn.textContent = 'Subscribed';
+          proBtn.disabled = true;
+          proBtn.classList.add('cursor-not-allowed', 'opacity-60');
+          proBtn.setAttribute('aria-disabled', 'true');
+        } else {
+          proBtn.textContent = 'Subscribe';
+          proBtn.disabled = false;
+          proBtn.classList.remove('cursor-not-allowed', 'opacity-60');
+          proBtn.removeAttribute('aria-disabled');
+        }
+      }
+      refreshPricingUI();
+
+      document.getElementById('subscribe-pro').addEventListener('click', () => {
+        currentPlan = 'pro';
+        localStorage.setItem(PLAN_KEY, 'pro');
+        refreshPricingUI();
+        alert('Thank you for subscribing to the Pro plan! You now have access to unlimited invoices, customizable templates, and priority support.');
+      });
+
+      // Load invoices from localStorage
+      function loadInvoices() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed;
+        } catch {
+          return [];
+        }
+        return [];
+      }
+
+      // Save invoices to localStorage
+      function saveInvoices(invoices) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(invoices));
+      }
+
+      // Format date as YYYY-MM-DD
+      function formatDateISO(date) {
+        return date.toISOString().split('T')[0];
+      }
+
+      // Parse date string yyyy-mm-dd to Date obj (local)
+      function parseDateLocal(s) {
+        const [y,m,d] = s.split('-').map(Number);
+        return new Date(y,m-1,d);
+      }
+
+      // Format date display mm/dd/yyyy
+      function formatDateDisplay(date) {
+        return date.toLocaleDateString(undefined, {year:'numeric',month:'short',day:'numeric'});
+      }
+
+      // Check if a date is past (without time)
+      function isPast(date) {
+        const now = new Date();
+        const d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        return d1 < d2;
+      }
+
+      // Check if invoice is overdue (due date < today && unpaid)
+      function isOverdue(invoice) {
+        if (invoice.status !== 'unpaid') return false;
+        return isPast(parseDateLocal(invoice.dueDate));
+      }
+
+      // Update invoice status based on date & payments (simulate tracking)
+      function updateInvoiceStatuses(invoices) {
+        invoices.forEach(inv => {
+          if (inv.status === 'unpaid') {
+            if (isOverdue(inv)) {
+              inv.status = 'overdue';
+            } else {
+              inv.status = 'unpaid';
+            }
+          }
+        });
+      }
+
+      // Render invoices list
+      function renderInvoices() {
+        let invoices = loadInvoices();
+        updateInvoiceStatuses(invoices);
+        saveInvoices(invoices);
+
+        invoiceList.innerHTML = '';
+
+        if (invoices.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-center text-indigo-400 select-none py-12';
+          p.textContent = 'No invoices created yet.';
+          invoiceList.appendChild(p);
+          updateMonthlyIncome(invoices);
+          return;
+        }
+
+        // Sort invoices by date desc
+        invoices.sort((a,b) => parseDateLocal(b.invoiceDate) - parseDateLocal(a.invoiceDate));
+
+        invoices.forEach((inv) => {
+          const div = document.createElement('article');
+          div.tabIndex = 0;
+          div.className = 'bg-white rounded-2xl p-6 shadow-sm border border-indigo-100 hover:shadow-lg focus-within:ring-4 focus-within:ring-indigo-500 cursor-pointer flex flex-col transition';
+
+          // Header line: Client and status + total
+          const header = document.createElement('div');
+          header.className = 'flex justify-between items-center mb-3';
+
+          const clientName = document.createElement('p');
+          clientName.className = 'font-semibold text-indigo-700 text-lg truncate';
+          clientName.textContent = inv.clientName;
+
+          const statusBadge = document.createElement('span');
+          statusBadge.className = `rounded-full px-4 py-1 text-xs font-semibold select-none whitespace-nowrap ${
+            inv.status === 'paid' ? 'bg-green-100 text-green-800' :
+            inv.status === 'overdue' ? 'bg-red-100 text-red-700' :
+            'bg-yellow-100 text-yellow-800'
+          }`;
+          statusBadge.textContent = inv.status.charAt(0).toUpperCase() + inv.status.slice(1);
+
+          header.append(clientName, statusBadge);
+
+          // Dates and invoice info
+          const datesDiv = document.createElement('div');
+          datesDiv.className = 'text-sm text-gray-600 flex gap-6 flex-wrap font-medium select-none';
+
+          const invoiceDateSpan = document.createElement('span');
+          invoiceDateSpan.setAttribute('aria-label', 'Invoice date');
+          invoiceDateSpan.textContent = `Invoice: ${formatDateDisplay(parseDateLocal(inv.invoiceDate))}`;
+
+          const dueDateSpan = document.createElement('span');
+          dueDateSpan.setAttribute('aria-label', 'Due date');
+          dueDateSpan.textContent = `Due: ${formatDateDisplay(parseDateLocal(inv.dueDate))}`;
+
+          datesDiv.append(invoiceDateSpan, dueDateSpan);
+
+          // Total amount
+          const totalSpan = document.createElement('p');
+          totalSpan.className = 'mt-2 font-semibold text-indigo-900 text-xl select-text';
+          totalSpan.textContent = `Total: $${inv.total.toFixed(2)}`;
+
+          // Description preview
+          const descPreview = document.createElement('p');
+          descPreview.className = 'mt-2 text-gray-700 text-sm line-clamp-2';
+          const descriptions = inv.items.map(i => i.description).join(', ');
+          descPreview.textContent = descriptions;
+          descPreview.setAttribute('aria-label', 'Invoice item descriptions');
+
+          // Buttons: Mark paid, resend reminder
+          const btnDiv = document.createElement('div');
+          btnDiv.className = 'mt-5 flex gap-4 flex-wrap';
+
+          if (inv.status !== 'paid') {
+            const payBtn = document.createElement('button');
+            payBtn.className = 'px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500 transition select-none';
+            payBtn.textContent = 'Mark Paid';
+            payBtn.type = 'button';
+            payBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              inv.status = 'paid';
+              saveInvoices(invoices);
+              renderInvoices();
+              alert(`Marked invoice for "${inv.clientName}" as paid.`);
+            });
+            btnDiv.appendChild(payBtn);
+          }
+
+          if (inv.status === 'overdue' || inv.status === 'unpaid') {
+            const remindBtn = document.createElement('button');
+            remindBtn.className = 'px-4 py-2 rounded-lg bg-yellow-600 text-white text-sm font-semibold hover:bg-yellow-700 focus:outline-none focus:ring-4 focus:ring-yellow-500 transition select-none';
+            remindBtn.textContent = 'Send Reminder';
+            remindBtn.type = 'button';
+            remindBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              alert(`Automatic reminder sent to ${inv.clientEmail} about invoice due on ${inv.dueDate}.`);
+            });
+            btnDiv.appendChild(remindBtn);
+          }
+
+          div.append(header, datesDiv, totalSpan, descPreview, btnDiv);
+          invoiceList.appendChild(div);
+        });
+
+        updateMonthlyIncome(invoices);
+      }
+
+      // Calculate monthly income (sum of paid invoices in current month)
+      function updateMonthlyIncome(invoices) {
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+
+        let sum = 0;
+        invoices.forEach(inv => {
+          if (inv.status === 'paid') {
+            const invDate = parseDateLocal(inv.invoiceDate);
+            if (invDate.getMonth() === thisMonth && invDate.getFullYear() === thisYear) {
+              sum += inv.total;
+            }
+          }
+        });
+        monthlyIncomeEl.textContent = `$${sum.toFixed(2)}`;
+      }
+
+      // Validate form constraints and subscription limits
+      function validateFormData(data) {
+        if (currentPlan === 'free') {
+          const invoices = loadInvoices();
+          if (invoices.length >= 5) {
+            alert('Free plan limit reached. Upgrade to Pro for unlimited invoices.');
+            return false;
+          }
+        }
+
+        const invoiceDt = parseDateLocal(data.invoiceDate);
+        const dueDt = parseDateLocal(data.dueDate);
+        if (dueDt < invoiceDt) {
+          alert('Due date cannot be before the invoice date.');
+          return false;
+        }
+
+        if (!data.items || data.items.length === 0) {
+          alert('Please add at least one invoice item.');
+          return false;
+        }
+        for (const item of data.items) {
+          if (!item.description.trim()) {
+            alert('Item descriptions cannot be empty.');
+            return false;
+          }
+          if (item.quantity < 1) {
+            alert('Item quantities must be at least 1.');
+            return false;
+          }
+          if (item.price < 0.01) {
+            alert('Item prices must be at least $0.01.');
+            return false;
+          }
+        }
+        return true;
+      }
+
+      // Gather form data into an invoice object
+      function gatherFormData() {
+        const formData = new FormData(form);
+        const clientName = formData.get('clientName').trim();
+        const clientEmail = formData.get('clientEmail').trim();
+        const invoiceDate = formData.get('invoiceDate');
+        const dueDate = formData.get('dueDate');
+
+        const itemsDivs = lineItemsContainer.querySelectorAll('div');
+        const items = [];
+        itemsDivs.forEach(div => {
+          const description = div.querySelector('input[name="description"]').value.trim();
+          const quantity = parseInt(div.querySelector('input[name="quantity"]').value, 10);
+          const price = parseFloat(div.querySelector('input[name="price"]').value);
+          items.push({ description, quantity, price });
+        });
+
+        const total = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
+
+        return {
+          clientName,
+          clientEmail,
+          invoiceDate,
+          dueDate,
+          items,
+          total,
+          status: 'unpaid',
+          createdAt: new Date().toISOString(),
+          id: crypto.randomUUID(),
+        };
+      }
+
+      // Reset form to initial state with exactly one line item
+      function resetForm() {
+        form.reset();
+        while (lineItemsContainer.children.length > 1) {
+          lineItemsContainer.lastChild.remove();
+        }
+        const first = lineItemsContainer.querySelector('div');
+        first.querySelector('input[name="description"]').value = '';
+        first.querySelector('input[name="quantity"]').value = '1';
+        first.querySelector('input[name="price"]').value = '0.00';
+        updateTotal();
+      }
+
+      // Set default invoice and due dates for convenience
+      function setDefaultDates() {
+        const today = new Date();
+        const invoiceDateInput = document.getElementById('invoiceDate');
+        const dueDateInput = document.getElementById('dueDate');
+        invoiceDateInput.value = formatDateISO(today);
+        invoiceDateInput.setAttribute('min', formatDateISO(today));
+
+        const due = new Date(today);
+        due.setDate(due.getDate() + 14);
+        dueDateInput.value = formatDateISO(due);
+        dueDateInput.setAttribute('min', invoiceDateInput.value);
+      }
+
+      // Keep due date min in sync with invoice date
+      document.getElementById('invoiceDate').addEventListener('change', (e) => {
+        const dueDate = document.getElementById('dueDate');
+        if (dueDate.value < e.target.value) {
+          dueDate.value = e.target.value;
+        }
+        dueDate.setAttribute('min', e.target.value);
+      });
+
+      // On form submit
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const invoiceData = gatherFormData();
+        if (!validateFormData(invoiceData)) return;
+
+        let invoices = loadInvoices();
+
+        if (currentPlan === 'free' && invoices.length >= 5) {
+          alert('Free plan limit reached. Upgrade to Pro for unlimited invoices.');
+          return;
+        }
+
+        invoices.push(invoiceData);
+        saveInvoices(invoices);
+
+        alert(`Invoice for ${invoiceData.clientName} saved successfully!`);
+
+        resetForm();
+        renderInvoices();
+      });
+
+      // Form change events to update total dynamically (including dynamically added items)
+      form.addEventListener('input', (e) => {
+        if (['description', 'quantity', 'price'].includes(e.target.name)) {
+          updateTotal();
+        }
+      });
+
+      // Initialize page
+      setDefaultDates();
+      renderInvoices();
+    })();
+  </script>
+</body>
+</html>
+```

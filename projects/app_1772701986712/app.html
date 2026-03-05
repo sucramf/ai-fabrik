@@ -1,0 +1,506 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meeting Minute Master</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #004d99;
+      color: white;
+      padding: 1em;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    main {
+      flex: 1;
+      padding: 1em;
+      max-width: 900px;
+      margin: auto;
+      width: 90%;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: bold;
+    }
+    input[type=text], textarea, select, input[type=date], input[type=email] {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.3em;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button {
+      margin-top: 1em;
+      background-color: #004d99;
+      color: white;
+      border: none;
+      padding: 0.7em 1.2em;
+      font-size: 1em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    section#minutes-list {
+      margin-top: 2em;
+    }
+    article.minute {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 5px rgb(0 0 0 / 0.1);
+      margin-bottom: 1em;
+      padding: 1em;
+    }
+    article.minute h3 {
+      margin-top: 0;
+    }
+    .action-items {
+      margin-left: 1em;
+      list-style: disc;
+      padding-left: 1em;
+    }
+    small {
+      color: #666;
+    }
+    #search-input {
+      width: 100%;
+      padding: 0.6em;
+      font-size: 1em;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .editable-template {
+      font-size: 1em;
+      font-family: monospace;
+      background: #eef5ff;
+      padding: 0.6em;
+      border-radius: 4px;
+      margin-top: 0.3em;
+      white-space: pre-wrap;
+      min-height: 100px;
+    }
+    .flex-row {
+      display: flex;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+    .flex-row > * {
+      flex: 1 1 200px;
+    }
+    footer {
+      text-align: center;
+      padding: 1em;
+      font-size: 0.9em;
+      color: #666;
+    }
+    .export-links {
+      margin-top: 0.5em;
+    }
+    .export-links button {
+      margin-right: 0.5em;
+      background: #007acc;
+    }
+    .export-links button:hover {
+      background: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Meeting Minute Master
+  </header>
+  <main>
+    <section id="create-minute-section" aria-label="Create Meeting Minute">
+      <h2>Create New Meeting Note</h2>
+
+      <label for="meeting-title">Meeting Title</label>
+      <input type="text" id="meeting-title" placeholder="E.g. Weekly Project Sync" required />
+
+      <label for="meeting-date">Date</label>
+      <input type="date" id="meeting-date" required />
+
+      <label for="template-editor">Meeting Notes Template (Editable)</label>
+      <textarea id="template-editor" rows="5"></textarea>
+
+      <label>Action Items</label>
+      <div id="action-items-container" aria-live="polite"></div>
+      <button type="button" id="add-action-item-btn">Add Action Item +</button>
+
+      <button type="button" id="save-minute-btn" disabled>Save Meeting Minute</button>
+    </section>
+
+    <section id="minutes-list-section" aria-label="Meeting Minutes Archive">
+      <h2>Search and Archive</h2>
+      <input type="search" id="search-input" placeholder="Search meeting notes..." aria-label="Search meeting notes" />
+      <div id="minutes-list" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer>
+    &copy; 2024 Meeting Minute Master &mdash; Simple, focused meeting notes for teams
+  </footer>
+
+  <script>
+    // Initialize app data
+    const defaultTemplate = `# Meeting Title
+
+Date: [Date]
+
+## Attendees
+- 
+
+## Agenda
+- 
+
+## Notes
+- 
+
+## Action Items
+`;
+
+    // Elements
+    const meetingTitle = document.getElementById('meeting-title');
+    const meetingDate = document.getElementById('meeting-date');
+    const templateEditor = document.getElementById('template-editor');
+    const actionItemsContainer = document.getElementById('action-items-container');
+    const addActionItemBtn = document.getElementById('add-action-item-btn');
+    const saveMinuteBtn = document.getElementById('save-minute-btn');
+    const minutesList = document.getElementById('minutes-list');
+    const searchInput = document.getElementById('search-input');
+
+    // Storage key
+    const STORAGE_KEY = 'mmm_meeting_minutes';
+
+    // Load data from localStorage
+    let minutes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    // Utility to generate unique ID for minutes and action items
+    function uuidv4() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+          (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    }
+
+    // Render action items fields
+    function renderActionItems(items = []) {
+      actionItemsContainer.innerHTML = '';
+      items.forEach((action, index) => {
+        const div = document.createElement('div');
+        div.style = "margin-bottom:0.8em; border: 1px solid #ccc; padding: 0.6em; border-radius: 4px; background: #eef9ff;";
+
+        const userLabel = document.createElement('label');
+        userLabel.textContent = `Assignee #${index + 1} (email)`;
+        userLabel.htmlFor = `action-assignee-${index}`;
+        const userInput = document.createElement('input');
+        userInput.type = 'email';
+        userInput.id = `action-assignee-${index}`;
+        userInput.placeholder = 'person@example.com';
+        userInput.value = action.assignee || '';
+        userInput.required = true;
+
+        const taskLabel = document.createElement('label');
+        taskLabel.textContent = 'Action Item Description';
+        taskLabel.htmlFor = `action-text-${index}`;
+        const taskInput = document.createElement('input');
+        taskInput.type = 'text';
+        taskInput.id = `action-text-${index}`;
+        taskInput.placeholder = 'E.g. Finalize project budget';
+        taskInput.value = action.text || '';
+        taskInput.required = true;
+
+        const dueLabel = document.createElement('label');
+        dueLabel.textContent = 'Due Date';
+        dueLabel.htmlFor = `action-due-${index}`;
+        const dueInput = document.createElement('input');
+        dueInput.type = 'date';
+        dueInput.id = `action-due-${index}`;
+        dueInput.value = action.due || '';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = 'Remove';
+        removeBtn.style = 'margin-top: 0.5em; background-color: #cc3300;';
+        removeBtn.onclick = () => {
+          items.splice(index, 1);
+          renderActionItems(items);
+          validateForm();
+        };
+
+        div.appendChild(userLabel);
+        div.appendChild(userInput);
+        div.appendChild(taskLabel);
+        div.appendChild(taskInput);
+        div.appendChild(dueLabel);
+        div.appendChild(dueInput);
+        div.appendChild(removeBtn);
+
+        actionItemsContainer.appendChild(div);
+      });
+      if (items.length === 0) {
+        actionItemsContainer.innerHTML = '<em>No action items added yet.</em>';
+      }
+    }
+
+    // Add new empty action item
+    let currentActionItems = [];
+    function addActionItem() {
+      currentActionItems.push({assignee: '', text: '', due: ''});
+      renderActionItems(currentActionItems);
+      validateForm();
+    }
+
+    // Validate form fields
+    function validateForm() {
+      const titleOk = meetingTitle.value.trim().length > 0;
+      const dateOk = meetingDate.value.trim().length > 0;
+      const templateOk = templateEditor.value.trim().length > 0;
+
+      // Actions: all must have assignee (valid email), text not empty
+      let actionsOk = true;
+      for (let i = 0; i < currentActionItems.length; i++) {
+        const assigneeInput = document.getElementById(`action-assignee-${i}`);
+        const textInput = document.getElementById(`action-text-${i}`);
+        if (!assigneeInput || !textInput) continue;
+        if (!assigneeInput.value.trim() || !validateEmail(assigneeInput.value.trim())) {
+          actionsOk = false; break;
+        }
+        if (!textInput.value.trim()) {
+          actionsOk = false; break;
+        }
+      }
+
+      saveMinuteBtn.disabled = !(titleOk && dateOk && templateOk && actionsOk);
+    }
+
+    // Simple email validation
+    function validateEmail(email) {
+      // Basic regex for demonstration
+      return /\S+@\S+\.\S+/.test(email);
+    }
+
+    // Save meeting minute to localStorage
+    function saveMeetingMinute() {
+      // Save current action items edits from inputs
+      for (let i = 0; i < currentActionItems.length; i++) {
+        const assigneeInput = document.getElementById(`action-assignee-${i}`);
+        const textInput = document.getElementById(`action-text-${i}`);
+        const dueInput = document.getElementById(`action-due-${i}`);
+        currentActionItems[i].assignee = assigneeInput.value.trim();
+        currentActionItems[i].text = textInput.value.trim();
+        currentActionItems[i].due = dueInput.value;
+      }
+      const meeting = {
+        id: uuidv4(),
+        title: meetingTitle.value.trim(),
+        date: meetingDate.value,
+        notes: templateEditor.value.trim(),
+        actionItems: currentActionItems.map(item => ({ ...item })),
+        createdAt: new Date().toISOString()
+      };
+      minutes.unshift(meeting);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(minutes));
+      resetForm();
+      renderMinutesList();
+      alert('Meeting minute saved!');
+    }
+
+    // Reset form to default state
+    function resetForm() {
+      meetingTitle.value = '';
+      meetingDate.value = '';
+      templateEditor.value = defaultTemplate;
+      currentActionItems = [];
+      renderActionItems(currentActionItems);
+      saveMinuteBtn.disabled = true;
+    }
+
+    // Render the list of meeting minutes (archive)
+    function renderMinutesList(filter = '') {
+      minutesList.innerHTML = '';
+      let filtered = minutes;
+      if (filter.trim()) {
+        const phrase = filter.toLowerCase();
+        filtered = minutes.filter(m => m.title.toLowerCase().includes(phrase) || m.notes.toLowerCase().includes(phrase));
+      }
+      if(filtered.length === 0) {
+        minutesList.innerHTML = '<p>No meeting minutes found.</p>';
+        return;
+      }
+
+      filtered.forEach(minute => {
+        const article = document.createElement('article');
+        article.classList.add('minute');
+        article.tabIndex = 0;
+
+        const h3 = document.createElement('h3');
+        h3.textContent = `${minute.title} (${minute.date})`;
+        article.appendChild(h3);
+
+        const preNotes = document.createElement('pre');
+        preNotes.style.whiteSpace = 'pre-wrap';
+        preNotes.textContent = minute.notes;
+        article.appendChild(preNotes);
+
+        if (minute.actionItems && minute.actionItems.length) {
+          const h4 = document.createElement('h4');
+          h4.textContent = 'Action Items';
+          article.appendChild(h4);
+
+          const ul = document.createElement('ul');
+          ul.classList.add('action-items');
+          minute.actionItems.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${item.text}</strong> assigned to <em>${item.assignee}</em>${item.due ? `, due by ${item.due}` : ''}`;
+            ul.appendChild(li);
+          });
+          article.appendChild(ul);
+        }
+
+        // Export buttons
+        const exportDiv = document.createElement('div');
+        exportDiv.className = 'export-links';
+
+        const exportPdfBtn = document.createElement('button');
+        exportPdfBtn.textContent = 'Export to PDF';
+        exportPdfBtn.type = 'button';
+        exportPdfBtn.onclick = () => exportToPDF(minute);
+        exportDiv.appendChild(exportPdfBtn);
+
+        const exportLinkBtn = document.createElement('button');
+        exportLinkBtn.textContent = 'Share Link';
+        exportLinkBtn.type = 'button';
+        exportLinkBtn.onclick = () => shareLink(minute.id);
+        exportDiv.appendChild(exportLinkBtn);
+
+        article.appendChild(exportDiv);
+        minutesList.appendChild(article);
+      });
+    }
+
+    // Export meeting note to PDF using jsPDF
+    // Use CDN for jsPDF - create script injection for demo here
+    function loadJsPDF(cb) {
+      if (window.jsPDF) {
+        cb();
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.onload = cb;
+      document.head.appendChild(script);
+    }
+
+    function exportToPDF(minute) {
+      loadJsPDF(() => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        let y = 10;
+        doc.setFontSize(16);
+        doc.text(minute.title, 10, y);
+        y += 10;
+        doc.setFontSize(12);
+        doc.text(`Date: ${minute.date}`, 10, y);
+        y += 10;
+
+        // Notes (multi-line)
+        doc.setFontSize(11);
+        const splitNotes = doc.splitTextToSize(minute.notes, 180);
+        doc.text(splitNotes, 10, y);
+        y += splitNotes.length * 7 + 5;
+
+        if (minute.actionItems.length) {
+          doc.setFontSize(13);
+          doc.text('Action Items:', 10, y);
+          y += 7;
+          doc.setFontSize(11);
+          minute.actionItems.forEach((item, i) => {
+            const line = `${i + 1}. ${item.text} (Assigned to: ${item.assignee}${item.due ? ', Due: ' + item.due : ''})`;
+            const splitLine = doc.splitTextToSize(line, 180);
+            doc.text(splitLine, 12, y);
+            y += splitLine.length * 7;
+            if(y > 270) { doc.addPage(); y = 10; }
+          });
+        }
+
+        doc.save(`Meeting_Minute_${minute.title.replace(/\s+/g,'_')}_${minute.date}.pdf`);
+      });
+    }
+
+    // Share link by putting minute data into URL hash (limited size for demo)
+    function shareLink(minuteId) {
+      const minute = minutes.find(m => m.id === minuteId);
+      if (!minute) return alert('Minute not found.');
+
+      // Encode data as base64 JSON in URL parameter (warning: URL length limit in practice)
+      const dataStr = encodeURIComponent(btoa(JSON.stringify(minute)));
+
+      const url = `${window.location.origin}${window.location.pathname}?shared=${dataStr}`;
+      prompt('Shareable meeting link (copy below):', url);
+    }
+
+    // Load shared meeting from URL if present and show it in archive for reading
+    function loadSharedMeetingFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('shared')) {
+        try {
+          const sharedData = params.get('shared');
+          const jsonStr = atob(decodeURIComponent(sharedData));
+          const sharedMinute = JSON.parse(jsonStr);
+          minutes.unshift(sharedMinute);
+          renderMinutesList();
+          alert('Loaded shared meeting minute from link.');
+          // clean URL to prevent reloading share on refresh
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch(e) {
+          console.warn('Failed to load shared meeting:', e);
+        }
+      }
+    }
+
+    // Event listeners for validation and updating action items from UI
+    meetingTitle.addEventListener('input', validateForm);
+    meetingDate.addEventListener('input', validateForm);
+    templateEditor.addEventListener('input', validateForm);
+    addActionItemBtn.addEventListener('click', () => {
+      addActionItem();
+    });
+    saveMinuteBtn.addEventListener('click', saveMeetingMinute);
+    searchInput.addEventListener('input', () => {
+      renderMinutesList(searchInput.value);
+    });
+
+    // Initial setup
+    templateEditor.value = defaultTemplate;
+    renderActionItems(currentActionItems);
+    renderMinutesList();
+    loadSharedMeetingFromURL();
+  </script>
+</body>
+</html>
+```
+  
+This is a fully client-side simple HTML web app that lets teams create editable meeting note templates, add action items with assignees and due dates, validate the input, save meeting minutes in browser localStorage, search past notes, and export notes to PDF or generate shareable links. It’s a minimal viable product focusing on core features and a user-friendly UI with no backend.  
+
+Let me know if you want me to help with outline for backend, integrations, or premium features next!

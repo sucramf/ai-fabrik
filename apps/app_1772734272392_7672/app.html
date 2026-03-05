@@ -1,0 +1,288 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contract Reminder | SaaS Tool for Freelancers & SMBs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+  <!-- Header -->
+  <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-30">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold text-indigo-600 select-none">ContractReminder</a>
+      <nav class="space-x-6 text-gray-700 hidden md:flex">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Try It</a>
+        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <a href="#tool" class="hidden md:inline-block px-5 py-2 rounded bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition">Get Started</a>
+      <button id="mobile-menu-btn" class="md:hidden focus:outline-none" aria-label="Toggle menu">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <nav id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+      <div class="flex flex-col px-6 py-4 space-y-3">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Try It</a>
+        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+        <a href="#tool" class="inline-block mt-2 px-5 py-2 rounded bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition text-center">Get Started</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="pt-28 pb-20 bg-indigo-50">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row md:items-center md:gap-16">
+      <div class="md:w-1/2">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-700 leading-tight tracking-tight mb-6">
+          Never Miss a Contract Deadline Again
+        </h1>
+        <p class="text-lg text-indigo-900/90 mb-8">
+          Automate contract deadline & renewal reminders tailored for freelancers and small businesses. Stay on top of your commitments effortlessly.
+        </p>
+        <a href="#tool" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-indigo-700 transition">
+          Try It Now – Free
+        </a>
+      </div>
+      <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-96 h-96" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 7V3m8 4V3m-9 8h10M6 17h12M6 21h12a2 2 0 002-2v-7H4v7a2 2 0 002 2z" />
+          <circle cx="12" cy="13" r="3" />
+          <path d="M12 16v3" />
+          <path d="M11 10h2" />
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="max-w-7xl mx-auto px-6 py-20">
+    <h2 class="text-3xl font-extrabold text-center text-indigo-700 mb-12">Features Designed for You</h2>
+    <div class="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto text-center">
+      <div class="bg-white rounded-lg p-8 shadow-md hover:shadow-lg transition">
+        <div class="mx-auto mb-4 w-14 h-14 text-indigo-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-14 h-14 mx-auto">
+            <path d="M12 8v4l3 3" />
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-indigo-800">Deadline Alerts</h3>
+        <p class="text-gray-600 leading-relaxed">Get automated reminders on important contract deadlines so you can focus on your work without worry.</p>
+      </div>
+      <div class="bg-white rounded-lg p-8 shadow-md hover:shadow-lg transition">
+        <div class="mx-auto mb-4 w-14 h-14 text-indigo-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-14 h-14 mx-auto">
+            <path d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-indigo-800">Renewal Tracking</h3>
+        <p class="text-gray-600 leading-relaxed">Monitor renewal dates and never lose a chance to extend contracts or renegotiate terms.</p>
+      </div>
+      <div class="bg-white rounded-lg p-8 shadow-md hover:shadow-lg transition">
+        <div class="mx-auto mb-4 w-14 h-14 text-indigo-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-14 h-14 mx-auto">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-indigo-800">Simple Dashboard</h3>
+        <p class="text-gray-600 leading-relaxed">Easily add, view, and manage all your contracts and their deadlines in one intuitive interface.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Working UI Tool Section -->
+  <section id="tool" class="bg-white py-20 px-6">
+    <div class="max-w-3xl mx-auto rounded-lg shadow-lg p-10 bg-indigo-50">
+      <h2 class="text-3xl font-extrabold text-indigo-700 mb-8 text-center">Add a Contract and Get Reminders</h2>
+      <form id="contract-form" class="space-y-6">
+        <div>
+          <label for="contractName" class="block text-indigo-800 font-semibold mb-1">Contract Name</label>
+          <input type="text" id="contractName" name="contractName" placeholder="e.g. Website Design Project" required class="w-full rounded-md border border-indigo-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+        </div>
+        <div>
+          <label for="deadline" class="block text-indigo-800 font-semibold mb-1">Deadline Date</label>
+          <input type="date" id="deadline" name="deadline" required class="w-full rounded-md border border-indigo-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+        </div>
+        <div>
+          <label for="renewalDate" class="block text-indigo-800 font-semibold mb-1">Renewal Date (optional)</label>
+          <input type="date" id="renewalDate" name="renewalDate" class="w-full rounded-md border border-indigo-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          <p class="text-sm text-indigo-600 mt-1">Leave blank if no renewal.</p>
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-md hover:bg-indigo-700 transition">
+          Add Contract
+        </button>
+      </form>
+
+      <div id="reminders" class="mt-12">
+        <h3 class="text-2xl font-bold text-indigo-700 mb-6 text-center">Upcoming Reminders</h3>
+        <ul class="space-y-4" id="reminder-list">
+          <li class="text-center text-gray-600">No contracts added yet.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <footer id="contact" class="bg-indigo-700 text-indigo-100 py-12 px-6 mt-20">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <div>
+        <h4 class="font-bold text-xl mb-2">Get in Touch</h4>
+        <p>Questions or feedback? Reach out anytime!</p>
+      </div>
+      <a href="mailto:support@contractreminder.com" class="inline-block bg-indigo-500 hover:bg-indigo-600 transition rounded px-5 py-3 font-semibold">
+        support@contractreminder.com
+      </a>
+    </div>
+    <p class="text-center text-indigo-300 text-sm mt-8 select-none">&copy; 2024 ContractReminder. All rights reserved.</p>
+  </footer>
+
+  <script>
+    (() => {
+      const form = document.getElementById('contract-form');
+      const reminderList = document.getElementById('reminder-list');
+
+      // Store contracts in localStorage for persistence
+      const STORAGE_KEY = 'contractReminderContracts';
+
+      function loadContracts() {
+        let contracts = localStorage.getItem(STORAGE_KEY);
+        return contracts ? JSON.parse(contracts) : [];
+      }
+
+      function saveContracts(contracts) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(contracts));
+      }
+
+      function formatDate(dateStr) {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        const d = new Date(dateStr + 'T00:00:00');
+        if (isNaN(d)) return dateStr;
+        return d.toLocaleDateString(undefined, options);
+      }
+
+      function daysUntil(dateStr) {
+        const now = new Date();
+        const d = new Date(dateStr + 'T00:00:00');
+        const diffTime = d - now;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      }
+
+      function createReminderItem(contract) {
+        const deadlineDays = daysUntil(contract.deadline);
+        const renewalDays = contract.renewalDate ? daysUntil(contract.renewalDate) : null;
+
+        const li = document.createElement('li');
+        li.className = 'bg-indigo-100 rounded-md p-4 shadow flex flex-col md:flex-row md:justify-between md:items-center';
+
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'font-semibold text-indigo-800 text-lg';
+        nameDiv.textContent = contract.name;
+        li.appendChild(nameDiv);
+
+        const datesDiv = document.createElement('div');
+        datesDiv.className = 'mt-2 md:mt-0 text-indigo-700 text-sm flex flex-col md:flex-row md:gap-6';
+
+        const deadlineSpan = document.createElement('span');
+        deadlineSpan.innerHTML = `<strong>Deadline:</strong> ${formatDate(contract.deadline)} (${deadlineDays >= 0 ? `${deadlineDays} day${deadlineDays !== 1 ? 's' : ''} left` : 'past due'})`;
+        if (deadlineDays < 0) deadlineSpan.classList.add('text-red-600', 'font-bold');
+        datesDiv.appendChild(deadlineSpan);
+
+        if (contract.renewalDate) {
+          const renewalSpan = document.createElement('span');
+          renewalSpan.innerHTML = `<strong>Renewal:</strong> ${formatDate(contract.renewalDate)} (${renewalDays >= 0 ? `${renewalDays} day${renewalDays !== 1 ? 's' : ''} left` : 'past due'})`;
+          if (renewalDays < 0) renewalSpan.classList.add('text-red-600', 'font-bold');
+          datesDiv.appendChild(renewalSpan);
+        }
+
+        li.appendChild(datesDiv);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.setAttribute('aria-label', 'Delete contract');
+        deleteBtn.className = 'mt-3 md:mt-0 bg-red-500 hover:bg-red-600 text-white rounded px-3 py-1 text-sm font-semibold transition md:ml-6 flex-shrink-0';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => {
+          let contracts = loadContracts();
+          contracts = contracts.filter(c => c.id !== contract.id);
+          saveContracts(contracts);
+          renderReminders();
+        });
+        li.appendChild(deleteBtn);
+
+        return li;
+      }
+
+      function renderReminders() {
+        const contracts = loadContracts();
+        reminderList.innerHTML = '';
+        if (contracts.length === 0) {
+          const emptyLi = document.createElement('li');
+          emptyLi.className = 'text-center text-gray-600';
+          emptyLi.textContent = 'No contracts added yet.';
+          reminderList.appendChild(emptyLi);
+          return;
+        }
+        // sort by nearest deadline first
+        contracts.sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
+        contracts.forEach(contract => {
+          const item = createReminderItem(contract);
+          reminderList.appendChild(item);
+        });
+      }
+
+      function clearForm() {
+        form.reset();
+      }
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const name = form.contractName.value.trim();
+        const deadline = form.deadline.value;
+        const renewalDate = form.renewalDate.value || null;
+
+        if (!name) {
+          alert('Please enter a contract name.');
+          return;
+        }
+        if (!deadline) {
+          alert('Please select a deadline date.');
+          return;
+        }
+        if (renewalDate && new Date(renewalDate) < new Date(deadline)) {
+          alert('Renewal date should be same or after the deadline.');
+          return;
+        }
+
+        const newContract = {
+          id: crypto.randomUUID(),
+          name,
+          deadline,
+          renewalDate,
+        };
+
+        const contracts = loadContracts();
+        contracts.push(newContract);
+        saveContracts(contracts);
+        renderReminders();
+        clearForm();
+      });
+
+      // Initial render
+      renderReminders();
+
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    })();
+  </script>
+</body>
+</html>
+```

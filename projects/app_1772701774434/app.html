@@ -1,0 +1,627 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickQuote - Instant Custom Quote Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #2a9d8f;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+    }
+    h1 {
+      margin-top: 0;
+    }
+    form > div {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="color"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+    textarea {
+      min-height: 70px;
+    }
+    button {
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #aac;
+      cursor: default;
+    }
+    .row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .row > div {
+      flex: 1;
+      min-width: 200px;
+    }
+    /* Quote preview styling */
+    #quotePreview {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fcfcfc;
+    }
+    #quotePreview header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    #quotePreview header img {
+      max-height: 50px;
+      max-width: 150px;
+      object-fit: contain;
+    }
+    #quotePreview h2 {
+      margin: 0;
+      color: #2a9d8f;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 0.5rem 1rem;
+      text-align: left;
+    }
+    tfoot td {
+      font-weight: bold;
+    }
+    #quotePreview footer {
+      font-style: italic;
+      font-size: 0.9rem;
+      border-top: 1px solid #ccc;
+      padding-top: 0.75rem;
+      white-space: pre-wrap;
+    }
+    #signature-img {
+      max-height: 50px;
+      margin-top: 1rem;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .row {
+        flex-direction: column;
+      }
+      #quotePreview header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>QuickQuote</h1>
+    <p>Instant Custom Quote Generator for Freelancers</p>
+  </header>
+  <main>
+    <form id="quoteForm">
+      <div>
+        <label for="clientName">Client Name</label>
+        <input type="text" id="clientName" name="clientName" required placeholder="Client or Company Name" />
+      </div>
+      <div>
+        <label for="projectTitle">Project Title</label>
+        <input type="text" id="projectTitle" name="projectTitle" required placeholder="e.g. Website redesign" />
+      </div>
+      <div>
+        <label for="projectScope">Project Scope & Deliverables</label>
+        <textarea id="projectScope" name="projectScope" required placeholder="Describe scope and deliverables"></textarea>
+      </div>
+      <div class="row">
+        <div>
+          <label for="startDate">Start Date</label>
+          <input type="date" id="startDate" name="startDate" required />
+        </div>
+        <div>
+          <label for="endDate">End Date</label>
+          <input type="date" id="endDate" name="endDate" required />
+        </div>
+      </div>
+
+      <div>
+        <label for="pricingModel">Pricing Model</label>
+        <select id="pricingModel" name="pricingModel" required>
+          <option value="fixed">Fixed Price</option>
+          <option value="hourly">Hourly Rate</option>
+          <option value="milestone">Milestone Based</option>
+        </select>
+      </div>
+
+      <div id="pricingDetails">
+        <!-- Pricing inputs injected here depending on model -->
+      </div>
+
+      <div>
+        <label for="taxPercentage">Tax Percentage (%)</label>
+        <input type="number" id="taxPercentage" name="taxPercentage" min="0" step="0.01" value="0" />
+      </div>
+      <div>
+        <label for="discount">Discount Amount</label>
+        <input type="number" id="discount" name="discount" min="0" step="0.01" value="0" />
+      </div>
+
+      <div>
+        <label for="logoURL">Brand Logo URL</label>
+        <input type="text" id="logoURL" name="logoURL" placeholder="Paste a logo image URL (optional)" />
+      </div>
+      <div>
+        <label for="brandColor">Brand Color</label>
+        <input type="color" id="brandColor" name="brandColor" value="#2a9d8f" />
+      </div>
+      <div>
+        <label for="signatureURL">Signature Image URL</label>
+        <input type="text" id="signatureURL" name="signatureURL" placeholder="Paste your signature image URL (optional)" />
+      </div>
+
+      <div>
+        <label for="terms">Terms & Conditions</label>
+        <textarea id="terms" name="terms" placeholder="Add any terms or notes here"></textarea>
+      </div>
+
+      <button type="submit">Generate Quote Preview</button>
+    </form>
+
+    <section id="quotePreview" style="display:none" aria-live="polite" aria-atomic="true">
+      <header>
+        <img id="previewLogo" src="" alt="Brand Logo" style="display:none"/>
+        <h2 id="previewTitle"></h2>
+      </header>
+      <p><strong>Client:</strong> <span id="previewClient"></span></p>
+      <p><strong>Project Duration:</strong> <span id="previewDuration"></span></p>
+
+      <h3>Scope & Deliverables</h3>
+      <p id="previewScope"></p>
+
+      <h3>Pricing Details</h3>
+      <table aria-label="Pricing Breakdown">
+        <thead>
+          <tr id="pricingHeader"></tr>
+        </thead>
+        <tbody id="pricingBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="1">Subtotal</td>
+            <td id="subtotalCell" style="text-align:right;"></td>
+          </tr>
+          <tr>
+            <td>Tax</td>
+            <td id="taxCell" style="text-align:right;"></td>
+          </tr>
+          <tr>
+            <td>Discount</td>
+            <td id="discountCell" style="text-align:right;"></td>
+          </tr>
+          <tr>
+            <td>Total</td>
+            <td id="totalCell" style="text-align:right;"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <h3>Terms & Conditions</h3>
+      <footer id="previewTerms"></footer>
+
+      <img id="signature-img" src="" alt="Signature" style="display:none" />
+
+      <button id="downloadPdfBtn">Download PDF</button>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const pricingModelSelect = document.getElementById('pricingModel');
+    const pricingDetailsDiv = document.getElementById('pricingDetails');
+    const quoteForm = document.getElementById('quoteForm');
+    const quotePreview = document.getElementById('quotePreview');
+    const previewLogo = document.getElementById('previewLogo');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewClient = document.getElementById('previewClient');
+    const previewDuration = document.getElementById('previewDuration');
+    const previewScope = document.getElementById('previewScope');
+    const pricingHeader = document.getElementById('pricingHeader');
+    const pricingBody = document.getElementById('pricingBody');
+    const subtotalCell = document.getElementById('subtotalCell');
+    const taxCell = document.getElementById('taxCell');
+    const discountCell = document.getElementById('discountCell');
+    const totalCell = document.getElementById('totalCell');
+    const previewTerms = document.getElementById('previewTerms');
+    const signatureImg = document.getElementById('signature-img');
+    const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+
+    // Helper to create input elements for pricing models
+    function renderPricingInputs(model) {
+      pricingDetailsDiv.innerHTML = '';
+      if(model === 'fixed') {
+        pricingDetailsDiv.innerHTML = `
+          <label for="fixedPrice">Fixed Price Amount</label>
+          <input type="number" id="fixedPrice" name="fixedPrice" min="0" step="0.01" required />
+        `;
+      }
+      else if(model === 'hourly') {
+        pricingDetailsDiv.innerHTML = `
+          <div style="margin-bottom: 0.75rem;">
+            <label for="hourlyRate">Hourly Rate</label>
+            <input type="number" id="hourlyRate" name="hourlyRate" min="0" step="0.01" required />
+          </div>
+          <div>
+            <label for="estimatedHours">Estimated Hours</label>
+            <input type="number" id="estimatedHours" name="estimatedHours" min="0" step="0.1" required />
+          </div>
+        `;
+      }
+      else if(model === 'milestone') {
+        pricingDetailsDiv.innerHTML = `
+          <label>Milestones (Add min 1 milestone)</label>
+          <div id="milestonesContainer"></div>
+          <button type="button" id="addMilestoneBtn" style="margin-top: 0.5rem;">Add Milestone</button>
+        `;
+        const milestonesContainer = document.getElementById('milestonesContainer');
+        const addMilestoneBtn = document.getElementById('addMilestoneBtn');
+
+        function createMilestone(index) {
+          const milestoneDiv = document.createElement('div');
+          milestoneDiv.style.border = '1px solid #ccc';
+          milestoneDiv.style.padding = '0.5rem';
+          milestoneDiv.style.marginBottom = '0.5rem';
+          milestoneDiv.style.borderRadius = '4px';
+
+          milestoneDiv.innerHTML = `
+            <label for="milestoneName-${index}">Milestone Name</label>
+            <input type="text" id="milestoneName-${index}" name="milestoneName-${index}" required placeholder="e.g. Design phase" />
+            
+            <label for="milestoneAmount-${index}" style="margin-top:0.5rem;">Amount</label>
+            <input type="number" id="milestoneAmount-${index}" name="milestoneAmount-${index}" min="0" step="0.01" required />
+            
+            <button type="button" class="removeMilestoneBtn" aria-label="Remove milestone ${index}" style="margin-top: 0.5rem; background:#e76f51; color:#fff; border:none; padding: 0.25rem 0.75rem; border-radius: 4px; cursor:pointer;">Remove</button>
+          `;
+          return milestoneDiv;
+        }
+
+        let milestoneCount = 0;
+
+        function addMilestone() {
+          milestoneCount++;
+          const milestoneDiv = createMilestone(milestoneCount);
+          milestonesContainer.appendChild(milestoneDiv);
+          milestoneDiv.querySelector('.removeMilestoneBtn').addEventListener('click', () => {
+            milestoneDiv.remove();
+          });
+        }
+
+        addMilestoneBtn.addEventListener('click', addMilestone);
+        // Add one initial milestone
+        addMilestone();
+      }
+    }
+
+    pricingModelSelect.addEventListener('change', (e) => {
+      renderPricingInputs(e.target.value);
+    });
+
+    // Initial render
+    renderPricingInputs(pricingModelSelect.value);
+
+    function formatCurrency(val) {
+      return '$' + Number(val).toFixed(2);
+    }
+
+    function calculateTotals(data) {
+      let subtotal = 0;
+      if(data.pricingModel === 'fixed') {
+        subtotal = parseFloat(data.fixedPrice) || 0;
+      }
+      else if(data.pricingModel === 'hourly') {
+        subtotal = (parseFloat(data.hourlyRate) || 0) * (parseFloat(data.estimatedHours) || 0);
+      }
+      else if(data.pricingModel === 'milestone') {
+        subtotal = 0;
+        data.milestones.forEach(m => {
+          subtotal += parseFloat(m.amount) || 0;
+        });
+      }
+      const tax = subtotal * ((parseFloat(data.taxPercentage) || 0) / 100);
+      const discount = parseFloat(data.discount) || 0;
+      const total = subtotal + tax - discount;
+      return {subtotal, tax, discount, total};
+    }
+
+    function buildPricingTable(data) {
+      pricingHeader.innerHTML = '';
+      pricingBody.innerHTML = '';
+
+      if(data.pricingModel === 'fixed') {
+        pricingHeader.innerHTML = '<th>Description</th><th>Amount</th>';
+        pricingBody.innerHTML = `<tr><td>Fixed Price</td><td style="text-align:right;">${formatCurrency(data.fixedPrice)}</td></tr>`;
+      }
+      else if(data.pricingModel === 'hourly') {
+        pricingHeader.innerHTML = '<th>Description</th><th>Rate</th><th>Hours</th><th>Amount</th>';
+        let amount = (parseFloat(data.hourlyRate) || 0) * (parseFloat(data.estimatedHours) || 0);
+        pricingBody.innerHTML = `<tr>
+          <td>Hourly Work</td>
+          <td style="text-align:right;">${formatCurrency(data.hourlyRate)}</td>
+          <td style="text-align:right;">${data.estimatedHours}</td>
+          <td style="text-align:right;">${formatCurrency(amount)}</td>
+        </tr>`;
+      }
+      else if(data.pricingModel === 'milestone') {
+        pricingHeader.innerHTML = '<th>Milestone</th><th>Amount</th>';
+        data.milestones.forEach(m => {
+          pricingBody.innerHTML += `<tr><td>${m.name}</td><td style="text-align:right;">${formatCurrency(m.amount)}</td></tr>`;
+        });
+      }
+    }
+
+    quoteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Collect form data
+      const data = {
+        clientName: quoteForm.clientName.value.trim(),
+        projectTitle: quoteForm.projectTitle.value.trim(),
+        projectScope: quoteForm.projectScope.value.trim(),
+        startDate: quoteForm.startDate.value,
+        endDate: quoteForm.endDate.value,
+        pricingModel: quoteForm.pricingModel.value,
+        taxPercentage: quoteForm.taxPercentage.value || 0,
+        discount: quoteForm.discount.value || 0,
+        logoURL: quoteForm.logoURL.value.trim(),
+        brandColor: quoteForm.brandColor.value,
+        signatureURL: quoteForm.signatureURL.value.trim(),
+        terms: quoteForm.terms.value.trim(),
+      };
+
+      if(data.pricingModel === 'fixed') {
+        data.fixedPrice = quoteForm.fixedPrice.value || 0;
+      }
+      else if(data.pricingModel === 'hourly') {
+        data.hourlyRate = quoteForm.hourlyRate.value || 0;
+        data.estimatedHours = quoteForm.estimatedHours.value || 0;
+      }
+      else if(data.pricingModel === 'milestone') {
+        const milestones = [];
+        const milestoneInputs = pricingDetailsDiv.querySelectorAll('[id^="milestoneName-"]');
+        milestoneInputs.forEach(input => {
+          const idSuffix = input.id.split('-')[1];
+          const name = input.value.trim();
+          const amountInput = document.getElementById(`milestoneAmount-${idSuffix}`);
+          const amount = amountInput ? amountInput.value : 0;
+          if(name && amount) {
+            milestones.push({name, amount});
+          }
+        });
+        if(milestones.length === 0) {
+          alert('Please add at least one milestone with a name and amount.');
+          return;
+        }
+        data.milestones = milestones;
+      }
+
+      // Validate dates
+      if(new Date(data.endDate) < new Date(data.startDate)) {
+        alert('End date must be after start date.');
+        return;
+      }
+
+      // Generate preview
+      generatePreview(data);
+    });
+
+    function generatePreview(data) {
+      // Brand logo
+      if(data.logoURL) {
+        previewLogo.src = data.logoURL;
+        previewLogo.style.display = 'block';
+      } else {
+        previewLogo.style.display = 'none';
+      }
+      // Brand color for title
+      previewTitle.style.color = data.brandColor;
+      previewTitle.textContent = data.projectTitle;
+      previewClient.textContent = data.clientName;
+      previewScope.textContent = data.projectScope;
+      previewDuration.textContent = `${data.startDate} to ${data.endDate}`;
+      previewTerms.textContent = data.terms || 'No additional terms provided.';
+
+      // Signature
+      if(data.signatureURL) {
+        signatureImg.src = data.signatureURL;
+        signatureImg.style.display = 'block';
+      } else {
+        signatureImg.style.display = 'none';
+      }
+
+      buildPricingTable(data);
+      const totals = calculateTotals(data);
+      subtotalCell.textContent = formatCurrency(totals.subtotal);
+      taxCell.textContent = formatCurrency(totals.tax);
+      discountCell.textContent = formatCurrency(totals.discount);
+      totalCell.textContent = formatCurrency(totals.total);
+
+      quotePreview.style.display = 'block';
+
+      // Attach data to download button
+      downloadPdfBtn.onclick = () => downloadPDF(data, totals);
+      downloadPdfBtn.focus();
+    }
+
+    // PDF generation function using jsPDF
+    async function downloadPDF(data, totals) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit: 'pt', format: 'a4'});
+      const pageWidth = doc.internal.pageSize.getWidth();
+      let currentHeight = 40;
+
+      doc.setFontSize(20);
+      doc.setTextColor(data.brandColor);
+      doc.text(data.projectTitle, 40, currentHeight);
+
+      currentHeight += 30;
+      doc.setFontSize(12);
+      doc.setTextColor(0,0,0);
+      doc.text(`Client: ${data.clientName}`, 40, currentHeight);
+      currentHeight += 20;
+      doc.text(`Project Duration: ${data.startDate} - ${data.endDate}`, 40, currentHeight);
+
+      if(data.logoURL) {
+        try {
+          const imgData = await loadImageToDataURL(data.logoURL);
+          doc.addImage(imgData, 'PNG', pageWidth - 180, 20, 140, 40);
+        } catch(e) {
+          // ignore logo loading error
+        }
+      }
+
+      currentHeight += 40;
+      doc.setFontSize(14);
+      doc.setTextColor(data.brandColor);
+      doc.text('Scope & Deliverables:', 40, currentHeight);
+      currentHeight += 20;
+
+      doc.setFontSize(12);
+      const splitScope = doc.splitTextToSize(data.projectScope, pageWidth - 80);
+      doc.text(splitScope, 40, currentHeight);
+      currentHeight += splitScope.length * 14 + 10;
+
+      doc.setFontSize(14);
+      doc.setTextColor(data.brandColor);
+      doc.text('Pricing Details:', 40, currentHeight);
+      currentHeight += 20;
+
+      // Draw pricing table
+      doc.setFontSize(12);
+      doc.setTextColor(0,0,0);
+
+      if(data.pricingModel === 'fixed') {
+        doc.text('Fixed Price:', 40, currentHeight);
+        doc.text(formatCurrency(data.fixedPrice), pageWidth - 80, currentHeight, {align: 'right'});
+        currentHeight += 20;
+      } else if(data.pricingModel === 'hourly') {
+        doc.text('Hourly Rate:', 40, currentHeight);
+        doc.text(formatCurrency(data.hourlyRate), 160, currentHeight);
+        doc.text('Hours:', 260, currentHeight);
+        doc.text(data.estimatedHours.toString(), 320, currentHeight);
+        const amount = (parseFloat(data.hourlyRate)||0) * (parseFloat(data.estimatedHours)||0);
+        doc.text('Amount:', 400, currentHeight);
+        doc.text(formatCurrency(amount), pageWidth - 80, currentHeight, {align: 'right'});
+        currentHeight += 20;
+      } else if(data.pricingModel === 'milestone') {
+        data.milestones.forEach(m => {
+          doc.text(m.name + ':', 40, currentHeight);
+          doc.text(formatCurrency(m.amount), pageWidth - 80, currentHeight, {align: 'right'});
+          currentHeight += 20;
+        });
+      }
+      currentHeight += 10;
+      doc.text('Subtotal:', 40, currentHeight);
+      doc.text(formatCurrency(totals.subtotal), pageWidth - 80, currentHeight, {align: 'right'});
+      currentHeight += 20;
+      doc.text('Tax:', 40, currentHeight);
+      doc.text(formatCurrency(totals.tax), pageWidth - 80, currentHeight, {align: 'right'});
+      currentHeight += 20;
+      doc.text('Discount:', 40, currentHeight);
+      doc.text(formatCurrency(totals.discount), pageWidth - 80, currentHeight, {align: 'right'});
+      currentHeight += 20;
+      doc.setFontSize(14);
+      doc.setTextColor(data.brandColor);
+      doc.text('Total:', 40, currentHeight);
+      doc.text(formatCurrency(totals.total), pageWidth - 80, currentHeight, {align: 'right'});
+
+      currentHeight += 40;
+      doc.setFontSize(14);
+      doc.setTextColor(data.brandColor);
+      doc.text('Terms & Conditions:', 40, currentHeight);
+      currentHeight += 20;
+      doc.setFontSize(12);
+      doc.setTextColor(0,0,0);
+
+      const splitTerms = doc.splitTextToSize(data.terms || 'No additional terms provided.', pageWidth - 80);
+      doc.text(splitTerms, 40, currentHeight);
+      currentHeight += splitTerms.length * 14 + 10;
+
+      // Add signature image if present
+      if(data.signatureURL) {
+        try {
+          const signatureData = await loadImageToDataURL(data.signatureURL);
+          doc.addImage(signatureData, 'PNG', 40, currentHeight, 140, 40);
+        } catch(e) {}
+      }
+
+      doc.save(`Quote_${data.clientName.replace(/\W/g,'') || 'Client'}.pdf`);
+    }
+
+    // Helper to load an image URL and convert to base64 data URL for jsPDF
+    function loadImageToDataURL(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img,0,0);
+          const dataURL = canvas.toDataURL('image/png');
+          resolve(dataURL);
+        };
+        img.onerror = function() {
+          reject(new Error('Could not load image at ' + url));
+        };
+        img.src = url;
+      });
+    }
+  </script>
+</body>
+</html>
+```

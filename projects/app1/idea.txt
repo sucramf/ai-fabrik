@@ -1,0 +1,27 @@
+Sure! Here's a simple and potentially profitable micro SaaS idea:
+
+**Web App Idea:**  
+**"MeetSnip" – Automated Meeting Summary & Action Item Generator**
+
+**Description:**  
+MeetSnip connects to popular video conferencing platforms (like Zoom, Google Meet, Microsoft Teams) and transcribes meetings in real-time or from recorded meetings. Using AI, it extracts key discussion points, summarizes the meeting in a concise format, and generates a clear list of action items with assignments and deadlines.
+
+**Why it’s profitable:**  
+- Saves time for busy professionals by eliminating manual note-taking and follow-ups.  
+- Increases productivity by ensuring clarity on tasks from meetings.  
+- Can be sold as a subscription targeting small to medium-sized businesses and remote teams.  
+- Minimal required maintenance after initial AI integration.  
+- Opportunity to add premium features like integrations with project management tools (Asana, Trello) or advanced analytics.
+
+**Basic Features:**  
+- Meeting transcription via audio upload or live integration  
+- AI-powered summary generation (~3-5 bullet points)  
+- Action items extraction and task assignment  
+- Export summaries to PDF or email  
+
+**Monetization:**  
+- Monthly subscription plans (e.g., Free tier with limited minutes, Pro with unlimited minutes and integrations)  
+- Team plans for collaboration  
+- Add-ons for additional storage or premium integrations
+
+Would you like me to help you outline the tech stack or MVP plan?

@@ -1,0 +1,234 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CleanText - Instant Text Cleaner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for textarea */
+    textarea::-webkit-scrollbar {
+      width: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background-color: rgba(100 116 139 / 0.5);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="#" class="text-2xl font-bold text-indigo-600 hover:text-indigo-700 select-none">CleanText</a>
+      <nav class="space-x-6 text-gray-600 text-sm font-medium hidden md:flex" aria-label="Primary navigation">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Tool</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button 
+        id="mobile-menu-button" 
+        class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+        aria-label="Toggle menu"
+        aria-expanded="false"
+      >
+        <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <nav id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+      <a href="#features" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Features</a>
+      <a href="#tool" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Tool</a>
+      <a href="#footer" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-indigo-600 text-white py-20 px-6 sm:px-12 lg:px-20">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">Transform Messy Text Into Clean, Clear Communication</h1>
+      <p class="text-indigo-200 text-lg max-w-2xl mx-auto mb-8">Paste your copied text from emails or documents and remove extra spaces, line breaks, and formatting artifacts with a single click.</p>
+      <a href="#tool" class="inline-block bg-white text-indigo-600 font-semibold px-8 py-3 rounded shadow hover:bg-indigo-50 transition">Try It Now</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-20">
+    <h2 class="text-3xl font-extrabold text-gray-900 mb-12 text-center">Why CleanText?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center">
+        <svg class="w-16 h-16 mb-4 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M9 12h6m-3 3v-6M4 19h16a2 2 0 002-2v-8a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+        </svg>
+        <h3 class="font-semibold text-lg mb-2">Clean & Simple</h3>
+        <p class="text-gray-600">Instantly remove unwanted spaces, line breaks, and formatting for easy reading and note-taking.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center">
+        <svg class="w-16 h-16 mb-4 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M9 11l3 3L22 4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2h14a2 2 0 012 2z"></path>
+        </svg>
+        <h3 class="font-semibold text-lg mb-2">Fixes Punctuation</h3>
+        <p class="text-gray-600">Automatically adjusts spacing around punctuation for polished, professional text.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-8 flex flex-col items-center text-center">
+        <svg class="w-16 h-16 mb-4 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M12 20l9-5-9-5-9 5 9 5z"></path><path d="M12 12v8"></path>
+        </svg>
+        <h3 class="font-semibold text-lg mb-2">Copy & Share Fast</h3>
+        <p class="text-gray-600">One-click cleaning with easy copy functionality speeds up your workflow and communication.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool Section -->
+  <section id="tool" class="bg-white py-20 px-6 sm:px-12 lg:px-20">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-900">Clean Your Text</h2>
+      <div class="flex flex-col sm:flex-row gap-6">
+        <div class="flex-1 flex flex-col">
+          <label for="inputText" class="font-semibold mb-2 text-gray-700">Paste your text here</label>
+          <textarea 
+            id="inputText" 
+            rows="12" 
+            placeholder="Paste messy text from emails, documents, or anywhere..."
+            class="resize-none p-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-800 font-mono bg-gray-50"
+          ></textarea>
+        </div>
+
+        <div class="flex-1 flex flex-col">
+          <label for="outputText" class="font-semibold mb-2 text-gray-700 flex items-center justify-between">
+            Cleaned text
+            <button 
+              id="copyBtn" 
+              class="bg-indigo-600 text-white text-sm py-1 px-3 rounded hover:bg-indigo-700 transition flex items-center gap-1 select-none"
+              title="Copy cleaned text"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+              </svg>
+              Copy
+            </button>
+          </label>
+          <textarea 
+            id="outputText" 
+            rows="12" 
+            readonly 
+            placeholder="Cleaned text will appear here..."
+            class="resize-none p-4 rounded-md border border-gray-300 bg-gray-50 text-gray-800 font-mono"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        <button id="cleanBtn" class="bg-indigo-600 hover:bg-indigo-700 transition text-white font-semibold px-8 py-3 rounded shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center gap-2 select-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2v-5l-9 6-9-6v5a2 2 0 002 2z"></path>
+          </svg>
+          Clean Text
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-gray-800 text-gray-400 py-12 px-6 sm:px-12 lg:px-20">
+    <div class="max-w-7xl mx-auto text-center text-sm">
+      <p>© 2024 CleanText. Crafted with ♥ for clearer communication.</p>
+      <p class="mt-2">Made by ChatGPT</p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      const expanded = menuBtn.getAttribute('aria-expanded') === 'true' || false;
+      menuBtn.setAttribute('aria-expanded', !expanded);
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Cleaning algorithm - removes extra spaces, normalizes line breaks and fixes punctuation spacing
+    function cleanText(text) {
+      if (!text) return '';
+
+      // Normalize line breaks to \n
+      let cleaned = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+      // Remove multiple blank lines
+      cleaned = cleaned.replace(/\n{2,}/g, '\n\n');
+
+      // Remove trailing/leading whitespace on each line
+      cleaned = cleaned.split('\n').map(line => line.trim()).join('\n');
+
+      // Replace multiple spaces with single space
+      cleaned = cleaned.replace(/[ \t]{2,}/g, ' ');
+
+      // Fix spaces before punctuation (remove space before . , ! ? ; :)
+      cleaned = cleaned.replace(/ \s*([.,!?;:])/g, '$1');
+
+      // Ensure single space after punctuation if not end of line or string
+      cleaned = cleaned.replace(/([.,!?;:])([^\s\n])/g, '$1 $2');
+
+      // Remove space before line breaks
+      cleaned = cleaned.replace(/[ \t]+\n/g, '\n');
+
+      // Trim start/end overall
+      cleaned = cleaned.trim();
+
+      return cleaned;
+    }
+
+    document.getElementById('cleanBtn').addEventListener('click', () => {
+      const input = document.getElementById('inputText').value;
+      const output = cleanText(input);
+      const outputTextarea = document.getElementById('outputText');
+      outputTextarea.value = output;
+
+      if (!output) {
+        alert('Please paste some messy text first.');
+      }
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const outputTextarea = document.getElementById('outputText');
+      if (!outputTextarea.value) {
+        alert('There is no cleaned text to copy!');
+        return;
+      }
+      outputTextarea.select();
+      outputTextarea.setSelectionRange(0, 99999); // For mobile devices
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(outputTextarea.value).then(() => {
+            alert('Cleaned text copied to clipboard!');
+          }, () => {
+            fallbackCopy();
+          });
+        } else {
+          fallbackCopy();
+        }
+      } catch {
+        fallbackCopy();
+      }
+
+      function fallbackCopy() {
+        const successful = document.execCommand('copy');
+        if(successful) {
+          alert('Cleaned text copied to clipboard!');
+        } else {
+          alert('Failed to copy. Please copy manually.');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+```

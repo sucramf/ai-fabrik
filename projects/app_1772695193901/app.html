@@ -1,0 +1,164 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Automated Meeting Summary Generator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f7f9fc;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    background: #2978b5;
+    padding: 1rem 2rem;
+    color: white;
+    text-align: center;
+  }
+  main {
+    flex: 1;
+    max-width: 700px;
+    margin: 2rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgb(0 0 0 / 0.1);
+  }
+  h1 {
+    margin-top: 0;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin: 1rem 0 0.5rem;
+  }
+  textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  button {
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #2978b5;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:disabled {
+    background: #a1bcd9;
+    cursor: not-allowed;
+  }
+  #summary {
+    margin-top: 2rem;
+    background: #eaf4fc;
+    border-left: 5px solid #2978b5;
+    padding: 1rem 1.5rem;
+    white-space: pre-wrap;
+  }
+  .footer {
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 1rem;
+    background: #f0f2f5;
+    color: #666;
+  }
+  #loading {
+    margin-top: 1rem;
+    color: #2978b5;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Automated Meeting Summary Generator</h1>
+  <p>Paste your meeting transcription below to get a concise summary and action items.</p>
+</header>
+<main>
+  <label for="transcription">Meeting Transcription</label>
+  <textarea id="transcription" placeholder="Paste your meeting transcription or typed notes here..."></textarea>
+  <button id="generateBtn" disabled>Generate Summary</button>
+  <div id="loading" style="display:none;">Generating summary, please wait...</div>
+  <div id="summary" aria-live="polite" aria-atomic="true"></div>
+</main>
+<div class="footer">
+  &copy; 2024 Automated Meeting Summary Generator
+</div>
+
+<script>
+  const transcriptionEl = document.getElementById('transcription');
+  const generateBtn = document.getElementById('generateBtn');
+  const summaryEl = document.getElementById('summary');
+  const loadingEl = document.getElementById('loading');
+
+  // Enable button if there is text
+  transcriptionEl.addEventListener('input', () => {
+    generateBtn.disabled = !transcriptionEl.value.trim();
+    summaryEl.textContent = '';
+  });
+
+  // Simple "AI-powered" summarization mock function:
+  //  - extracts key sentences containing keywords like "decide", "action", "next", "task", "follow-up"
+  //  - summarizes into bullet points and highlights action items
+  function generateSummary(text) {
+    const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [];
+    const keywords = ['decide', 'decided', 'action', 'actions', 'task', 'tasks', 'follow-up', 'next step', 'deadline', 'assign', 'responsible', 'due'];
+    // Extract sentences with keywords
+    let keyPoints = sentences.filter(sentence =>
+      keywords.some(kw => sentence.toLowerCase().includes(kw))
+    );
+
+    // If no key points found, take some important-looking sentences from the start
+    if (keyPoints.length === 0) {
+      keyPoints = sentences.slice(0, Math.min(5, sentences.length));
+    }
+
+    // Compose summary
+    let summary = 'Meeting Summary:\n\n';
+    summary += keyPoints.map((s, i) => `${i + 1}. ${s.trim()}`).join('\n');
+
+    // Extract action items
+    let actions = keyPoints.filter(sentence =>
+      /action|task|follow-up|assign|responsible|due|deadline/gi.test(sentence));
+    actions = actions.map(a => a.trim());
+    if (actions.length > 0) {
+      summary += '\n\nAction Items:\n\n';
+      summary += actions.map((a, i) => `- ${a}`).join('\n');
+    } else {
+      summary += '\n\nNo explicit action items found.';
+    }
+
+    return summary;
+  }
+
+  generateBtn.addEventListener('click', () => {
+    const text = transcriptionEl.value.trim();
+    if (!text) return;
+
+    loadingEl.style.display = 'block';
+    summaryEl.textContent = '';
+
+    // Simulate AI processing delay
+    setTimeout(() => {
+      const summary = generateSummary(text);
+      summaryEl.textContent = summary;
+      loadingEl.style.display = 'none';
+    }, 1500);
+  });
+</script>
+</body>
+</html>
+```
