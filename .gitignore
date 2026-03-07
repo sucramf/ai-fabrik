@@ -1,0 +1,11 @@
+# Hemligheter – committa aldrig
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# QA / loggar (valfritt)
+qa_top_idea_report.json
+superchief_report.log
