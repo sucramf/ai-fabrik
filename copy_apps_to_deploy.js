@@ -4,33 +4,39 @@ import path from "path";
 const appsDir = "./apps";
 const deployDir = "./deploy";
 
+// Se till att deploy finns
 if (!fs.existsSync(deployDir)) {
   fs.mkdirSync(deployDir);
 }
 
-const apps = fs.readdirSync(appsDir);
+// Läs alla app-mappar
+const apps = fs.readdirSync(appsDir).filter(f => fs.statSync(path.join(appsDir, f)).isDirectory());
 
-apps.forEach((app) => {
+// Skapa index.html
+let html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI FABRIK</title>
+<style>
+body { font-family: Arial; max-width: 800px; margin: 40px auto; }
+a { display: block; margin: 12px 0; font-size: 20px; }
+</style>
+</head>
+<body>
+<h1>AI FABRIK</h1>
+<p>Automatiskt genererade micro-appar</p>
+`;
 
-  const src = path.join(appsDir, app);
-  const dest = path.join(deployDir, app);
-
-  if (!fs.existsSync(src)) return;
-
-  if (fs.existsSync(dest)) {
-    fs.rmSync(dest, { recursive: true, force: true });
-  }
-
-  fs.mkdirSync(dest);
-
-  const files = fs.readdirSync(src);
-
-  files.forEach((file) => {
-    const srcFile = path.join(src, file);
-    const destFile = path.join(dest, file);
-    fs.copyFileSync(srcFile, destFile);
-  });
-
+apps.forEach((app, i) => {
+  html += `<a href="./${app}/">${app.replace("app_", "App ")}</a>\n`;
 });
 
-console.log("apps copied to deploy");
+html += `
+</body>
+</html>
+`;
+
+fs.writeFileSync(path.join(deployDir, "index.html"), html);
+console.log("deploy/index.html uppdaterad");

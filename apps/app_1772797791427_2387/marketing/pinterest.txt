@@ -1,0 +1,3 @@
+Pin title: Webbplats som jämför matpriser i realtid
+Description: "Webbplats som jämför matpriser i realtid" – simple, focused tool. Link to try.
+Board: SaaS & productivity tools

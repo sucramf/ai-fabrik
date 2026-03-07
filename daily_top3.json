@@ -1,0 +1,48 @@
+{
+  "genererad": "2026-03-06T21:48:05.649Z",
+  "beskrivning": "TOP 3 idéer att starta produktion på direkt – Total Score, juridisk status, förväntad lönsamhet. Blockerade byggs aldrig.",
+  "topp_3": [
+    {
+      "rank": 1,
+      "idé": "Anpassningsbara lanterns med kreativ design",
+      "plattform": "YouTube",
+      "trend": "Lanterns  | Official Teaser | HBO Max",
+      "total_score": 34.2,
+      "juridisk_risk": 95,
+      "blockerad": "nej",
+      "kort_motivering": "Total Score 34.2. Verklig lönsamhet 90/100, juridisk risk 95/100.",
+      "förväntad_lönsamhet": "hög",
+      "förväntad_månatlig_intäkt_sek": 30000,
+      "trend_score": 100,
+      "market_saturation": 60
+    },
+    {
+      "rank": 2,
+      "idé": "Onlinekurser om att skapa musikvideo och videoredigeringstekniker",
+      "plattform": "YouTube",
+      "trend": "Harry Styles - American Girls (Official Video)",
+      "total_score": 32.3,
+      "juridisk_risk": 95,
+      "blockerad": "nej",
+      "kort_motivering": "Total Score 32.3. Verklig lönsamhet 85/100, juridisk risk 95/100.",
+      "förväntad_lönsamhet": "hög",
+      "förväntad_månatlig_intäkt_sek": 25000,
+      "trend_score": 100,
+      "market_saturation": 60
+    },
+    {
+      "rank": 3,
+      "idé": "Onlinekurser för att skapa musikvideor",
+      "plattform": "YouTube",
+      "trend": "Juice WRLD, Marshmello - We Don't Get Along (Official Video)",
+      "total_score": 32.3,
+      "juridisk_risk": 95,
+      "blockerad": "nej",
+      "kort_motivering": "Total Score 32.3. Verklig lönsamhet 85/100, juridisk risk 95/100.",
+      "förväntad_lönsamhet": "hög",
+      "förväntad_månatlig_intäkt_sek": 30000,
+      "trend_score": 100,
+      "market_saturation": 60
+    }
+  ]
+}

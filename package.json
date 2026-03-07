@@ -3,10 +3,19 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node superchief.js",
-    "deploy": "node deploy.js"
+    "start": "node agents/superchief.js",
+    "trend": "node trend_scout.js",
+    "trend:daily": "node daily_trend_scout.js",
+    "long": "node long_version.js",
+    "check": "node long_version.js --check-only",
+    "deploy": "node deploy.js",
+    "qa": "node full_qa_top_idea.js"
   },
   "dependencies": {
+    "dotenv": "^17.3.1",
     "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }

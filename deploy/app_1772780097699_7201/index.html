@@ -1,0 +1,88 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Appointment Reminder SaaS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans leading-relaxed">
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-indigo-600 select-none">AppointEase</h1>
+      <nav class="space-x-6 hidden md:flex text-gray-700 font-medium">
+        <a href="#benefits" class="hover:text-indigo-600 transition">Benefits</a>
+        <a href="#cta" class="hover:text-indigo-600 transition">Get Started</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="bg-indigo-600 text-white">
+      <div class="max-w-4xl mx-auto px-6 py-20 text-center">
+        <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-6">Never Miss an Appointment Again!</h2>
+        <p class="text-lg md:text-xl max-w-3xl mx-auto mb-10">
+          Boost your small business with our customizable appointment reminder system&mdash;send automated SMS and email notifications that keep your clients on time and engaged.
+        </p>
+        <a href="#cta" class="inline-block bg-white text-indigo-600 font-semibold px-8 py-4 rounded-lg shadow-md hover:bg-gray-100 transition">
+          Start Your Free Trial
+        </a>
+      </div>
+    </section>
+
+    <section id="benefits" class="py-20 bg-gray-50">
+      <div class="max-w-5xl mx-auto px-6">
+        <h3 class="text-3xl font-bold text-center mb-12 text-indigo-600">Why Choose Our System?</h3>
+        <div class="grid gap-12 md:grid-cols-3 text-center">
+          <div class="bg-white rounded-xl shadow-md p-8 border border-indigo-100 hover:shadow-lg transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 h-14 w-14 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10m-5 7v-4" />
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            <h4 class="text-xl font-semibold mb-2">Reduce No-Shows</h4>
+            <p class="text-gray-600">Automated reminders ensure your clients never forget their appointments.</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-md p-8 border border-indigo-100 hover:shadow-lg transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 h-14 w-14 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 20h9" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3a2.121 2.121 0 10-3 2.828 2.121 2.121 0 003-2.828z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 12h4l3 4-2 2-2-2-3-4z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 12.5L13 15.9" />
+            </svg>
+            <h4 class="text-xl font-semibold mb-2">Fully Customizable</h4>
+            <p class="text-gray-600">Tailor messages and schedules to fit your unique business needs.</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-md p-8 border border-indigo-100 hover:shadow-lg transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 h-14 w-14 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6a4 4 0 018 0v6" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 12H4a1 1 0 000 2h1v3h14v-3h1a1 1 0 000-2h-1" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 20h10" />
+            </svg>
+            <h4 class="text-xl font-semibold mb-2">Easy Setup</h4>
+            <p class="text-gray-600">Get started in minutes without any technical hassle.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cta" class="bg-white py-20">
+      <div class="max-w-3xl mx-auto px-6 text-center">
+        <h3 class="text-3xl font-extrabold mb-6 text-indigo-600">Start streamlining your appointments today</h3>
+        <p class="text-lg mb-10 max-w-xl mx-auto">
+          Sign up now for a free trial and enjoy hassle-free appointment management with automated SMS and email reminders.
+        </p>
+        <form class="max-w-md mx-auto flex flex-col sm:flex-row gap-4" onsubmit="event.preventDefault(); alert('Thank you for signing up!');">
+          <input type="email" required placeholder="Your email address" class="rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-grow" />
+          <button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-indigo-700 transition">
+            Start Free Trial
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="bg-gray-100 py-6 mt-12 text-center text-gray-500 text-sm select-none">
+    &copy; 2024 AppointEase. All rights reserved.
+  </footer>
+</body>
+</html>
+```

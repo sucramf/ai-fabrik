@@ -1,0 +1,17 @@
+{
+  "_comment": "Set ONE credential per provider to enable payments for this product. No live transactions until keys are set.",
+  "stripe": {
+    "secret_key": "SET_STRIPE_SECRET_KEY",
+    "publishable_key": "SET_STRIPE_PUBLISHABLE_KEY"
+  },
+  "paypal": {
+    "client_id": "SET_PAYPAL_CLIENT_ID",
+    "client_secret": "SET_PAYPAL_CLIENT_SECRET"
+  },
+  "apple_pay": {
+    "merchant_id": "SET_APPLE_MERCHANT_ID"
+  },
+  "google_pay": {
+    "merchant_id": "SET_GOOGLE_MERCHANT_ID"
+  }
+}

@@ -1,0 +1,62 @@
+# AI_FABRIK – errors.log
+# Superdiktator: produktionsklar granskning. Uppdaterad för ready-to-produce.
+
+## 1. RISKER
+
+### 1.1 Sökvägs- och strukturkonflikter
+- deploy.js: använder appsDir = "./apps", skriver deploy/index.html med länkar ./apps/${app}/app.html. Vid publicering som root: kontrollera att länkar pekar rätt.
+- copy_apps_to_deploy.js: bygger index från ./apps; workers skapar deploy/<id>/. Produktionsflödet använder deploy_index.js (endast PASS) istället.
+- generate_index.js: förväntar sig deploy/apps – workers skapar deploy/<id>/. Använd deploy_index.js för produktion.
+
+### 1.2 API-svarsstruktur
+- ideas.js använder res.output_text; övriga använder res.output[0].content[0].text. Fallback getText() används i inspektörer och trend_analyst. Övriga moduler kan standardiseras vid behov.
+
+### 1.3 Boss.js – parameterfel
+- runFactory(numberOfApps) anropar createApps(numberOfApps). createApps förväntar idé-array. Beslut: anropa Boss med idé-array från Superchief eller låt Boss hämta idéer innan createApps.
+
+### 1.4 Destruktiva batch-script
+- update_apps_run.js, update_app_html.js, add_app_function.js: kör endast manuellt, inte i automatisering. Automation Monitor + Superchief säkerställer att de inte körs i loop.
+
+### 1.5 Publisher.js
+- Tom fil. Implementera när deploy-strategi (t.ex. gh-pages) är fastställd.
+
+### 1.6 .env
+- OPENAI_API_KEY. Ska aldrig committas. Använd .gitignore. long_version.js laddar .env automatiskt.
+
+## 2. KOMPONENTER – PRODUKTIONSSTATUS
+
+- agents/inspectors/market_inspector.js – PRODUKTIONSKLAR (marknadsdata, trender mars–dec 2026)
+- agents/inspectors/money_inspector.js – PRODUKTIONSKLAR (intäktspotential)
+- agents/inspectors/legal_inspector.js – PRODUKTIONSKLAR (juridik, copyright, moral)
+- agents/inspectors/quality_inspector.js – PRODUKTIONSKLAR (bar: spel ≥ Monkey Island, web ≥ Hemnet)
+- marketing/trend_analyst.js – PRODUKTIONSKLAR (redan genererar pengar, marknad ej mättad, osäkerhet → Superchief)
+- marketing/marketing_agent.js – Stubb, integrerad i pipeline (SEO, social, annonser vid implementering)
+- marketing/user_feedback_agent.js – Stubb, redo (feedback → Quality Inspector vid implementering)
+- marketing/pricing_monetization_agent.js – Stubb, integrerad i pipeline (optimerar intäkter vid implementering)
+- marketing/growth_hacker.js – Stubb, integrerad i pipeline (A/B, kampanjer vid implementering)
+- testers/test_runner.js – PRODUKTIONSKLAR (PASS/FAIL, stickprov)
+- testers/quality_tester.js – PRODUKTIONSKLAR (PASS/FAIL, Hemnet-nivå)
+- automation_monitor.js – PRODUKTIONSKLAR (övervakar agenter, stoppar loopar, flaskhalsar)
+- deploy_index.js – Bygger deploy/index.html endast för PASS-produkter.
+
+## 3. KODLOOPAR
+
+- Automation Monitor: reportAction() anropas i Superchief; vid >6 samma action inom 60s → loopDetected, rapporteras till Superchief, körning kan avbrytas.
+- update_apps_run/update_app_html/add_app_function körs inte från pipeline; endast manuellt.
+
+## 4. BESLUTSPUNKTER TILL SUPERCHIEF
+
+1. Deploy-struktur: Produktion använder deploy/<id>/ (workers) + deploy_index.js (endast PASS). deploy.js/copy_apps_to_deploy/generate_index är alternativa script.
+2. Boss.runFactory: Anropa med idé-array eller uppdatera Boss att hämta idéer själv.
+3. Osäkra inspektörer: Idéer med uncertain=true rapporteras och behandlas nu som REJECT (går inte vidare utan manuell ändring av pipeline).
+4. trend_scanner.js / add_app_function.js: Ta bort eller flytta enligt struktur.
+5. publisher.js: Implementera vid behov för gh-pages eller annan publicering.
+
+## 5. READY-TO-PRODUCE SAMMANFATTNING
+
+- Ingen kodloop: Automation Monitor aktiv, inga upprepade auto-ändringar.
+- Alla beslut via Superchief: Idéer → Trend Analyst → Evolution → Inspektörer (market, money, legal) → Build → Quality Inspector + test_runner + quality_tester → endast PASS i deploy_index.
+- Alla projekt granskas: Trend Analyst, Market/Money/Legal på idé; Quality Inspector + stickprov på artifact.
+- Produktionskapacitet: Obegränsad (inga hårdkodade tak; monitor varnar vid flaskhalsar).
+- Stickprovskontroller: test_runner.js + quality_tester.js → PASS/FAIL; endast PASS deployas, FAIL rapporteras till Superchief.
+- Marknadsföring integrerad: runMarketing, suggestPricing, runGrowth anropas för PASS-produkter (stubs redo för intäkter vid implementering).

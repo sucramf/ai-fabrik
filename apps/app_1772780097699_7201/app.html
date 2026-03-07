@@ -1,0 +1,281 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NotifyMe - Appointment Reminder System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar for sidebar (optional) */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #a78bfa;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-indigo-600 font-bold text-2xl tracking-tight">NotifyMe</a>
+      <nav class="space-x-6 text-gray-600 font-medium hidden md:flex">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#tool" class="hover:text-indigo-600 transition">Customize</a>
+        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button id="menu-btn" class="md:hidden focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded">
+        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <nav id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+      <a href="#features" class="block px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Features</a>
+      <a href="#tool" class="block px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Customize</a>
+      <a href="#contact" class="block px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-indigo-600 text-white py-20 px-6">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-4">
+          Simplify Appointment Reminders<br />with SMS & Email Notifications
+        </h1>
+        <p class="text-indigo-200 max-w-xl mb-8">
+          NotifyMe helps small service businesses reduce no-shows and boost client satisfaction by automating appointment reminders tailored to your needs.
+        </p>
+        <a href="#tool" class="inline-block bg-white text-indigo-600 font-semibold py-3 px-8 rounded-lg shadow hover:shadow-lg transition">
+          Customize Your Reminders
+        </a>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/3548/3548416.png" alt="Appointment Reminder Illustration" class="w-full max-w-md mx-auto" />
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="py-20 px-6 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-extrabold text-center mb-12 text-gray-900">Features Built For Your Business</h2>
+    <div class="grid md:grid-cols-3 gap-12 text-gray-700">
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+        <div class="mb-6">
+          <svg class="w-12 h-12 text-indigo-600 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 8v4l3 3"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3 text-center">Flexible Scheduling</h3>
+        <p class="text-center">Set up reminders on custom lead times that fit your appointment schedule.</p>
+      </div>
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+        <div class="mb-6">
+          <svg class="w-12 h-12 text-indigo-600 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 1 1-12 0 6 6 0 0 1 12 0z"></path>
+            <path d="M12 14v3"></path>
+            <path d="M9 21h6"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3 text-center">SMS & Email Notifications</h3>
+        <p class="text-center">Reach your clients wherever they are with customizable SMS and email messages.</p>
+      </div>
+      <div class="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+        <div class="mb-6">
+          <svg class="w-12 h-12 text-indigo-600 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7v4a1 1 0 0 0 1 1h3"></path>
+            <path d="M21 7v4a1 1 0 0 1-1 1h-3"></path>
+            <path d="M7 16v5h10v-5"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3 text-center">Easy Integration</h3>
+        <p class="text-center">Simple setup with your existing booking system, no coding required.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customization Tool -->
+  <section id="tool" class="bg-white py-20 px-6 max-w-4xl mx-auto rounded-xl shadow-lg mb-24">
+    <h2 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Customize Your Appointment Reminder</h2>
+    <form id="reminderForm" class="space-y-8">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label for="serviceName" class="block font-semibold mb-2 text-gray-700">Service Name</label>
+          <input type="text" id="serviceName" placeholder="e.g., Haircut, Massage" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+        </div>
+        <div>
+          <label for="leadTime" class="block font-semibold mb-2 text-gray-700">Reminder Lead Time</label>
+          <select id="leadTime" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="60">1 Hour Before</option>
+            <option value="120">2 Hours Before</option>
+            <option value="1440" selected>1 Day Before</option>
+            <option value="2880">2 Days Before</option>
+            <option value="10080">1 Week Before</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-2 text-gray-700">Notification Methods</label>
+        <div class="flex items-center space-x-8">
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" id="notifyEmail" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
+            <span>Email</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" id="notifySMS" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
+            <span>SMS</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label for="emailTemplate" class="block font-semibold mb-2 text-gray-700">Email Template</label>
+        <textarea id="emailTemplate" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" required>Hi {{clientName}},
+
+This is a reminder for your upcoming appointment for {{serviceName}} scheduled on {{appointmentDate}} at {{appointmentTime}}.
+
+Looking forward to seeing you!
+
+Best,
+{{businessName}}</textarea>
+      </div>
+      <div>
+        <label for="smsTemplate" class="block font-semibold mb-2 text-gray-700">SMS Template</label>
+        <textarea id="smsTemplate" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" required>Reminder: Your {{serviceName}} appointment is on {{appointmentDate}} at {{appointmentTime}}. See you soon!</textarea>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 text-white font-semibold rounded-lg px-10 py-3 shadow transition">
+          Preview Reminder Messages
+        </button>
+      </div>
+    </form>
+
+    <div id="previewSection" class="mt-12 hidden">
+      <h3 class="text-xl font-bold mb-4 text-indigo-600 text-center">Preview</h3>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 whitespace-pre-wrap font-mono text-indigo-900">
+          <h4 class="font-semibold mb-2">Email Message</h4>
+          <div id="emailPreview" class="text-sm"></div>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 whitespace-pre-wrap font-mono text-indigo-900">
+          <h4 class="font-semibold mb-2">SMS Message</h4>
+          <div id="smsPreview" class="text-sm"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact / Footer -->
+  <footer id="contact" class="bg-indigo-600 text-indigo-100 py-12 mt-32">
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+      <div>
+        <h4 class="font-extrabold text-lg mb-4">NotifyMe</h4>
+        <p>Your partner in reducing no-shows and improving client communication with flexible appointment reminders.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Contact Us</h4>
+        <p>Email: <a href="mailto:support@notifyme.com" class="underline hover:text-indigo-300">support@notifyme.com</a></p>
+        <p>Phone: <a href="tel:+1234567890" class="underline hover:text-indigo-300">+1 (234) 567-890</a></p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Follow Us</h4>
+        <div class="flex space-x-6">
+          <a href="#" aria-label="Twitter" class="hover:text-indigo-300">
+            <svg fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0022.4.36a9.07 9.07 0 01-2.9 1.11 4.52 4.52 0 00-7.94 4.13A12.81 12.81 0 013 4.16a4.52 4.52 0 001.4 6.03A4.42 4.42 0 012 9.57v.06a4.52 4.52 0 003.63 4.44 4.48 4.48 0 01-2 .08 4.52 4.52 0 004.22 3.14A9 9 0 012 19.54a12.77 12.77 0 006.92 2.03c8.3 0 12.84-6.88 12.84-12.84l-.01-.59A9.18 9.18 0 0023 3z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn" class="hover:text-indigo-300">
+            <svg fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook" class="hover:text-indigo-300">
+            <svg fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-12 text-indigo-300 text-sm">
+      &copy; 2024 NotifyMe, Inc. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu toggle
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Sample placeholders for preview
+    const sampleData = {
+      clientName: "Alex Johnson",
+      appointmentDate: "May 10, 2024",
+      appointmentTime: "3:00 PM",
+      businessName: "NotifyMe Salons"
+    };
+
+    // Render template function - replaces {{placeholders}} in template with values
+    function renderTemplate(template, data) {
+      return template.replace(/{{\s*([\w]+)\s*}}/g, (_, key) => {
+        return data[key] || '';
+      });
+    }
+
+    const form = document.getElementById('reminderForm');
+    const previewSection = document.getElementById('previewSection');
+    const emailPreview = document.getElementById('emailPreview');
+    const smsPreview = document.getElementById('smsPreview');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      // Gather input values
+      const serviceName = form.serviceName.value.trim();
+      const leadTime = form.leadTime.value;
+      const notifyEmail = form.notifyEmail.checked;
+      const notifySMS = form.notifySMS.checked;
+      const emailTemplate = form.emailTemplate.value.trim();
+      const smsTemplate = form.smsTemplate.value.trim();
+
+      if (!notifyEmail && !notifySMS) {
+        alert("Please select at least one notification method (Email or SMS).");
+        return;
+      }
+
+      // Build data for template
+      const dataForTemplate = {
+        ...sampleData,
+        serviceName,
+        leadTime
+      };
+
+      // Render previews
+      if (notifyEmail) {
+        emailPreview.textContent = renderTemplate(emailTemplate, dataForTemplate);
+      } else {
+        emailPreview.textContent = "(Email notifications disabled)";
+      }
+      if (notifySMS) {
+        smsPreview.textContent = renderTemplate(smsTemplate, dataForTemplate);
+      } else {
+        smsPreview.textContent = "(SMS notifications disabled)";
+      }
+
+      previewSection.classList.remove('hidden');
+      // Scroll to preview
+      previewSection.scrollIntoView({behavior: "smooth"});
+    });
+  </script>
+</body>
+</html>
+```

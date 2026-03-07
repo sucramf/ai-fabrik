@@ -1,0 +1,421 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quick Contract Generator - SaaS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-indigo-600 font-bold text-2xl tracking-wide">QuickContract</a>
+      <nav class="space-x-6 text-gray-600 hidden sm:flex">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#generator" class="hover:text-indigo-600 transition">Generate</a>
+        <a href="#footer" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <button class="sm:hidden text-indigo-600 focus:outline-none" id="navToggle" aria-label="Toggle menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+        </svg>
+      </button>
+    </div>
+    <nav id="mobileMenu" class="sm:hidden px-6 pb-4 hidden">
+      <a href="#features" class="block py-2 text-indigo-600 font-medium">Features</a>
+      <a href="#generator" class="block py-2 text-indigo-600 font-medium">Generate</a>
+      <a href="#footer" class="block py-2 text-indigo-600 font-medium">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-indigo-600 text-white">
+    <div class="max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center space-y-10 md:space-y-0 md:space-x-12">
+      <div class="md:flex-1 max-w-xl text-center md:text-left">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight">Generate Custom Contracts in Seconds</h1>
+        <p class="mt-6 text-lg tracking-wide text-indigo-100">QuickContract is the easiest way to create professional contracts tailored to your needs — no legal jargon, no hassle.</p>
+        <a href="#generator" class="inline-block mt-8 bg-white text-indigo-600 font-semibold rounded-lg px-8 py-3 shadow-lg hover:bg-indigo-50 transition">Try it now</a>
+      </div>
+      <div class="md:flex-1 max-w-md w-full bg-indigo-500 bg-opacity-30 rounded-lg p-8 shadow-lg">
+        <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Contract Signing" class="rounded-lg shadow-md" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="max-w-7xl mx-auto px-6 py-20">
+    <h2 class="text-3xl font-extrabold text-center text-gray-900 mb-12">Why QuickContract?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="bg-white rounded-lg p-8 shadow hover:shadow-lg transition">
+        <div class="mb-5 text-indigo-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m2 9H7a2 2 0 01-2-2V7a2 2 0 012-2h5l5 5v9a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-center md:text-left">Fast & Easy</h3>
+        <p class="text-gray-600 text-center md:text-left">Generate fully personalized contracts with a simple and intuitive interface.</p>
+      </div>
+      <div class="bg-white rounded-lg p-8 shadow hover:shadow-lg transition">
+        <div class="mb-5 text-indigo-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a5 5 0 00-10 0v2M7 13h10l1 9H6l1-9z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-center md:text-left">Customizable Templates</h3>
+        <p class="text-gray-600 text-center md:text-left">Choose from multiple contract types and tailor them to your needs.</p>
+      </div>
+      <div class="bg-white rounded-lg p-8 shadow hover:shadow-lg transition">
+        <div class="mb-5 text-indigo-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2m4 6v-2a4 4 0 00-8 0v2m-2 4h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-center md:text-left">Download & Share</h3>
+        <p class="text-gray-600 text-center md:text-left">Export contracts as PDF or share them digitally in seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Working UI Tool: Contract Generator -->
+  <section id="generator" class="bg-white py-20">
+    <div class="max-w-4xl mx-auto px-6">
+      <h2 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Quick Contract Generator</h2>
+      <form id="contractForm" class="bg-gray-50 rounded-lg shadow p-8 space-y-6" autocomplete="off">
+        <!-- Contract Type -->
+        <div>
+          <label for="contractType" class="block text-sm font-medium text-gray-700 mb-1">Contract Type</label>
+          <select id="contractType" required class="w-full rounded border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="" disabled selected>Select a contract type</option>
+            <option value="nda">Non-Disclosure Agreement (NDA)</option>
+            <option value="freelance">Freelance Agreement</option>
+            <option value="sale">Sales Contract</option>
+          </select>
+        </div>
+
+        <!-- Parties -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="partyA" class="block text-sm font-medium text-gray-700 mb-1">Party A Name</label>
+            <input id="partyA" name="partyA" type="text" required placeholder="Company or Person" class="w-full rounded border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+          </div>
+          <div>
+            <label for="partyB" class="block text-sm font-medium text-gray-700 mb-1">Party B Name</label>
+            <input id="partyB" name="partyB" type="text" required placeholder="Company or Person" class="w-full rounded border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+          </div>
+        </div>
+
+        <!-- Contract Details -->
+        <div id="extraFields" class="space-y-6"></div>
+
+        <!-- Generate Button -->
+        <div class="text-center">
+          <button type="submit" id="generateBtn" class="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            Generate Contract
+          </button>
+        </div>
+      </form>
+
+      <!-- Output area -->
+      <section id="outputSection" class="mt-12 bg-gray-100 rounded-lg p-8 shadow-md hidden">
+        <h3 class="text-xl font-semibold mb-4 text-gray-900">Your Generated Contract</h3>
+        <pre id="contractOutput" class="whitespace-pre-wrap text-gray-800 font-mono text-sm max-h-96 overflow-auto"></pre>
+        <div class="mt-6 flex justify-end space-x-4">
+          <button id="copyBtn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500">Copy to Clipboard</button>
+          <button id="downloadBtn" class="bg-white text-indigo-600 border border-indigo-600 px-4 py-2 rounded hover:bg-indigo-50 transition focus:outline-none focus:ring-2 focus:ring-indigo-500">Download as .txt</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-gray-800 text-gray-300 py-10 mt-20">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <p>© 2024 QuickContract. All rights reserved.</p>
+      <p class="mt-2">
+        <a href="mailto:support@quickcontract.example" class="underline hover:text-indigo-400">support@quickcontract.example</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const navToggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    navToggle.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.remove('hidden');
+      } else {
+        mobileMenu.classList.add('hidden');
+      }
+    });
+
+    // Contract templates as functions
+    const templates = {
+      nda: ({partyA, partyB, duration}) => `
+NON-DISCLOSURE AGREEMENT (NDA)
+
+This Non-Disclosure Agreement ("Agreement") is entered into as of the date below by and between ${partyA} ("Disclosing Party") and ${partyB} ("Receiving Party").
+
+1. Purpose:
+The parties wish to explore a business opportunity of mutual interest and in connection with this opportunity, Disclosing Party may disclose certain confidential information.
+
+2. Confidential Information:
+Confidential information shall remain confidential for a period of ${duration} months from the effective date of this Agreement.
+
+3. Obligations:
+Receiving Party agrees not to disclose or use any Confidential Information except as permitted under this Agreement.
+
+IN WITNESS WHEREOF, the parties hereto have executed this Agreement as of the date indicated below.
+
+______________________________    ______________________________
+${partyA}                        ${partyB}
+
+Date: _________________________    Date: _________________________
+`.trim(),
+
+      freelance: ({partyA, partyB, project, payment, deadline}) => `
+FREELANCE AGREEMENT
+
+This Freelance Agreement ("Agreement") is made between ${partyA} ("Client") and ${partyB} ("Freelancer") effective as of the date below.
+
+1. Services:
+Freelancer agrees to provide the following services: ${project}.
+
+2. Payment:
+Client agrees to pay Freelancer ${payment} upon completion of the services.
+
+3. Deadline:
+The services shall be completed by ${deadline}.
+
+4. Ownership:
+Upon full payment, all deliverables will become the property of Client.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date indicated below.
+
+______________________________    ______________________________
+${partyA}                        ${partyB}
+
+Date: _________________________    Date: _________________________
+`.trim(),
+
+      sale: ({partyA, partyB, item, price, deliveryDate}) => `
+SALES CONTRACT
+
+This Sales Contract ("Contract") is entered into on the date below by and between ${partyA} ("Seller") and ${partyB} ("Buyer").
+
+1. Item Description:
+Seller agrees to sell, and Buyer agrees to purchase the following item: ${item}.
+
+2. Purchase Price:
+The total purchase price is ${price}.
+
+3. Delivery:
+The item will be delivered by ${deliveryDate}.
+
+4. Acceptance:
+Buyer shall inspect the item upon delivery and notify Seller of any issues within 5 business days.
+
+IN WITNESS WHEREOF, the parties have signed this Contract as of the date below.
+
+______________________________    ______________________________
+${partyA}                        ${partyB}
+
+Date: _________________________    Date: _________________________
+`.trim()
+    };
+
+    // Elements
+    const contractTypeEl = document.getElementById('contractType');
+    const extraFieldsEl = document.getElementById('extraFields');
+    const contractForm = document.getElementById('contractForm');
+    const outputSection = document.getElementById('outputSection');
+    const contractOutput = document.getElementById('contractOutput');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // Clear extra fields
+    function clearExtraFields() {
+      extraFieldsEl.innerHTML = '';
+    }
+
+    // Create input helper
+    function createInput({label, id, type = 'text', placeholder = '', required = true}) {
+      const wrapper = document.createElement('div');
+      const labelEl = document.createElement('label');
+      labelEl.setAttribute('for', id);
+      labelEl.className = 'block text-sm font-medium text-gray-700 mb-1';
+      labelEl.textContent = label;
+
+      let inputEl;
+      if (type === 'textarea') {
+        inputEl = document.createElement('textarea');
+        inputEl.rows = 3;
+      } else {
+        inputEl = document.createElement('input');
+        inputEl.type = type;
+      }
+      inputEl.id = id;
+      inputEl.name = id;
+      inputEl.placeholder = placeholder;
+      inputEl.required = required;
+      inputEl.className = 'w-full rounded border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500';
+
+      wrapper.appendChild(labelEl);
+      wrapper.appendChild(inputEl);
+      return wrapper;
+    }
+
+    // Update extra fields by contract type
+    function updateExtraFields(type) {
+      clearExtraFields();
+      if (type === 'nda') {
+        extraFieldsEl.appendChild(createInput({
+          label: 'Duration (in months)',
+          id: 'duration',
+          type: 'number',
+          placeholder: '12',
+          required: true
+        }));
+      } else if (type === 'freelance') {
+        extraFieldsEl.appendChild(createInput({
+          label: 'Project Description',
+          id: 'project',
+          type: 'textarea',
+          placeholder: 'Briefly describe the project',
+          required: true
+        }));
+        extraFieldsEl.appendChild(createInput({
+          label: 'Payment Terms',
+          id: 'payment',
+          type: 'text',
+          placeholder: '$1,500 upon project completion',
+          required: true
+        }));
+        extraFieldsEl.appendChild(createInput({
+          label: 'Deadline',
+          id: 'deadline',
+          type: 'date',
+          placeholder: '',
+          required: true
+        }));
+      } else if (type === 'sale') {
+        extraFieldsEl.appendChild(createInput({
+          label: 'Item Description',
+          id: 'item',
+          type: 'text',
+          placeholder: 'E.g. 10 laptops model X',
+          required: true
+        }));
+        extraFieldsEl.appendChild(createInput({
+          label: 'Price',
+          id: 'price',
+          type: 'text',
+          placeholder: '$20,000',
+          required: true
+        }));
+        extraFieldsEl.appendChild(createInput({
+          label: 'Delivery Date',
+          id: 'deliveryDate',
+          type: 'date',
+          placeholder: '',
+          required: true
+        }));
+      }
+    }
+
+    contractTypeEl.addEventListener('change', (e) => {
+      updateExtraFields(e.target.value);
+    });
+
+    // Form submit handler to generate contract
+    contractForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(contractForm);
+      const type = formData.get('contractType');
+      const partyA = formData.get('partyA').trim();
+      const partyB = formData.get('partyB').trim();
+
+      if (!templates[type]) {
+        alert('Please select a valid contract type.');
+        return;
+      }
+      if (!partyA || !partyB) {
+        alert('Please fill in both Party A and Party B names.');
+        return;
+      }
+
+      let data = { partyA, partyB };
+
+      // Gather extra fields depending on contract type
+      if (type === 'nda') {
+        const dur = formData.get('duration');
+        if (!dur || isNaN(dur) || dur <= 0) {
+          alert('Please enter a valid duration (months).');
+          return;
+        }
+        data.duration = dur;
+      } else if (type === 'freelance') {
+        const project = formData.get('project').trim();
+        const payment = formData.get('payment').trim();
+        const deadline = formData.get('deadline');
+        if (!project || !payment || !deadline) {
+          alert('Please complete all freelance contract fields.');
+          return;
+        }
+        data.project = project;
+        data.payment = payment;
+        data.deadline = new Date(deadline).toLocaleDateString();
+      } else if (type === 'sale') {
+        const item = formData.get('item').trim();
+        const price = formData.get('price').trim();
+        const deliveryDateRaw = formData.get('deliveryDate');
+        if (!item || !price || !deliveryDateRaw) {
+          alert('Please complete all sales contract fields.');
+          return;
+        }
+        data.item = item;
+        data.price = price;
+        data.deliveryDate = new Date(deliveryDateRaw).toLocaleDateString();
+      }
+
+      // Generate contract text
+      const contractText = templates[type](data);
+
+      // Show output section
+      contractOutput.textContent = contractText;
+      outputSection.classList.remove('hidden');
+      outputSection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Copy button handler
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(contractOutput.textContent)
+        .then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => (copyBtn.textContent = 'Copy to Clipboard'), 2000);
+        })
+        .catch(() => {
+          alert('Failed to copy. Please copy manually.');
+        });
+    });
+
+    // Download button handler - download as .txt
+    downloadBtn.addEventListener('click', () => {
+      const text = contractOutput.textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'contract.txt';
+      a.click();
+
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
+```

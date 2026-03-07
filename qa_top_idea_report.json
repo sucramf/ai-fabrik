@@ -1,0 +1,95 @@
+{
+  "genererad": "2026-03-07T06:56:17.273Z",
+  "appId": "app_1772833685668_6583",
+  "idé": "Anpassningsbara lanterns med kreativ design",
+  "sektioner": [
+    {
+      "section": "UI/UX",
+      "checks": [
+        {
+          "name": "Länkar (fragment)",
+          "status": "OK",
+          "detail": "1 fragment-länk(ar) OK"
+        },
+        {
+          "name": "Responsivt (viewport)",
+          "status": "OK",
+          "detail": "meta viewport finns"
+        },
+        {
+          "name": "Responsivt (layout)",
+          "status": "OK",
+          "detail": "Responsiv layout (media/layout-klasser)"
+        },
+        {
+          "name": "Struktur/Kvalitet (inspector)",
+          "status": "OK",
+          "detail": "Artifact looks like a complete, structured page with headings and CTA – passes heuristic quality bar."
+        },
+        {
+          "name": "Struktur/Kvalitet (tester)",
+          "status": "OK",
+          "detail": "PASS"
+        }
+      ],
+      "status": "OK",
+      "fixes": []
+    },
+    {
+      "section": "Funktioner",
+      "checks": [
+        {
+          "name": "Stickprov (test_runner)",
+          "status": "OK",
+          "detail": "PASS"
+        },
+        {
+          "name": "Idé återfinns i innehåll",
+          "status": "OK",
+          "detail": "Idé: \"Anpassningsbara lanterns med kreativ design...\" – nyckelord i sidan: 5/5"
+        }
+      ],
+      "status": "OK",
+      "fixes": []
+    },
+    {
+      "section": "Betalvägar",
+      "checks": [
+        {
+          "name": "Stripe",
+          "status": "WARN",
+          "detail": "Scaffold – sätt test-nycklar för dummy-test (t.ex. Stripe: pk_test_..., sk_test_...)"
+        },
+        {
+          "name": "PayPal",
+          "status": "WARN",
+          "detail": "Scaffold – sätt test-nycklar för dummy-test (t.ex. Stripe: pk_test_..., sk_test_...)"
+        },
+        {
+          "name": "Apple Pay",
+          "status": "WARN",
+          "detail": "Scaffold – sätt test-nycklar för dummy-test (t.ex. Stripe: pk_test_..., sk_test_...)"
+        },
+        {
+          "name": "Google Pay",
+          "status": "WARN",
+          "detail": "Scaffold – sätt test-nycklar för dummy-test (t.ex. Stripe: pk_test_..., sk_test_...)"
+        },
+        {
+          "name": "Betalvägar sammanfattning",
+          "status": "WARN",
+          "detail": "Alla providers är scaffold (SET_*). Sätt test-nycklar för dummy-test; rapportera sedan OK när test genomförts."
+        }
+      ],
+      "status": "WARN",
+      "fixes": [
+        "Stripe dummy-test: sätt publishable_key till pk_test_... och secret_key till sk_test_... i payment_config.json.",
+        "PayPal: använd Sandbox client_id/client_secret för test.",
+        "För full QA: sätt Stripe test keys (pk_test_, sk_test_), testa betalflöde, rapportera sedan 'Betalvägar testade med dummy'."
+      ]
+    }
+  ],
+  "status": "WARN",
+  "fullständig_och_redo_för_nästa_steg": true,
+  "sammanfattning": "WARN – produkten kan anses redo efter manuell kontroll (t.ex. betalvägar med test-nycklar)."
+}
