@@ -20,6 +20,9 @@ import { createApps } from "../agents/workers.js";
 import { inspectQuality } from "../agents/inspectors/quality_inspector.js";
 import { runTests } from "../testers/test_runner.js";
 import { testQuality } from "../testers/quality_tester.js";
+import { runAppTests } from "../agents/tester_agent.js";
+import { evaluateBuildability } from "../agents/capability_filter.js";
+import { recordMetrics } from "../agents/revenue_tracker.js";
 import { buildDeployIndex } from "../deploy_index.js";
 import { runMarketing } from "../marketing/marketing_agent.js";
 import { suggestPricing } from "../marketing/pricing_monetization_agent.js";
@@ -181,9 +184,10 @@ export async function runFullProductPipeline() {
     return { ok: true, createdIds: [], passedIds: [], filesCreated: [] };
   }
 
-  console.log("Approved ideas:", approvedIdeas.length);
+  console.log("\n[PIPELINE] IDEA_SELECTED");
   approvedIdeas.forEach((i, n) => console.log(" ", n + 1 + ".", i));
 
+  console.log("\n[PIPELINE] BUILD_STARTED");
   const createdIds = await createApps(approvedIdeas);
   const allFilesCreated = [];
   const ideaByAppId = {};
@@ -198,7 +202,8 @@ export async function runFullProductPipeline() {
     allFilesCreated.push(...marketingFiles, ...paymentFiles);
     console.log("Marketing + payment scaffolding:", appId);
   }
-
+  console.log("[PIPELINE] BUILD_COMPLETED – apps:", createdIds.join(", ") || "(none)");
+  console.log("[PIPELINE] PRODUCT_SPEC_CREATED (by workers, per app – see apps/<id>/spec.json)");
   await report("Build", [
     "Created apps: " + createdIds.join(", "),
     "Marketing + payment files written per product."
@@ -207,42 +212,81 @@ export async function runFullProductPipeline() {
   const passedIds = [];
   const failedReports = [];
 
-  for (const appId of createdIds) {
+  async function loadSpecForApp(appId) {
+    const specPath = path.join(root, "apps", appId, "spec.json");
+    try {
+      const raw = await fs.readFile(specPath, "utf-8");
+      return JSON.parse(raw);
+    } catch {
+      const idea = ideaByAppId[appId] || "";
+      return { product_name: idea || appId, product_type: "micro_saas", features: [] };
+    }
+  }
+
+  async function runQaAndTester(appId, spec) {
     const deployPath = path.join(root, "deploy", appId);
     let html = "";
     try {
       html = await fs.readFile(path.join(deployPath, "app.html"), "utf-8");
     } catch {
-      failedReports.push({ appId, reason: "Missing app.html" });
-      continue;
+      return { pass: false, reason: "Missing app.html" };
     }
-
     const qualityInsp = await inspectQuality(html, "website");
-    if (!qualityInsp.pass) {
-      failedReports.push({ appId, reason: "Quality Inspector: " + qualityInsp.reason });
-      continue;
-    }
-
+    if (!qualityInsp.pass) return { pass: false, reason: "Quality Inspector: " + qualityInsp.reason };
     const run = await runTests(deployPath);
-    if (!run.passed) {
-      failedReports.push({ appId, reason: "test_runner: " + run.message });
-      continue;
-    }
-
+    if (!run.passed) return { pass: false, reason: "test_runner: " + run.message };
     const qual = await testQuality(deployPath);
-    if (!qual.passed) {
-      failedReports.push({ appId, reason: "quality_tester: " + qual.message });
+    if (!qual.passed) return { pass: false, reason: "quality_tester: " + qual.message };
+    const testResult = await runAppTests(path.join("deploy", appId), spec);
+    if (!testResult.passed) return { pass: false, reason: "tester_agent: " + (testResult.issues || []).join("; "), issues: testResult.issues };
+    return { pass: true };
+  }
+
+  for (const appId of createdIds) {
+    const spec = await loadSpecForApp(appId);
+    const deployPath = path.join(root, "deploy", appId);
+
+    console.log("\n[PIPELINE] TESTING –", appId);
+    let result = await runQaAndTester(appId, spec);
+
+    if (!result.pass) {
+      console.log("[PIPELINE] TEST_FAILED –", appId, "–", result.reason);
+      const evalResult = await evaluateBuildability(spec);
+      const revisedIdea = (evalResult.adjusted_scope && evalResult.adjusted_scope[0])
+        ? (spec.product_name || ideaByAppId[appId] || appId) + ". " + evalResult.adjusted_scope[0]
+        : (spec.product_name || ideaByAppId[appId] || appId) + " (simplified)";
+      console.log("[PIPELINE] Rebuild (one attempt) with adjusted_scope:", revisedIdea.slice(0, 80) + "...");
+      const retryIds = await createApps([revisedIdea]);
+      if (retryIds.length === 0) {
+        failedReports.push({ appId, reason: result.reason + "; rebuild produced no app" });
+        continue;
+      }
+      const newAppId = retryIds[0];
+      ideaByAppId[newAppId] = revisedIdea;
+      const ideaForNew = ideaByAppId[newAppId] || "";
+      await writeMarketingMaterials(newAppId, ideaForNew);
+      await writePaymentConfig(newAppId);
+      const specRetry = await loadSpecForApp(newAppId);
+      console.log("[PIPELINE] TESTING (retry) –", newAppId);
+      result = await runQaAndTester(newAppId, specRetry);
+      if (!result.pass) {
+        console.log("[PIPELINE] TEST_FAILED (retry) –", newAppId, "–", result.reason);
+        failedReports.push({ appId: newAppId, reason: result.reason });
+        continue;
+      }
+      console.log("[PIPELINE] TEST_PASSED –", newAppId, "(after rebuild)");
+      passedIds.push(newAppId);
       continue;
     }
 
+    console.log("[PIPELINE] TEST_PASSED –", appId);
     passedIds.push(appId);
-    console.log("QA PASS:", appId);
   }
 
   await report("QA FAIL (not deployed)", failedReports.map((r) => r.appId + ": " + r.reason));
 
+  console.log("\n[PIPELINE] DEPLOYED – buildDeployIndex for", passedIds.length, "product(s)");
   buildDeployIndex(passedIds);
-  console.log("\nDeploy index updated – PASS products:", passedIds.length);
 
   for (const appId of passedIds) {
     await runMarketing(appId, ideaByAppId[appId] || "");
@@ -250,6 +294,23 @@ export async function runFullProductPipeline() {
     await runGrowth(appId);
   }
   console.log("Marketing / pricing / growth hooks run for PASS products.");
+
+  const currentDate = new Date().toISOString().slice(0, 10);
+  for (const appId of passedIds) {
+    const spec = await loadSpecForApp(appId);
+    const productName = spec.product_name || ideaByAppId[appId] || appId;
+    await recordMetrics(productName, {
+      deploy_date: currentDate,
+      visitors: 0,
+      signups: 0,
+      revenue: 0,
+      conversion_rate: 0
+    });
+    console.log("[PIPELINE] METRICS_INITIALIZED –", productName);
+  }
+  if (passedIds.length > 0) {
+    console.log("[PIPELINE] METRICS_INITIALIZED – data/revenue_metrics.json");
+  }
 
   const marketingChannels = ["google_ads", "tiktok", "youtube", "linkedin", "pinterest", "product_hunt"];
   const allFilePaths = [];

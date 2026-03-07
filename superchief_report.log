@@ -276,3 +276,45 @@ Var API-nycklar: apps/<appId>/payment_config.json
 Artifact looks like a complete, structured page with headings and CTA – passes heuristic quality bar.
 --- End ---
 
+
+--- FULL PRODUCT PIPELINE: Start ---
+Pipeline started at 2026-03-07T10:56:18.703Z
+--- End ---
+
+
+--- FULL PRODUCT PIPELINE: Build ---
+Created apps: app_1772880978711_4909
+Marketing + payment files written per product.
+--- End ---
+
+
+--- QUALITY INSPECTOR: PASS ---
+Artifact looks like a complete, structured page with headings and CTA – passes heuristic quality bar.
+--- End ---
+
+
+--- FULL PRODUCT PIPELINE: Confirmation ---
+EXEMPLAR PRODUKTER KLARA
+apps/app_1772880978711_4909/idea.txt
+apps/app_1772880978711_4909/app.html
+apps/app_1772880978711_4909/marketing.txt
+apps/app_1772880978711_4909/marketing/google_ads.txt
+apps/app_1772880978711_4909/marketing/tiktok.txt
+apps/app_1772880978711_4909/marketing/youtube.txt
+apps/app_1772880978711_4909/marketing/linkedin.txt
+apps/app_1772880978711_4909/marketing/pinterest.txt
+apps/app_1772880978711_4909/marketing/product_hunt.txt
+apps/app_1772880978711_4909/payment_config.json
+apps/app_1772880978711_4909/PAYMENT_README.txt
+deploy/app_1772880978711_4909/index.html
+deploy/app_1772880978711_4909/app.html
+deploy/app_1772880978711_4909/marketing/google_ads.txt
+deploy/app_1772880978711_4909/marketing/tiktok.txt
+deploy/app_1772880978711_4909/marketing/youtube.txt
+deploy/app_1772880978711_4909/marketing/linkedin.txt
+deploy/app_1772880978711_4909/marketing/pinterest.txt
+deploy/app_1772880978711_4909/marketing/product_hunt.txt
+deploy/index.html
+Var API-nycklar: apps/<appId>/payment_config.json
+--- End ---
+
