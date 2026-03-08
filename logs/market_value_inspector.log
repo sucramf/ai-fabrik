@@ -1,0 +1,3 @@
+2026-03-08T17:33:17.222Z [INFO] Market value check {"level":"info","idea":"Meeting cost calculator for teams","pass":true}
+2026-03-08T17:33:17.226Z [INFO] Market value check {"level":"info","idea":"Random meme generator","pass":false,"reason":"Random meme generator – no real market value"}
+2026-03-08T17:33:17.233Z [INFO] Market value check {"level":"info","idea":"invoice generator for freelancers","pass":true}

@@ -1,0 +1,10 @@
+{
+  "actions": [
+    {
+      "app_id": "app_123",
+      "action": "add_freemium_tier",
+      "priority": "high"
+    }
+  ],
+  "updated": ""
+}

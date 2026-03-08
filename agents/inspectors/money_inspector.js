@@ -37,10 +37,16 @@ export async function inspectMoney(idea) {
     "paid plan",
     "pricing",
     "tier",
-    "upgrade"
+    "upgrade",
+    "freelancer",
+    "for freelancers",
+    "invoice",
+    "calculator",
+    "tool",
+    "generator"
   ];
 
-  const weakKeywords = ["free", "open source only", "no monetization"];
+  const weakKeywords = ["open source only", "no monetization", "free only", "completely free"];
 
   let monetScore = 0;
   for (const k of monetizationKeywords) {

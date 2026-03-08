@@ -1,0 +1,12 @@
+2026-03-08T14:17:08.701Z [INFO] Idea injector start {"level":"info"}
+2026-03-08T14:17:08.710Z [INFO] Ideas extracted from trend opportunities {"level":"info","extracted":5,"aboveThreshold":60}
+2026-03-08T14:17:08.714Z [INFO] Ideas written to ideas/ideas.json {"level":"info","written":24,"injected":5,"dropped":0}
+2026-03-08T14:18:27.024Z [INFO] Idea injector start {"level":"info"}
+2026-03-08T14:18:27.030Z [INFO] Ideas extracted from trend opportunities {"level":"info","extracted":5,"aboveThreshold":60}
+2026-03-08T14:18:27.034Z [INFO] Ideas written to ideas/ideas.json {"level":"info","written":24,"injected":0,"dropped":0}
+2026-03-08T14:18:56.811Z [INFO] Idea injector start {"level":"info"}
+2026-03-08T14:18:56.815Z [WARN] trend_opportunities.json missing (ideas/ and data/) {"level":"warn"}
+2026-03-08T14:18:56.816Z [WARN] Idea injector exiting without writing; existing ideas.json unchanged {"level":"warn","reason":"missing"}
+2026-03-08T14:29:20.596Z [INFO] Idea injector start {"level":"info"}
+2026-03-08T14:29:20.599Z [INFO] Ideas extracted from trend opportunities {"level":"info","extracted":5,"aboveThreshold":60}
+2026-03-08T14:29:20.602Z [INFO] Ideas written to ideas/ideas.json {"level":"info","written":24,"injected":0,"dropped":0}

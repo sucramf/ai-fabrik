@@ -2,17 +2,53 @@
  * PRODUCT ARCHITECT – Converts a raw idea into a structured product specification
  * before any code is generated. Used to align workers and pipeline with a clear spec.
  *
+ * Quality goal: Duolingo / Hemnet / Monkey Island scope – focused, high-quality products.
+ * NOT: massive platforms, MMO-scale systems, low-effort spam tools.
+ *
  * Input: { idea_title, idea_description }
  * Output: Product spec (product_name, product_type, target_user, features, pages, tech_stack, etc.)
  */
 
-const PRODUCT_TYPES = [
-  "generator",
-  "calculator",
-  "tracker",
-  "analyzer",
-  "directory",
-  "micro_saas"
+import { AI_MODELS } from "../config/ai_models.js";
+
+/** Allowed product categories – specs must use only these. */
+const ALLOWED_PRODUCT_CATEGORIES = [
+  "web app",
+  "mobile app",
+  "desktop app",
+  "browser game",
+  "casual web game",
+  "SaaS micro-product",
+  "focused platform",
+  "specialized productivity tool",
+  "niche consumer app",
+  "content or learning product"
+];
+
+/** Normalized keys for lookup (lowercase, spaces → underscores). */
+const ALLOWED_NORMALIZED = new Set(
+  ALLOWED_PRODUCT_CATEGORIES.map((c) => c.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_"))
+);
+
+/** Out-of-scope types → closest allowed category. */
+const DOWNGRADE_MAP = [
+  { pattern: /\b(mmo|open\s*world|massive\s*multiplayer|world\s*of\s*warcraft)\b/i, to: "browser game" },
+  { pattern: /\b(platform|mega\s*platform|infrastructure\s*platform)\b/i, to: "focused platform" },
+  { pattern: /\b(ai\s*mega|mega\s*productivity|all-in-one\s*platform)\b/i, to: "specialized productivity tool" },
+  { pattern: /\b(video\s*game|aaa\s*game|3d\s*game|game\s*engine)\b/i, to: "casual web game" },
+  { pattern: /\b(social\s*network|messaging\s*platform|feed\s*platform)\b/i, to: "niche consumer app" },
+  { pattern: /\b(generator|calculator|tracker|analyzer|directory)\b/i, to: "web app" },
+  { pattern: /\b(micro\s*saas|micro_saas|saas)\b/i, to: "SaaS micro-product" },
+  { pattern: /\b(productivity|planner|tool)\b/i, to: "specialized productivity tool" },
+  { pattern: /\b(game|puzzle|quiz)\b/i, to: "browser game" },
+  { pattern: /\b(learning|education|content)\b/i, to: "content or learning product" }
+];
+
+/** Trivial / spam patterns – idea is rejected, not downgraded. */
+const REJECT_PATTERNS = [
+  /\b(random\s*meme|meme\s*generator)\b/i,
+  /\b(spam\s*generator|low-effort\s*tool)\b/i,
+  /\b(clickbait|fake\s*news\s*generator)\b/i
 ];
 
 const REQUIRED_PAGES = ["landing", "app", "pricing", "about"];
@@ -24,19 +60,44 @@ const DEFAULT_TECH_STACK = [
   "simple JSON storage"
 ];
 
+function normalizeKey(s) {
+  return (s || "").toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_").trim();
+}
+
 /**
- * Normalize product_type to one of the allowed enum values.
+ * Check if idea text matches reject patterns (trivial/spam). Returns rejection reason or null.
  */
-function normalizeProductType(value) {
-  if (!value || typeof value !== "string") return "micro_saas";
-  const v = value.toLowerCase().replace(/\s+/g, "_").trim();
-  if (PRODUCT_TYPES.includes(v)) return v;
-  if (v.includes("generat")) return "generator";
-  if (v.includes("calculat") || v.includes("calc")) return "calculator";
-  if (v.includes("track")) return "tracker";
-  if (v.includes("analyz") || v.includes("analys")) return "analyzer";
-  if (v.includes("director") || v.includes("list") || v.includes("directory")) return "directory";
-  return "micro_saas";
+function checkReject(ideaText) {
+  const text = (ideaText || "").toLowerCase();
+  for (const re of REJECT_PATTERNS) {
+    if (re.test(text)) return "Trivial or spam idea; out of scope for factory.";
+  }
+  return null;
+}
+
+/**
+ * Normalize product_type to one of ALLOWED_PRODUCT_CATEGORIES. Downgrade if outside scope; log adjustment.
+ * @returns { { productType: string, adjusted: boolean, adjustmentLog?: string } }
+ */
+function normalizeProductType(value, ideaTextForLog = "") {
+  const raw = (value || "").trim();
+  const key = normalizeKey(raw);
+
+  if (key && ALLOWED_NORMALIZED.has(key)) {
+    const canonical = ALLOWED_PRODUCT_CATEGORIES.find((c) => normalizeKey(c) === key);
+    return { productType: canonical || "web app", adjusted: false };
+  }
+
+  const text = (ideaTextForLog || raw).toLowerCase();
+  for (const { pattern, to } of DOWNGRADE_MAP) {
+    if (pattern.test(text)) {
+      console.warn("[product_architect] Adjusted product_type outside scope:", JSON.stringify(raw), "→", to);
+      return { productType: to, adjusted: true, adjustmentLog: `"${raw}" → ${to}` };
+    }
+  }
+
+  console.warn("[product_architect] Unknown product_type, defaulting to web app:", JSON.stringify(raw));
+  return { productType: "web app", adjusted: true, adjustmentLog: `"${raw}" → web app` };
 }
 
 /**
@@ -66,20 +127,41 @@ function estimateBuildHours(complexity) {
 }
 
 /**
- * Build a heuristic spec when OpenAI is unavailable.
+ * Build a heuristic spec when OpenAI is unavailable. Uses allowed categories only.
  */
 function heuristicSpec(idea) {
   const title = (idea?.idea_title || idea?.idé || "").trim() || "Unnamed product";
   const desc = (idea?.idea_description || "").trim() || "";
-  const text = `${title} ${desc}`.toLowerCase();
+  const text = `${title} ${desc}`;
 
-  let productType = "micro_saas";
-  if (/\b(generat|create|build|make)\b/.test(text) && !/calculator|tracker/.test(text))
-    productType = "generator";
-  else if (/\b(calculat|compute|convert|estimate)\b/.test(text)) productType = "calculator";
-  else if (/\b(track|log|monitor|habit)\b/.test(text)) productType = "tracker";
-  else if (/\b(analyz|analys|insight|report|dashboard)\b/.test(text)) productType = "analyzer";
-  else if (/\b(directory|list|find|search|index)\b/.test(text)) productType = "directory";
+  const rejectReason = checkReject(text);
+  if (rejectReason) {
+    const spec = {
+      product_name: title.slice(0, 60) || "Product",
+      product_type: "web app",
+      target_user: "N/A",
+      core_problem: "",
+      value_proposition: "",
+      features: [],
+      pages: [...REQUIRED_PAGES],
+      tech_stack: [...DEFAULT_TECH_STACK],
+      monetization: "N/A",
+      build_complexity: "low",
+      estimated_build_hours: 8,
+      rejected_by_architect: true,
+      rejection_reason: rejectReason
+    };
+    console.warn("[product_architect] Idea rejected:", title, "–", rejectReason);
+    return spec;
+  }
+
+  let suggested = "web app";
+  if (/\b(game|puzzle|quiz)\b/.test(text)) suggested = "browser game";
+  else if (/\b(learning|education|course)\b/.test(text)) suggested = "content or learning product";
+  else if (/\b(saas|subscription|b2b|freelancer)\b/.test(text)) suggested = "SaaS micro-product";
+  else if (/\b(productivity|planner|track|habit)\b/.test(text)) suggested = "specialized productivity tool";
+  else if (/\b(calculat|compute|convert|estimate)\b/.test(text)) suggested = "web app";
+  const { productType } = normalizeProductType(suggested, text);
 
   let complexity = "medium";
   if (/\b(api|integrat|backend|ai|ml|machine learning)\b/.test(text)) complexity = "high";
@@ -104,7 +186,8 @@ function heuristicSpec(idea) {
     monetization: "Freemium or one-time purchase",
     build_complexity: complexity,
     estimated_build_hours: estimateBuildHours(complexity),
-    not_recommended_for_factory_build: complexity === "high"
+    not_recommended_for_factory_build: complexity === "high",
+    rejected_by_architect: false
   };
 }
 
@@ -128,21 +211,27 @@ export async function createProductSpec(idea) {
   const OpenAI = (await import("openai")).default;
   const openai = new OpenAI({ apiKey: openaiKey });
 
-  const systemPrompt = `You are a product architect. Convert a raw idea into a structured product specification.
+  const categoriesList = ALLOWED_PRODUCT_CATEGORIES.map((c) => `"${c}"`).join(", ");
+  const systemPrompt = `You are a product architect for a focused product factory. Goal: high-quality, scoped products (like Duolingo, Hemnet, Monkey Island). NOT: massive platforms, MMO-scale systems, or low-effort spam tools.
 
-Rules:
-- product_type MUST be exactly one of: generator, calculator, tracker, analyzer, directory, micro_saas.
+QUALITY RULES (every spec must satisfy):
+- Solve a clear problem or provide meaningful entertainment.
+- Have a clear primary user (one short sentence).
+- Be realistically buildable by an automated factory (no multi-year platforms).
+- Avoid trivial "spam generators" (e.g. random meme generator).
+- Avoid giant infrastructure or MMO-scale systems.
+
+PRODUCT TYPE (exactly one of): ${categoriesList}.
+If the idea suggests something larger (e.g. "AI mega platform"), choose the closest allowed category (e.g. "specialized productivity tool" or "web app"). If it suggests an open-world MMO, use "browser game" or "casual web game". Never invent types outside this list.
+
+OTHER RULES:
 - pages MUST include at least: landing, app, pricing, about. You may add more (e.g. dashboard, settings) if needed.
 - features: array of concise functional items (short strings), no more than 8.
-- tech_stack: default to HTML, Vanilla JS, Node, simple JSON storage unless the idea clearly needs more (e.g. database, external API).
-- build_complexity: exactly one of low, medium, high.
-  - low: simple UI + logic, no external API, minimal state.
-  - medium: one API integration or multiple UI components.
-  - high: complex backend, heavy AI dependency, or many integrations.
-- If build_complexity is high, the idea is "not recommended for factory build".
+- tech_stack: default to HTML, Vanilla JS, Node, simple JSON storage unless the idea clearly needs more.
+- build_complexity: exactly one of low, medium, high. Prefer low or medium for factory buildability.
 - estimated_build_hours: number (e.g. low=8-16, medium=20-40, high=60+).
 - product_name: short, clear name (no slug).
-- target_user: one short sentence.
+- target_user: one short sentence (clear primary user).
 - core_problem: one sentence.
 - value_proposition: one sentence.
 - monetization: one short phrase (e.g. "Freemium", "One-time purchase").
@@ -153,7 +242,7 @@ Return ONLY valid JSON with these keys: product_name, product_type, target_user,
 
   try {
     const res = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: AI_MODELS.reasoning,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
@@ -165,7 +254,32 @@ Return ONLY valid JSON with these keys: product_name, product_type, target_user,
     const jsonStr = raw.replace(/^```json?\s*|\s*```$/g, "");
     const parsed = JSON.parse(jsonStr || "{}");
 
-    const productType = normalizeProductType(parsed.product_type);
+    const ideaText = `${title} ${description}`.trim();
+    const rejectReason = checkReject(ideaText);
+    if (rejectReason) {
+      console.warn("[product_architect] Idea rejected:", title, "–", rejectReason);
+      const spec = {
+        product_name: String(parsed.product_name || title).slice(0, 80) || "Product",
+        product_type: "web app",
+        target_user: String(parsed.target_user || "").slice(0, 200),
+        core_problem: String(parsed.core_problem || "").slice(0, 500),
+        value_proposition: String(parsed.value_proposition || "").slice(0, 300),
+        features: Array.isArray(parsed.features) ? parsed.features.slice(0, 12) : [],
+        pages: [...new Set([...REQUIRED_PAGES, ...(Array.isArray(parsed.pages) ? parsed.pages : [])])],
+        tech_stack: Array.isArray(parsed.tech_stack) && parsed.tech_stack.length ? parsed.tech_stack : [...DEFAULT_TECH_STACK],
+        monetization: String(parsed.monetization || "").slice(0, 100),
+        build_complexity: normalizeComplexity(parsed.build_complexity),
+        estimated_build_hours: estimateBuildHours(normalizeComplexity(parsed.build_complexity)),
+        rejected_by_architect: true,
+        rejection_reason: rejectReason
+      };
+      return spec;
+    }
+
+    const { productType, adjusted, adjustmentLog } = normalizeProductType(parsed.product_type, ideaText);
+    if (adjusted && adjustmentLog) {
+      console.warn("[product_architect] Adjusted product_type:", adjustmentLog);
+    }
     const complexity = normalizeComplexity(parsed.build_complexity);
     let pages = Array.isArray(parsed.pages) ? parsed.pages : [];
     const requiredSet = new Set(REQUIRED_PAGES);
@@ -187,6 +301,7 @@ Return ONLY valid JSON with these keys: product_name, product_type, target_user,
     const spec = {
       product_name: String(parsed.product_name || title).slice(0, 80) || "Product",
       product_type: productType,
+      rejected_by_architect: false,
       target_user: String(parsed.target_user || "Small businesses and individuals").slice(0, 200),
       core_problem: String(parsed.core_problem || "").slice(0, 500),
       value_proposition: String(parsed.value_proposition || "").slice(0, 300),

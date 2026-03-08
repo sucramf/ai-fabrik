@@ -1,0 +1,82 @@
+[
+  {
+    "id": "broken_html",
+    "name": "Broken HTML",
+    "description": "Corrupt app.html in one app with invalid HTML to test pipeline resilience.",
+    "target": "apps/<app_id>/app.html",
+    "action": "overwrite_with_invalid_html",
+    "expected_behavior": "Factory recovers and continues pipeline; QA or stabilizer may flag the app."
+  },
+  {
+    "id": "missing_spec_json",
+    "name": "Missing spec.json",
+    "description": "Remove spec.json from one app directory.",
+    "target": "apps/<app_id>/spec.json",
+    "action": "delete_file",
+    "expected_behavior": "Factory recovers and continues pipeline; pipeline may use fallback spec or stabilizer records corrupted app."
+  },
+  {
+    "id": "corrupted_metrics",
+    "name": "Corrupted metrics",
+    "description": "Write invalid JSON to data/revenue_metrics.json.",
+    "target": "data/revenue_metrics.json",
+    "action": "corrupt_json",
+    "expected_behavior": "System stabilizer repairs or recreates file; pipeline continues."
+  },
+  {
+    "id": "invalid_pricing_config",
+    "name": "Invalid pricing config",
+    "description": "Write malformed JSON to an app's payment_config.json.",
+    "target": "apps/<app_id>/payment_config.json",
+    "action": "corrupt_json",
+    "expected_behavior": "Factory recovers and continues pipeline; monetization or readers skip or use defaults."
+  },
+  {
+    "id": "missing_deploy_files",
+    "name": "Missing deploy files",
+    "description": "Delete app.html from one app's deploy folder.",
+    "target": "deploy/<app_id>/app.html",
+    "action": "delete_file",
+    "expected_behavior": "Factory recovers and continues pipeline; deploy index may list fewer apps or next build repopulates."
+  },
+  {
+    "id": "duplicate_app_ids",
+    "name": "Duplicate app IDs",
+    "description": "Add duplicate entries to growth/growth_experiments.json to test deduplication.",
+    "target": "growth/growth_experiments.json",
+    "action": "inject_duplicates",
+    "expected_behavior": "Factory recovers and continues pipeline; growth engine or consumers handle duplicates."
+  },
+  {
+    "id": "empty_ideas_json",
+    "name": "Empty ideas.json",
+    "description": "Set ideas/ideas.json to empty array.",
+    "target": "ideas/ideas.json",
+    "action": "write_empty_array",
+    "expected_behavior": "Daemon skips build cycle and continues with evolution, portfolio, growth for existing apps."
+  },
+  {
+    "id": "extremely_large_ideas_list",
+    "name": "Extremely large ideas list",
+    "description": "Fill ideas/ideas.json with a very large number of placeholder ideas.",
+    "target": "ideas/ideas.json",
+    "action": "write_large_list",
+    "expected_behavior": "Factory recovers and continues pipeline; idea injector or pipeline caps or processes batch."
+  },
+  {
+    "id": "random_file_deletion",
+    "name": "Random file deletion simulation",
+    "description": "Delete a non-critical file (e.g. idea.txt) from one app.",
+    "target": "apps/<app_id>/idea.txt",
+    "action": "delete_file",
+    "expected_behavior": "Factory recovers and continues pipeline; agents fail safely or use fallbacks."
+  },
+  {
+    "id": "malformed_evolution_plan",
+    "name": "Malformed evolution_plan.json",
+    "description": "Write invalid JSON to apps/<app_id>/evolution_plan.json.",
+    "target": "apps/<app_id>/evolution_plan.json",
+    "action": "corrupt_json",
+    "expected_behavior": "Code modifier and evolution engine skip or fail safely; pipeline continues."
+  }
+]

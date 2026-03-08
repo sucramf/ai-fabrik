@@ -1,0 +1,66 @@
+[
+  {
+    "id": "trend_1772979348969_ai_writing_prompt_generator_hldu3b",
+    "title": "AI writing prompt generator",
+    "description": "Web tool that suggests and refines prompts for AI writing assistants.",
+    "source": "simulated: AI tools",
+    "potential": "high",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  },
+  {
+    "id": "trend_1772979348969_micro_learning_quiz_app_b6a1bb",
+    "title": "Micro learning quiz app",
+    "description": "Short daily quizzes for learning a skill in 5 minutes. Browser-based, no app store.",
+    "source": "simulated: educational apps",
+    "potential": "medium",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  },
+  {
+    "id": "trend_1772979348969_browser-based_word_puzzle_game_354ulm",
+    "title": "Browser-based word puzzle game",
+    "description": "Daily word puzzle game playable in the browser, shareable results.",
+    "source": "simulated: browser games",
+    "potential": "high",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  },
+  {
+    "id": "trend_1772979348969_meeting_cost_calculator_ec4vwb",
+    "title": "Meeting cost calculator",
+    "description": "SaaS tool that estimates the cost of meetings by duration and attendees for teams.",
+    "source": "simulated: productivity tools",
+    "potential": "medium",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  },
+  {
+    "id": "trend_1772979348969_niche_invoice_generator_for_freelancers_vsbbzo",
+    "title": "Niche invoice generator for freelancers",
+    "description": "Simple web app to create and send invoices for a specific niche (e.g. translators, designers).",
+    "source": "simulated: niche SaaS",
+    "potential": "medium",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  },
+  {
+    "id": "trend_1772979348969_ai_summarizer_for_long_articles_zlpn7l",
+    "title": "AI summarizer for long articles",
+    "description": "Paste a URL or text and get a short summary. Web-only tool.",
+    "source": "simulated: AI tools",
+    "potential": "high",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  },
+  {
+    "id": "trend_1772979348969_habit_streak_tracker_0duva1",
+    "title": "Habit streak tracker",
+    "description": "Minimal web app to track daily habits and streak counts with optional export.",
+    "source": "simulated: productivity tools",
+    "potential": "low",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  },
+  {
+    "id": "trend_1772979348969_simple_ab_headline_tester_cfqzmb",
+    "title": "Simple A/B headline tester",
+    "description": "Landing page headline A/B test tool for indie makers. No code required.",
+    "source": "simulated: niche SaaS",
+    "potential": "medium",
+    "created_at": "2026-03-08T14:15:48.949Z"
+  }
+]

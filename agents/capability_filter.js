@@ -6,7 +6,18 @@
  * Output: { allowed, reason, adjusted_scope }
  */
 
+/** Allowed product categories (product_architect output). Normalize: lowercase, spaces/hyphens → underscore. */
 const ALLOWED_PRODUCT_TYPES = new Set([
+  "web_app",
+  "mobile_app",
+  "desktop_app",
+  "browser_game",
+  "casual_web_game",
+  "saas_micro_product",
+  "focused_platform",
+  "specialized_productivity_tool",
+  "niche_consumer_app",
+  "content_or_learning_product",
   "generator",
   "calculator",
   "tracker",
@@ -98,11 +109,11 @@ function suggestAdjustedScope(spec, rejectionReason) {
     suggestions.push("Consider: curated list, generator, or SEO tool instead of a moderated marketplace.");
   }
 
-  const productType = (spec.product_type || "").toLowerCase();
-  if (!ALLOWED_PRODUCT_TYPES.has(productType)) {
-    suggestions.push("Reframe as one of: generator, calculator, tracker, analyzer, directory, or niche micro_saas.");
+  const productTypeNorm = (spec.product_type || "").toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_");
+  if (!ALLOWED_PRODUCT_TYPES.has(productTypeNorm)) {
+    suggestions.push("Reframe as one of: web app, browser game, SaaS micro-product, specialized productivity tool, niche consumer app, content or learning product.");
   } else if (!ALLOWED_CATEGORY_KEYWORDS.some((k) => searchSpec(spec, k)) &&
-    !["generator", "calculator", "tracker", "micro_saas"].includes(productType)) {
+    !["web_app", "generator", "calculator", "tracker", "micro_saas", "saas_micro_product"].includes(productTypeNorm)) {
     suggestions.push("Add a clear angle: e.g. SEO tool, creator tool, or niche micro-SaaS to fit factory scope.");
   }
 
@@ -132,9 +143,13 @@ export async function evaluateBuildability(product_spec) {
     reasons.push(`estimated_build_hours (${hours}) exceeds factory limit of 40.`);
   }
 
-  const productType = (spec.product_type || "").toLowerCase().replace(/\s+/g, "_");
+  const productType = (spec.product_type || "").toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_");
   if (productType && !ALLOWED_PRODUCT_TYPES.has(productType)) {
-    reasons.push(`product_type "${spec.product_type}" is not in allowed categories (generators, calculators, trackers, niche micro SaaS, SEO tools, creator tools).`);
+    reasons.push(`product_type "${spec.product_type}" is not in allowed categories (web app, browser game, SaaS micro-product, specialized productivity tool, etc.).`);
+  }
+
+  if (spec.rejected_by_architect && spec.rejection_reason) {
+    reasons.push("Rejected by product architect: " + spec.rejection_reason);
   }
 
   if (matchesAny(spec, REJECT_SOCIAL)) {

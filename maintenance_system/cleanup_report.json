@@ -1,0 +1,9 @@
+{
+  "timestamp": "",
+  "actions": [
+    {
+      "type": "archive_logs",
+      "files": []
+    }
+  ]
+}

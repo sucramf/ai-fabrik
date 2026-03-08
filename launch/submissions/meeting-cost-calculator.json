@@ -1,0 +1,32 @@
+{
+  "product_slug": "meeting-cost-calculator",
+  "generated_at": "2026-03-08T17:41:37.650Z",
+  "product_hunt": {
+    "name": "Meeting Cost Calculator",
+    "tagline": "SaaS tool that estimates the cost of meetings by duration an",
+    "description": "SaaS tool that estimates the cost of meetings by duration and attendees for teams.",
+    "url": "https://yoursite.com/app_123",
+    "topics": [
+      "web app",
+      "saas",
+      "productivity"
+    ]
+  },
+  "indie_hackers": {
+    "title": "Launch: Meeting Cost Calculator",
+    "body": "We built Meeting Cost Calculator to solve a specific problem.\n\nSaaS tool that estimates the cost of meetings by duration and attendees for teams.\n\nTry it: https://yoursite.com/app_123",
+    "url": "https://yoursite.com/app_123"
+  },
+  "reddit": {
+    "suggested_subreddits": [
+      "SideProject",
+      "SaaS",
+      "startups",
+      "Entrepreneur",
+      "IMadeThis"
+    ],
+    "title": "I made Meeting Cost Calculator – SaaS tool that estimates the cost of meetings by d",
+    "body": "SaaS tool that estimates the cost of meetings by duration and attendees for teams.\n\nLink: https://yoursite.com/app_123",
+    "disclaimer": "Follow each subreddit's rules; no spam."
+  }
+}

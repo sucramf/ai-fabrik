@@ -1,175 +1,112 @@
 # AI_FABRIK – Repository Overview
 
-This document explains the entire AI_FABRIK codebase: agents, app generation, pipeline, deployment, and weaknesses.
+## 1. SYSTEM ARCHITECTURE
+
+**Idea → App → Deploy**
+
+1. **Ideas** come from one of:
+   - `ideas/ideas.json` (candidate list, used by daemon)
+   - `ideas/approved_trend_ideas.json` (approved list, written by trend_scout or daemon)
+   - Optional: `idea_explosion_engine.generateTopIdeas()` (generates ~100 ideas, scores, returns top 5–10; not yet wired into pipeline)
+
+2. **Build:** The pipeline reads approved ideas and calls **workers** (`createApps(ideas)`). For each idea:
+   - **product_architect** turns it into a product spec (product_name, product_type, features, etc.).
+   - **capability_filter** decides if the spec is buildable; if not, the idea is skipped.
+   - If allowed: **BUILD_MODE** chooses **ai_code_engine** (AI-generated HTML/JS/CSS/logic) or **template** (deterministic spec-driven templates). Output is written to **apps/\<id\>** and **deploy/\<id\>**.
+
+3. **Post-build (per app):** Marketing and payment scaffolding are written (e.g. `apps/<id>/marketing/*.txt`, `payment_config.json`).
+
+4. **QA:** Each app is tested: **quality_inspector** (HTML), **test_runner**, **quality_tester**, **tester_agent** (runAppTests). On failure, **capability_filter.evaluateBuildability** can suggest an adjusted scope; the pipeline attempts **one rebuild** with that scope, then re-tests. If it still fails, the app is not deployed.
+
+5. **Deploy:** Only apps that pass QA are listed in **deploy/index.html** via **buildDeployIndex(passedIds)**. Marketing/pricing/growth hooks run for passed apps; **revenue_tracker.recordMetrics** initializes metrics in **data/revenue_metrics.json**.
 
 ---
 
-## 1. All Agents
+## 2. AGENTS
 
-Agents are the decision and execution units. They are **rule-based/heuristic** (no OpenAI in inspectors or workers) except where noted.
-
-### 1.1 Boss (`agents/boss.js`)
-
-- **Role:** Delegates build jobs to workers. Called by Superchief with a number or list of ideas.
-- **API:** `runFactory(numberOfApps)` → calls `createApps()` from workers.
-- **Note:** Rarely used directly; the main flow uses **trend_scout** → **full_product_pipeline** or **Superchief** → workers.
-
-### 1.2 Workers (`agents/workers.js`)
-
-- **Role:** Build apps from approved ideas. **Fully deterministic, template-based; no OpenAI.**
-- **API:** `createApps(ideas)` – `ideas` can be an array of strings or a newline-separated string.
-- **Behaviour:**
-  - For each idea: generates a unique ID `app_${Date.now()}_${random}`.
-  - Creates `apps/<id>/`: `idea.txt`, `app.html`, `marketing.txt`.
-  - Creates `deploy/<id>/`: `index.html` (landing), `app.html` (same as apps).
-  - **App HTML:** Single template: Tailwind, header “AI_FABRIK”, title = idea, hero + “Idea scratchpad” (textarea + Run test / Clear) with `localStorage`. No idea-specific logic—every app is the same structure with the idea as title/copy.
-- **Output:** Array of created app IDs.
-
-### 1.3 Inspectors (all heuristic, no OpenAI)
-
-| Agent | File | Role | Input | Output |
-|-------|------|------|--------|--------|
-| **Market** | `agents/inspectors/market_inspector.js` | Market potential, trend, competition | Idea string | `{ pass, uncertain, reason }` |
-| **Money** | `agents/inspectors/money_inspector.js` | Revenue potential, monetization | Idea string | `{ pass, uncertain, reason }` |
-| **Legal** | `agents/inspectors/legal_inspector.js` | Legal risk, sensitive topics (medical, financial advice, etc.) | Idea string | `{ pass, uncertain, reason }` |
-| **Quality** | `agents/inspectors/quality_inspector.js` | Structural quality of built artifact | HTML string (or path) | `{ pass, uncertain, reason }` |
-
-- **Market:** Keyword lists (saturated vs promising); pass/uncertain/fail from counts.
-- **Money:** Monetization keywords (subscription, SaaS, etc.) vs weak (free only); score threshold.
-- **Legal:** Blocklist of high-risk keywords (medical, legal advice, financial advice, children data, etc.); any match → fail.
-- **Quality:** Checks for DOCTYPE, `<html>`, `<head>`, `<body>`, `<title>`, `<h1>`, and a CTA (button or `.btn`/`.cta` link). Logs to `superchief_report.log`.
-
-### 1.4 Superchief (`agents/superchief.js`)
-
-- **Role:** Top-level decision point. No idea/product proceeds without passing Superchief. Only PASS products are listed in the deploy index.
-- **Flow:**
-  1. **Ideas:** `generateIdeas(10)` from `ideas/ideas.js` (OpenAI – GPT-4.1-mini) → raw ideas.
-  2. **Trend analyst:** `filterByTrends(ideas)` from `marketing/trend_analyst.js` → trend-approved list.
-  3. **Evolution:** `filterIdeas(trendApproved)` from `builders/evolution.js` (deterministic ranking by length + keywords) → best ideas.
-  4. **Inspectors:** For each idea, run **Market → Money → Legal**. Only ideas that pass all three go to build.
-  5. **Build:** `createApps(passedInspectors)` (workers).
-  6. **QA:** For each built app: **Quality Inspector** (HTML) + **test_runner** + **quality_tester**. Only PASS → added to deploy index.
-  7. **Deploy index:** `buildDeployIndex(passedIds)` – writes `deploy/index.html` with links to `./<appId>/`.
-  8. **Post-build:** `runMarketing()`, `suggestPricing()`, `runGrowth()` for each PASS app (currently stubs).
-- **Entry:** `npm start` → `node agents/superchief.js`.
-
-### 1.5 Supporting “agents” (marketing/pricing/growth)
-
-- **marketing_agent.js:** `runMarketing(appId, idea)` – **stub** (returns `{ ok: true, reason: "stub" }`).
-- **pricing_monetization_agent.js:** `suggestPricing(idea)` – **stub** (returns freemium + "stub").
-- **growth_hacker.js:** `runGrowth(appId)` – **stub**.
-
-So: **real agents** are Boss, Workers, four Inspectors, and Superchief. Marketing/pricing/growth are placeholders.
+| File | Role |
+|------|------|
+| **agents/ai_code_engine.js** | Generates full app code (indexHtml, appJs, stylesCss, logicJs, readme) from a product spec using the AI; used by workers when BUILD_MODE=ai_generated. |
+| **agents/boss.js** | Thin wrapper that delegates build jobs to workers (createApps). |
+| **agents/capability_filter.js** | Evaluates whether a product spec is buildable; returns allowed/reason/adjusted_scope; used by workers and pipeline for rebuilds. |
+| **agents/idea_explosion_engine.js** | Generates ~100 product ideas via AI, scores them (usefulness, clarity, monetization, simplicity), returns top 5–10; not yet integrated into the pipeline. |
+| **agents/product_architect.js** | Converts a raw idea (idea_title, idea_description) into a structured product spec (product_name, product_type, features, etc.) via AI or heuristics. |
+| **agents/revenue_tracker.js** | Records and updates product metrics (deploy_date, visitors, signups, revenue, conversion_rate) in data/revenue_metrics.json; used after deploy. |
+| **agents/superchief.js** | Legacy “superchief” flow: generates ideas, runs trend analyst + evolution + inspectors + workers + tests + deploy + marketing; invoked by long_version.js. |
+| **agents/tester_agent.js** | Runs app tests (HTML load, JS syntax, main feature output, UI vs spec, no placeholders) on a deploy folder; returns { passed, issues }. |
+| **agents/workers.js** | Builds apps from ideas: idea → product_architect → capability_filter → build (ai_code_engine or template); writes to apps/\<id\> and deploy/\<id\>. |
+| **agents/inspectors/quality_inspector.js** | Inspects HTML/artifact quality and returns { pass, uncertain, reason }. |
+| **agents/inspectors/legal_inspector.js** | Inspects an idea for legal concerns; returns { pass, uncertain, reason }. |
+| **agents/inspectors/market_inspector.js** | Inspects an idea for market fit; returns { pass, uncertain, reason }. |
+| **agents/inspectors/money_inspector.js** | Inspects an idea for monetization/financial viability; returns { pass, uncertain, reason }. |
 
 ---
 
-## 2. How Apps Are Generated
+## 3. BUILD PIPELINE (builders/full_product_pipeline.js)
 
-- **Single source of app content:** `agents/workers.js` → `createAppHtml(idea)` and `createLandingPageHtml(idea, marketingText)`.
-- **Process:**
-  1. Idea string (e.g. “Anpassningsbara lanterns med kreativ design”) is passed to `createApps([idea])`.
-  2. Workers generate `app_<timestamp>_<random>` and create:
-     - `apps/<id>/idea.txt` – idea string.
-     - `apps/<id>/app.html` – one fixed HTML template with:
-       - `<title>`, `<h1>` = idea.
-       - Hero text: generic “lightweight, auto-generated SaaS-style tool…”
-       - “Idea scratchpad”: textarea + “Run quick test” / “Clear results”, persisted in `localStorage` with a key like `ai_fabrik_note_<timestamp>`.
-       - No backend, no API calls, no idea-specific behaviour.
-     - `apps/<id>/marketing.txt` – generic “Unlock the power of …” copy.
-     - `deploy/<id>/index.html` – landing with idea title + marketing bullets + link to “Open interactive prototype” (`./app.html`).
-     - `deploy/<id>/app.html` – same HTML as in `apps/<id>/app.html`.
-- **No LLM or dynamic generation of UI or logic:** every app is the same template; only the idea title and marketing text change. The “Duolingo/Hemnet/Monkey Island” quality bar in docs is aspirational; the current implementation is a single deterministic template.
+**Steps:**
 
----
+1. **Load .env** (loadEnv).
+2. **Read approved ideas** from `ideas/approved_trend_ideas.json` (approvedIdeas or approved). If empty, exit.
+3. **Log IDEA_SELECTED** and **BUILD_STARTED**; call **createApps(approvedIdeas)** (workers). Build creates apps and writes marketing/payment scaffolding per app.
+4. **Log BUILD_COMPLETED** and **PRODUCT_SPEC_CREATED**.
+5. **For each created app:**
+   - Load spec from `apps/<appId>/spec.json` (or fallback).
+   - **Log TESTING**; run **runQaAndTester**: quality_inspector → test_runner → quality_tester → **runAppTests** (tester_agent).
+   - If **TEST_FAILED:** get **evaluateBuildability(spec).adjusted_scope**, build one revised idea, call **createApps([revisedIdea])**, write marketing/payment for the new app, then run QA + runAppTests again. If retry passes → add new app to passedIds; if not → add to failedReports.
+   - If **TEST_PASSED** → add app to passedIds.
+6. **Log DEPLOYED**; call **buildDeployIndex(passedIds)** to update deploy/index.html.
+7. For each passed app: **runMarketing**, **suggestPricing**, **runGrowth**.
+8. For each passed app: **recordMetrics(productName, { deploy_date, visitors: 0, signups: 0, revenue: 0, conversion_rate: 0 })**; **log METRICS_INITIALIZED**.
+9. Log confirmation and file list to console and superchief_report.log; return { ok, createdIds, passedIds, failedReports, ... }.
 
-## 3. How the Pipeline Works
-
-There are **two main pipelines**.
-
-### 3.1 Trend Scout → Full Product Pipeline (main “Kompakt Diktator” flow)
-
-1. **trend_scout.js** (`npm run trend`):
-   - **Collect:** Fetches trends from YouTube API, GitHub API, Google Trends (pytrends script), TikTok/Etsy/Kickstarter (web scraping), Product Hunt (GraphQL). Builds list of `{ plattform, trend, trend_score, market_saturation }`.
-   - **Filter:** `market_saturation ≤ 70%`.
-   - **Ideas:** If `OPENAI_API_KEY` is set, calls OpenAI to generate 3–5 ideas per trend with `verklig_lönsamhet`, `juridisk_risk`, `blockerad`, `förväntad_månatlig_intäkt`. Otherwise uses placeholder ideas.
-   - **Filter ideas:** `filterIdeasForFactory` (saturation, juridisk_risk ≥ 70, no physical-product keywords), `filterByVerkligLönsamhet` (e.g. ≥ 20), `filterByJuridiskRisk` (≥ 70).
-   - **Score:** `total_score = (trend_score×(100−market_saturation)/100) × (verklig_lönsamhet/100) × (juridisk_risk/100)`. Sorts by `total_score`.
-   - **Output:** Writes `trend_ideas.json` (all ideas + total_score) and `daily_top3.json` (top 3). Logs TOP 5 to console.
-   - **Auto-build:** If top idea is not blocked (`blockerad !== "ja"`, `juridisk_risk ≥ 70`), writes **only top 1** to `ideas/approved_trend_ideas.json` and calls `runFullProductPipeline()`.
-
-2. **full_product_pipeline.js** (invoked by trend_scout or run directly):
-   - Reads `ideas/approved_trend_ideas.json` (array of idea strings).
-   - Calls **workers** `createApps(approvedIdeas)` → creates `apps/<id>/` and `deploy/<id>/` per idea.
-   - For each app: writes **marketing** copy (Google Ads, TikTok, YouTube, LinkedIn, Pinterest, Product Hunt) to `apps/<id>/marketing/*.txt` and `deploy/<id>/marketing/*.txt`; writes **payment_config.json** (Stripe, PayPal, Apple Pay, Google Pay placeholders) and `PAYMENT_README.txt`.
-   - **QA loop:** For each app: **quality_inspector** (HTML), **test_runner** (file + DOCTYPE/body/content/script errors), **quality_tester** (structure + viewport + CTA). Only if all PASS → app is added to `passedIds`.
-   - **Deploy index:** `buildDeployIndex(passedIds)` → updates `deploy/index.html` with links to `./<appId>/`.
-   - **Post-PASS:** Calls `runMarketing()`, `suggestPricing()`, `runGrowth()` (stubs).
-   - Logs to console and `superchief_report.log`; returns `{ ok, createdIds, passedIds, failedReports, ... }`.
-
-So: **Trend Scout** = trend data + OpenAI ideas + scoring + filters → writes approved list → **Full Product Pipeline** = build (workers) + marketing/payment scaffolding + QA → deploy index.
-
-### 3.2 Superchief pipeline (alternative)
-
-- **Entry:** `npm start` → `agents/superchief.js`.
-- **Flow:** Generate ideas (OpenAI) → trend analyst → evolution filter → Market/Money/Legal inspectors → workers → Quality + test_runner + quality_tester → buildDeployIndex → marketing/pricing/growth stubs.
-- **Difference from trend_scout flow:** No trend_scout data; ideas come from `ideas/ideas.js` (generic SaaS idea prompt). Inspectors (market, money, legal) run **before** build; in trend_scout flow, idea filtering is by saturation/juridisk/verklig_lönsamhet and no pre-build market/money/legal inspectors.
+**Entry when run as script:** `node builders/full_product_pipeline.js` runs `runFullProductPipeline()`.
 
 ---
 
-## 4. How Deployment Works
+## 4. DATA FLOW
 
-- **Deploy artefact:** The `deploy/` folder. It contains:
-  - `deploy/index.html` – index of PASS apps: links to `./<appId>/` (each app’s folder).
-  - `deploy/<appId>/index.html` – landing page for that app.
-  - `deploy/<appId>/app.html` – the actual “app” (single-page template).
-  - `deploy/<appId>/marketing/*.txt` – per-channel copy.
-- **Who builds it:** `buildDeployIndex(passedIds)` in `deploy_index.js` (used by full_product_pipeline and Superchief). It writes `deploy/index.html` with links to `./${appId}/` (so each app is a folder with its own index/app).
-- **deploy.js** (`npm run deploy`): **Separate script.** It reads **`apps/`** (not `deploy/`), builds a single `deploy/index.html` that links to `./apps/${app}/app.html`. So it assumes deploy root contains a flat list of app links pointing into **apps/** subfolders, which does **not** match the structure produced by the pipeline (which puts each app under `deploy/<appId>/`). So:
-  - **Pipeline deployment:** Use the `deploy/` folder as-is; serve it (e.g. static host or gh-pages from `deploy/`).
-  - **npm run deploy:** Rebuilds a different index that links into `apps/`; inconsistent with pipeline output and with `buildDeployIndex`.
-- **GitHub Pages:** `gh-pages` is a devDependency but **no npm script** uses it. To publish, you would need to add e.g. `gh-pages -d deploy` and run it manually or in CI; the repo does not do that by default.
-
-**Summary:** Deployment is “whatever serves the `deploy/` folder.” The pipeline fills `deploy/` and `deploy_index.js` keeps `deploy/index.html` in sync with PASS apps. Actual publish (e.g. to GitHub Pages) is not wired in; `deploy.js` is an older/different convention and doesn’t match the pipeline layout.
+- **Idea generation:** Ideas come from `ideas/ideas.json` (daemon) or from trend_scout (writes `approved_trend_ideas.json`). idea_explosion_engine can produce scored ideas (not yet wired).
+- **Product architecture:** Workers call **product_architect.createProductSpec(idea)** → spec (product_name, product_type, features, value_proposition, etc.).
+- **Code generation:** Workers use **capability_filter.evaluateBuildability(spec)**; if allowed, **ai_code_engine.generate(spec)** (or template builder) produces files → written to **apps/\<id\>** and **deploy/\<id\>** (index.html, app.html, app.js, styles.css, logic.js, spec.json, idea.txt, marketing.txt, marketing/*.txt, payment_config.json, etc.).
+- **Testing:** Pipeline reads **apps/\<id\>/spec.json**, runs quality_inspector on HTML, test_runner and quality_tester on deploy folder, **tester_agent.runAppTests(deploy/<id>, spec)**. Failures can trigger one rebuild using **capability_filter.evaluateBuildability(spec).adjusted_scope**.
+- **Marketing:** Pipeline calls **writeMarketingMaterials(appId, idea)** (per-channel copy), **runMarketing**, **suggestPricing**, **runGrowth** for passed apps; outputs under apps/\<id\>/marketing and deploy/\<id\>/marketing.
+- **Revenue tracking:** After **buildDeployIndex(passedIds)**, pipeline calls **revenue_tracker.recordMetrics(productName, metrics)** for each passed app; data is stored in **data/revenue_metrics.json**.
 
 ---
 
-## 5. Weaknesses in the System
+## 5. GENERATED APPS (apps/\<id\>/)
 
-1. **Apps are not idea-specific.** Workers use one HTML template for every idea. There is no generation of custom UI, flows, or features per idea; only title and marketing text change. The “full product” / “Duolingo-level” claim is not implemented.
+Each app folder (e.g. **apps/app_1772880978711_4909/**) typically contains:
 
-2. **Marketing, pricing, and growth are stubs.** `runMarketing`, `suggestPricing`, and `runGrowth` do nothing. No real campaigns, pricing logic, or growth hooks.
+| File / folder | Description |
+|---------------|-------------|
+| **idea.txt** | Product name or idea title. |
+| **spec.json** | Full product spec from product_architect (product_name, product_type, features, value_proposition, etc.). |
+| **marketing.txt** | Short marketing blurb. |
+| **index.html** | Main app HTML (same as app.html for pipeline compatibility). |
+| **app.html** | Copy of index.html (used by test_runner / quality_tester / tester_agent). |
+| **app.js** | Main application script (connects UI to logic). |
+| **styles.css** | Styles for the app. |
+| **logic.js** | Present when BUILD_MODE=ai_generated; core logic, exported functions used by app.js. |
+| **README.md** | Present when BUILD_MODE=ai_generated; short project readme. |
+| **marketing/** | Per-channel copy (e.g. google_ads.txt, tiktok.txt, youtube.txt, linkedin.txt, pinterest.txt, product_hunt.txt). |
+| **payment_config.json** | Payment scaffolding (Stripe, PayPal, etc.; keys to be filled per product). |
+| **PAYMENT_README.txt** | Instructions for payment setup. |
 
-3. **Payment is scaffold-only.** `payment_config.json` is created with placeholders (`SET_STRIPE_SECRET_KEY`, etc.). No integration with Stripe/PayPal/Apple/Google; no checkout or test flows.
-
-4. **Two deploy conventions.** `deploy_index.js` + full pipeline use `deploy/<appId>/` and links `./<appId>/`. `deploy.js` builds an index that links to `./apps/<app>/app.html`. They are incompatible; `npm run deploy` does not match the pipeline output.
-
-5. **No real deployment to the web.** `deploy/` is only a local folder. No script pushes to GitHub Pages or any host; gh-pages is installed but not used.
-
-6. **Trend data quality.** TikTok, Etsy, Kickstarter rely on web scraping (often 403 or HTML fallbacks). Product Hunt may need a token. So trend inputs can be empty or fallback data.
-
-7. **QA is structural only.** Quality inspector and test_runner/quality_tester check DOCTYPE, tags, viewport, CTA. They do not test behaviour, accessibility, or real payment flows; `full_qa_top_idea.js` checks payment config presence/placeholders, not live payments.
-
-8. **Superchief vs trend_scout.** Two separate entry points (Superchief vs trend_scout → full_product_pipeline) with different idea sources and different inspector usage (market/money/legal only in Superchief). Risk of confusion and duplicated logic.
-
-9. **Boss is unused in the main flow.** `agents/boss.js` is only a thin wrapper over `createApps` and is not used by trend_scout or full_product_pipeline; those call `createApps` directly.
-
-10. **Ideas.js API.** `ideas/ideas.js` uses `openai.responses.create` and `res.output_text` (Responses API); if the API shape changes or the model is unavailable, idea generation in Superchief breaks.
-
-11. **No persistence of run state.** Which ideas were already built, which failed, and why is only in logs and in `trend_ideas.json` / `last_mvp_launched`. There is no structured “pipeline state” or idempotency (e.g. “skip if this idea already has an app”).
-
-12. **Single top idea per run.** When trend_scout triggers the pipeline, it passes only the **top 1** idea to `approved_trend_ideas.json`. Rank 2 and 3 are only in daily_top3; they are not built unless the user manually approves them or runs again with a different selection.
+The same app is mirrored under **deploy/\<id\>/** (HTML, JS, CSS, logic.js, marketing/) so that deploy is the served artifact; **deploy/index.html** lists only PASS app links.
 
 ---
 
-## Quick reference
+## 6. ENTRY POINT
 
-| Component | Purpose |
-|-----------|---------|
-| **trend_scout.js** | Collect trends → OpenAI ideas → score/filter → write approved list → optionally call full_product_pipeline |
-| **full_product_pipeline.js** | Read approved ideas → workers → marketing/payment scaffolding → QA → buildDeployIndex |
-| **agents/workers.js** | createApps(ideas) → deterministic app + deploy HTML per idea |
-| **agents/superchief.js** | Alternative flow: ideas.js → trend analyst → evolution → inspectors → workers → QA → buildDeployIndex |
-| **deploy_index.js** | buildDeployIndex(passedIds) → deploy/index.html with links to PASS apps |
-| **deploy.js** | Standalone script: list apps from apps/ → deploy/index.html linking to ./apps/<id>/app.html (different layout) |
-| **Inspectors** | Market, Money, Legal (idea-level); Quality (HTML-level). All heuristic. |
-| **full_qa_top_idea.js** | QA report for “top” app (from trend_ideas.json): UI/UX, function, payment config. |
+There is no single binary entry point; different scripts start different flows:
+
+| Script | Role |
+|--------|------|
+| **long_version.js** | Full one-shot run: checks structure, .env, required modules, then **dynamically imports agents/superchief.js**, which calls **runFactory()** (ideas → trend analyst → evolution → inspectors → workers → tests → deploy → marketing). |
+| **superchief_daemon.js** | Continuous loop (default 7 min): reads **ideas/ideas.json** → **filterByTrends** → writes **ideas/approved_trend_ideas.json** → **runFullProductPipeline()**. |
+| **trend_scout.js** (when run as main) | Fetches/processes trends, picks top idea, writes **approved_trend_ideas.json** with one idea, then runs **runFullProductPipeline()** for that idea. |
+| **builders/full_product_pipeline.js** (when run as main) | Reads **ideas/approved_trend_ideas.json**, runs **runFullProductPipeline()** (build → QA → deploy → marketing → revenue_tracker). |
+
+So: **long_version.js** starts the legacy Superchief factory; **superchief_daemon.js** and **trend_scout.js** feed the **full_product_pipeline**, which is the main path from approved ideas to built and deployed apps.

@@ -27,12 +27,34 @@ import { buildDeployIndex } from "../deploy_index.js";
 import { runMarketing } from "../marketing/marketing_agent.js";
 import { suggestPricing } from "../marketing/pricing_monetization_agent.js";
 import { runGrowth } from "../marketing/growth_hacker.js";
+import { runMonetization } from "../agents/monetization_engine.js";
+import { injectMetrics } from "../agents/metrics_collector.js";
+import { runTrafficEngine } from "../agents/traffic_engine.js";
+import { runDistributionEngine } from "../agents/distribution_engine.js";
+import { launchProduct } from "../launch/launch_engine.js";
+import { generateTrafficPlan } from "../growth/traffic_engine.js";
+import { publishTraffic } from "../growth/traffic_publisher.js";
+import { collectRevenueMetrics } from "../revenue/revenue_collector.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = process.cwd();
 const reportLogPath = path.join(root, "superchief_report.log");
-const approvedJsonPath = path.join(root, "ideas", "approved_trend_ideas.json");
+const pipelineLogPath = path.join(root, "logs", "pipeline.log");
+const approvedJsonPath = path.join(root, "ideas", "approved_ideas.json");
+
+/** Structured pipeline log: writes to logs/pipeline.log. Level: info | warn | error */
+async function pipelineLog(level, message, data = null) {
+  const ts = new Date().toISOString();
+  const payload = data !== null && data !== undefined ? { level, message, ...(typeof data === "object" ? data : { value: data }) } : { level, message };
+  const line = ts + " [" + level.toUpperCase() + "] " + (typeof payload === "object" && payload.message ? payload.message + (Object.keys(payload).length > 2 ? " " + JSON.stringify(Object.fromEntries(Object.entries(payload).filter(([k]) => k !== "message"))) : "") : JSON.stringify(payload));
+  try {
+    await fs.mkdir(path.dirname(pipelineLogPath), { recursive: true });
+    await fs.appendFile(pipelineLogPath, line + "\n", "utf-8");
+  } catch {
+    // ignore
+  }
+}
 
 async function loadEnv() {
   const envPath = path.join(root, ".env");
@@ -164,22 +186,26 @@ async function writePaymentConfig(appId) {
 export async function runFullProductPipeline() {
   await loadEnv();
 
+  const startedAt = new Date().toISOString();
   console.log("\n=== FULL PRODUCT PIPELINE – START ===\n");
-  await report("Start", ["Pipeline started at " + new Date().toISOString()]);
+  await report("Start", ["Pipeline started at " + startedAt]);
+  await pipelineLog("info", "Pipeline started", { startedAt });
 
   let approvedIdeas = [];
   try {
     const raw = await fs.readFile(approvedJsonPath, "utf-8");
-    const json = JSON.parse(raw);
-    approvedIdeas = json.approvedIdeas || json.approved || [];
+    const parsed = JSON.parse(raw);
+    approvedIdeas = Array.isArray(parsed) ? parsed : (parsed.approvedIdeas || parsed.approved || []);
   } catch (err) {
-    await report("Error", ["Could not read ideas/approved_trend_ideas.json: " + err.message]);
+    await pipelineLog("error", "Could not read approved_ideas.json", { error: err.message });
+    await report("Error", ["Could not read ideas/approved_ideas.json: " + err.message]);
     console.error("Could not read", approvedJsonPath, err.message);
     return { ok: false, createdIds: [], passedIds: [], filesCreated: [] };
   }
 
   if (!Array.isArray(approvedIdeas) || approvedIdeas.length === 0) {
-    await report("Skip", ["No approved ideas in approved_trend_ideas.json."]);
+    await pipelineLog("info", "No approved ideas (inspector pipeline may have rejected all). Skipping build.");
+    await report("Skip", ["No approved ideas in approved_ideas.json."]);
     console.log("No approved ideas. Stopping.");
     return { ok: true, createdIds: [], passedIds: [], filesCreated: [] };
   }
@@ -199,14 +225,22 @@ export async function runFullProductPipeline() {
     const idea = ideaByAppId[appId] || "";
     const marketingFiles = await writeMarketingMaterials(appId, idea);
     const paymentFiles = await writePaymentConfig(appId);
+    const monetResult = await runMonetization(appId).catch((e) => ({ ok: false, files: [] }));
+    if (monetResult.ok) allFilesCreated.push(...(monetResult.files || []));
+    const metricsResult = await injectMetrics(appId).catch((e) => ({ ok: false, files: [] }));
+    if (metricsResult.ok) allFilesCreated.push(...(metricsResult.files || []));
+    const trafficResult = await runTrafficEngine(appId).catch((e) => ({ ok: false, files: [] }));
+    if (trafficResult.ok) allFilesCreated.push(...(trafficResult.files || []));
+    const distResult = await runDistributionEngine(appId).catch((e) => ({ ok: false, files: [] }));
+    if (distResult.ok) allFilesCreated.push(...(distResult.files || []));
     allFilesCreated.push(...marketingFiles, ...paymentFiles);
-    console.log("Marketing + payment scaffolding:", appId);
+    console.log("Marketing + payment + monetization + metrics + traffic_engine + distribution_engine:", appId);
   }
   console.log("[PIPELINE] BUILD_COMPLETED – apps:", createdIds.join(", ") || "(none)");
   console.log("[PIPELINE] PRODUCT_SPEC_CREATED (by workers, per app – see apps/<id>/spec.json)");
   await report("Build", [
     "Created apps: " + createdIds.join(", "),
-    "Marketing + payment files written per product."
+    "Marketing + payment + traffic (SEO) + distribution files written per product."
   ]);
 
   const passedIds = [];
@@ -266,6 +300,10 @@ export async function runFullProductPipeline() {
       const ideaForNew = ideaByAppId[newAppId] || "";
       await writeMarketingMaterials(newAppId, ideaForNew);
       await writePaymentConfig(newAppId);
+      await runMonetization(newAppId).catch(() => ({}));
+      await injectMetrics(newAppId).catch(() => ({}));
+      await runTrafficEngine(newAppId).catch(() => ({}));
+      await runDistributionEngine(newAppId).catch(() => ({}));
       const specRetry = await loadSpecForApp(newAppId);
       console.log("[PIPELINE] TESTING (retry) –", newAppId);
       result = await runQaAndTester(newAppId, specRetry);
@@ -307,6 +345,71 @@ export async function runFullProductPipeline() {
       conversion_rate: 0
     });
     console.log("[PIPELINE] METRICS_INITIALIZED –", productName);
+
+    try {
+      const product = {
+        name: productName,
+        description: spec.value_proposition || spec.core_problem || "",
+        url: "https://yoursite.com/" + appId,
+        category: spec.product_type || "web app",
+        features: spec.features || [],
+        target_users: spec.target_user || ""
+      };
+      const launchResult = await launchProduct(product);
+      if (launchResult.ok) {
+        console.log("[PIPELINE] LAUNCH_ASSETS –", launchResult.slug);
+      } else {
+        await pipelineLog("warn", "Launch engine failed for product", { appId, error: launchResult.error });
+      }
+
+      // Traffic plan (SEO, content, community, growth loops) – must never crash pipeline
+      try {
+        const trafficProduct = {
+          ...product,
+          slug: launchResult?.slug || productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || appId,
+          primary_keyword: spec.primary_keyword || productName
+        };
+        const trafficPlan = await generateTrafficPlan(trafficProduct);
+        if (trafficPlan.seo_strategy) {
+          console.log("[PIPELINE] TRAFFIC_PLAN –", launchResult?.slug || appId);
+        }
+
+        // Traffic publishing (Reddit, Indie Hackers, Product Hunt, blog, sitemap) – must never crash pipeline
+        try {
+          const publishProduct = {
+            name: productName,
+            slug: trafficProduct.slug,
+            description: product.description,
+            url: product.url,
+            primary_keyword: trafficProduct.primary_keyword
+          };
+          const publishResult = await publishTraffic(publishProduct);
+          if (publishResult.reddit || publishResult.blog_articles > 0) {
+            console.log("[PIPELINE] TRAFFIC_PUBLISH –", trafficProduct.slug, "blog:", publishResult.blog_articles);
+          }
+        } catch (publishErr) {
+          await pipelineLog("warn", "Traffic publisher failed (non-fatal)", { appId, error: publishErr.message });
+        }
+      } catch (trafficErr) {
+        await pipelineLog("warn", "Traffic engine failed (non-fatal)", { appId, error: trafficErr.message });
+      }
+
+      // Revenue tracking – must never crash pipeline
+      try {
+        const revenueProduct = {
+          name: productName,
+          slug: launchResult?.slug || productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || appId,
+          pricing_model: spec.pricing_model || undefined,
+          payment_provider: spec.payment_provider || undefined
+        };
+        await collectRevenueMetrics(revenueProduct);
+        console.log("[PIPELINE] REVENUE_METRICS –", revenueProduct.slug);
+      } catch (revenueErr) {
+        await pipelineLog("warn", "Revenue collector failed (non-fatal)", { appId, error: revenueErr.message });
+      }
+    } catch (e) {
+      await pipelineLog("error", "Launch product threw", { appId, error: e.message });
+    }
   }
   if (passedIds.length > 0) {
     console.log("[PIPELINE] METRICS_INITIALIZED – data/revenue_metrics.json");
@@ -320,10 +423,14 @@ export async function runFullProductPipeline() {
       allFilePaths.push(`apps/${appId}/marketing/${ch}.txt`);
     }
     allFilePaths.push(`apps/${appId}/payment_config.json`, `apps/${appId}/PAYMENT_README.txt`);
+    allFilePaths.push(`apps/${appId}/seo/keywords.json`, `apps/${appId}/seo/meta.json`, `apps/${appId}/seo/landing_page.html`, `apps/${appId}/seo/blog_post.md`);
+    allFilePaths.push(`apps/${appId}/distribution/reddit_post.md`, `apps/${appId}/distribution/twitter_thread.md`, `apps/${appId}/distribution/indiehackers_post.md`, `apps/${appId}/distribution/producthunt_launch.md`);
     allFilePaths.push(`deploy/${appId}/index.html`, `deploy/${appId}/app.html`);
     for (const ch of marketingChannels) {
       allFilePaths.push(`deploy/${appId}/marketing/${ch}.txt`);
     }
+    allFilePaths.push(`deploy/${appId}/seo/keywords.json`, `deploy/${appId}/seo/meta.json`, `deploy/${appId}/seo/landing_page.html`, `deploy/${appId}/seo/blog_post.md`);
+    allFilePaths.push(`deploy/${appId}/distribution/reddit_post.md`, `deploy/${appId}/distribution/twitter_thread.md`, `deploy/${appId}/distribution/indiehackers_post.md`, `deploy/${appId}/distribution/producthunt_launch.md`);
   }
   allFilePaths.push("deploy/index.html");
 
@@ -357,6 +464,7 @@ export async function runFullProductPipeline() {
   const fullConfirmation = confirmation + "\n" + fileListBlock + "\n" + confirmationEnd;
   console.log(fullConfirmation);
   await report("Confirmation", ["EXEMPLAR PRODUKTER KLARA", ...allFilePaths, "Var API-nycklar: apps/<appId>/payment_config.json"]);
+  await pipelineLog("info", "Pipeline completed", { createdIds: createdIds.length, passedIds: passedIds.length, failed: failedReports.length });
 
   return {
     ok: true,

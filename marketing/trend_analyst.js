@@ -10,6 +10,7 @@
  * { trend_score (0–100), market_saturation (0–100), pass, uncertain, reason }
  */
 import { collectLiveSignals } from './live_sources.js';
+import { AI_MODELS } from "../config/ai_models.js";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -29,7 +30,7 @@ function getText(res) {
  */
 export async function analyzeTrends(idea) {
   const res = await openai.responses.create({
-    model: "gpt-4.1-mini",
+    model: AI_MODELS.analysis,
     input: `
 You are a 2026 trend & market analyst. Evaluate this product/SaaS idea using conceptual signals from:
 - Google Trends, Reddit, X/Twitter, LinkedIn, YouTube Trends, Pinterest, TikTok

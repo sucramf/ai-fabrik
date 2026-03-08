@@ -318,3 +318,613 @@ deploy/index.html
 Var API-nycklar: apps/<appId>/payment_config.json
 --- End ---
 
+
+--- MARKET INSPECTOR: PASS ---
+"invoice generator for freelancers" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"invoice generator for freelancers" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: FAIL ---
+"invoice generator for freelancers" → Monetization unclear or explicitly free-only.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Meeting cost calculator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"AI writing prompt generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"simple todo list app" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"simple todo list app" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"simple todo list app" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Netflix movie downloader" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"random cat fact generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"invoice generator for freelancers" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"invoice generator for freelancers" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: FAIL ---
+"invoice generator for freelancers" → Monetization unclear or explicitly free-only.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Meeting cost calculator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"Meeting cost calculator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"Meeting cost calculator" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"AI writing prompt generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"AI writing prompt generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"AI writing prompt generator" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"simple todo list app" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"simple todo list app" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"simple todo list app" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Netflix movie downloader" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: FAIL ---
+"Netflix movie downloader" → Copyright violation risk
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"random cat fact generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"random cat fact generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"random cat fact generator" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"invoice generator for freelancers" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"invoice generator for freelancers" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"invoice generator for freelancers" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+Idea too short to judge: "adhd focus timer"
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"adhd focus timer" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"adhd focus timer" → Idea description too short to assess revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"simple flight tracker map" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"simple flight tracker map" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"simple flight tracker map" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"minimal daily budget planner" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"minimal daily budget planner" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"minimal daily budget planner" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"youtube title generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"youtube title generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"youtube title generator" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"random workout generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"random workout generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"random workout generator" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"habit tracker web app" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"habit tracker web app" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"habit tracker web app" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"markdown note editor" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"markdown note editor" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"markdown note editor" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"password generator tool" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"password generator tool" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"password generator tool" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"simple project planner" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"simple project planner" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"simple project planner" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+Idea too short to judge: "pomodoro focus tool"
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"pomodoro focus tool" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"pomodoro focus tool" → Idea description too short to assess revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+Idea too short to judge: "weekly meal planner"
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"weekly meal planner" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"weekly meal planner" → Idea description too short to assess revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"seo keyword generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"seo keyword generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"seo keyword generator" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"daily writing prompt generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"daily writing prompt generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"daily writing prompt generator" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"simple todo list app" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"simple todo list app" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"simple todo list app" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+Idea too short to judge: "link organizer tool"
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"link organizer tool" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"link organizer tool" → Idea description too short to assess revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"reading tracker web app" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"reading tracker web app" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"reading tracker web app" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"study timer for students" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"study timer for students" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"study timer for students" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"simple calendar planner" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"simple calendar planner" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"simple calendar planner" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"AI summarizer for long articles" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"AI summarizer for long articles" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"AI summarizer for long articles" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Meeting cost calculator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"Meeting cost calculator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"Meeting cost calculator" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Browser-based word puzzle game" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"Browser-based word puzzle game" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"Browser-based word puzzle game" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Micro learning quiz app" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"Micro learning quiz app" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"Micro learning quiz app" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"AI writing prompt generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"AI writing prompt generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"AI writing prompt generator" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"invoice generator for freelancers" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"invoice generator for freelancers" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"invoice generator for freelancers" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+Idea too short to judge: "adhd focus timer"
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"adhd focus timer" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"adhd focus timer" → Idea description too short to assess revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"simple flight tracker map" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"simple flight tracker map" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"simple flight tracker map" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"minimal daily budget planner" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"minimal daily budget planner" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: UNCERTAIN ---
+"minimal daily budget planner" → No explicit monetization model detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"youtube title generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"youtube title generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Meeting cost calculator for teams" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"Meeting cost calculator for teams" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"Meeting cost calculator for teams" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: UNCERTAIN ---
+"Random meme generator" → No strong signals of either saturation or clear opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"Random meme generator" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"Random meme generator" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+
+
+--- MARKET INSPECTOR: PASS ---
+"invoice generator for freelancers" → Heuristic market check suggests non-saturated niche with some opportunity.
+--- End ---
+
+
+--- LEGAL INSPECTOR: PASS ---
+"invoice generator for freelancers" → No obvious high-risk legal/ethical issues detected.
+--- End ---
+
+
+--- MONEY INSPECTOR: PASS ---
+"invoice generator for freelancers" → Idea contains clear hints of a monetizable SaaS/revenue model.
+--- End ---
+

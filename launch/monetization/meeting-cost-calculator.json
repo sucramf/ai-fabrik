@@ -1,0 +1,51 @@
+{
+  "product_slug": "meeting-cost-calculator",
+  "generated_at": "2026-03-08T17:41:37.654Z",
+  "pricing_model": "freemium",
+  "options": [
+    {
+      "id": "freemium",
+      "label": "Freemium",
+      "recommended": true,
+      "description": "Free tier + paid upgrades"
+    },
+    {
+      "id": "subscription",
+      "label": "Subscription",
+      "recommended": false,
+      "description": "Monthly/yearly plans"
+    },
+    {
+      "id": "one_time",
+      "label": "One-time purchase",
+      "recommended": false,
+      "description": "Single payment"
+    },
+    {
+      "id": "ads",
+      "label": "Ads",
+      "recommended": false,
+      "description": "Ad-supported free tier"
+    }
+  ],
+  "suggested_tiers": [
+    {
+      "name": "Free",
+      "price": 0,
+      "features": [
+        "Core features",
+        "Limited usage"
+      ]
+    },
+    {
+      "name": "Pro",
+      "price": 9,
+      "period": "month",
+      "features": [
+        "Unlimited",
+        "Priority support"
+      ]
+    }
+  ],
+  "notes": "Configure actual pricing in payment_config.json. Product: Meeting Cost Calculator."
+}

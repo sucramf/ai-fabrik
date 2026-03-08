@@ -1,0 +1,2 @@
+[2026-03-08T14:29:20.587Z] Corrupted apps recorded: 15 → data/corrupted_apps.json
+[2026-03-08T14:29:20.588Z] System check complete. Missing dirs created: 7 Missing files created: 5 Corrupted files repaired: 0 Missing agents: 0 Corrupted apps: 15

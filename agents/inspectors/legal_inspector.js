@@ -54,6 +54,28 @@ export async function inspectLegal(idea) {
     }
   }
 
+  // Copyright / scraping / trademark risk
+  const copyrightScrapingTrademark = [
+    { k: "download movies", reason: "Copyright violation risk" },
+    { k: "movie downloader", reason: "Copyright violation risk" },
+    { k: "netflix download", reason: "Copyright violation risk" },
+    { k: "scrape ", reason: "Scraping may violate ToS or law" },
+    { k: "scraping ", reason: "Scraping may violate ToS or law" },
+    { k: "illegal source", reason: "Illegal sources not allowed" },
+    { k: "pirate", reason: "Copyright violation risk" },
+    { k: "torrent", reason: "Copyright violation risk" },
+    { k: "clone netflix", reason: "Trademark and copyright risk" },
+    { k: "like spotify", reason: "Trademark resemblance risk" },
+    { k: "spotify clone", reason: "Trademark resemblance risk" },
+    { k: "youtube downloader", reason: "Copyright/ToS violation risk" }
+  ];
+  for (const { k, reason } of copyrightScrapingTrademark) {
+    if (text.includes(k)) {
+      await log("FAIL", `"${idea}" → ${reason}`);
+      return { pass: false, uncertain: false, reason };
+    }
+  }
+
   // GDPR / data-relaterat – inte direkt fail, men flagga om oklart
   if (text.includes("personal data") || text.includes("user tracking") || text.includes("gdpr")) {
     const reason =

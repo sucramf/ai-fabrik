@@ -5,6 +5,8 @@
  * Output is compatible with builders/full_product_pipeline.js (each idea has title, description, product_type; pipeline can map to idea_title/idea_description).
  */
 
+import { AI_MODELS } from "../config/ai_models.js";
+
 const PRODUCT_TYPES = ["generator", "calculator", "tracker", "analyzer", "directory", "micro_saas"];
 
 const TOP_N_MIN = 5;
@@ -97,7 +99,7 @@ Rules:
   const userPrompt = `Generate approximately 100 product ideas as a JSON array. Each element: { "title": "...", "description": "...", "product_type": "generator"|"calculator"|"tracker"|"analyzer"|"directory"|"micro_saas" }. Return only the array.`;
 
   const res = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: AI_MODELS.reasoning,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt }

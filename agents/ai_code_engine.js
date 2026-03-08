@@ -9,6 +9,8 @@
  * Uses OPENAI_API_KEY. Vanilla HTML/JS/CSS (no build step) for pipeline compatibility.
  */
 
+import { AI_MODELS } from "../config/ai_models.js";
+
 const PRODUCT_TYPE_LOGIC_HINTS = {
   generator: "generate something from user input",
   calculator: "perform a real calculation",
@@ -150,7 +152,7 @@ Generate a tool that delivers real user value. Your response must be only the JS
     ];
 
     const res = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: AI_MODELS.generation,
       messages,
       temperature: 0.2
     });
@@ -167,7 +169,7 @@ Generate a tool that delivers real user value. Your response must be only the JS
       messages.push({ role: "assistant", content: res.choices?.[0]?.message?.content || "" });
       messages.push({ role: "user", content: retryPrompt });
       const res2 = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: AI_MODELS.generation,
         messages,
         temperature: 0.2
       });
@@ -195,4 +197,120 @@ Generate a tool that delivers real user value. Your response must be only the JS
     if (err.message && err.message.startsWith("AI_CODE_ENGINE:")) throw err;
     throw new Error("AI_CODE_ENGINE: " + (err.message || String(err)));
   }
+}
+
+/**
+ * Apply evolution plan to existing app code. Returns updated files only; does not delete or replace unrelated code.
+ * @param {Object} spec - Product spec (product_name, product_type, features, etc.)
+ * @param {Object} currentFiles - { indexHtml, appJs, logicJs, stylesCss }
+ * @param {Object} evolutionPlan - { suggestions: string[], allocation_status?: string, reasoning?: string[] }
+ * @param {{ maxChangeScope?: 'small'|'medium'|'large' }} options - small = minimal patches, large = allow broader refactors
+ * @returns {Promise<{ indexHtml: string, appJs: string, logicJs: string, stylesCss: string }>}
+ */
+export async function applyEvolution(spec, currentFiles, evolutionPlan, options = {}) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || !apiKey.trim()) {
+    throw new Error("AI_CODE_ENGINE: OPENAI_API_KEY is required for applyEvolution.");
+  }
+
+  const suggestions = Array.isArray(evolutionPlan?.suggestions) ? evolutionPlan.suggestions : [];
+  if (suggestions.length === 0) {
+    return {
+      indexHtml: currentFiles.indexHtml || "",
+      appJs: currentFiles.appJs || "",
+      logicJs: currentFiles.logicJs || "",
+      stylesCss: currentFiles.stylesCss || ""
+    };
+  }
+
+  const scope = options.maxChangeScope || "medium";
+  const scopeInstruction =
+    scope === "small"
+      ? "Make MINIMAL changes: only the smallest edits needed to address each suggestion. Do not refactor or restructure."
+      : scope === "large"
+        ? "You may refactor and improve structure as needed to implement the suggestions well."
+        : "Make focused changes to address the suggestions; avoid unnecessary refactors.";
+
+  const OpenAI = (await import("openai")).default;
+  const openai = new OpenAI({ apiKey });
+
+  function parseResponse(content) {
+    const raw = (content || "").trim();
+    const jsonStr = raw.replace(/^```json?\s*|\s*```$/g, "").trim();
+    try {
+      return JSON.parse(jsonStr);
+    } catch (e) {
+      throw new Error("AI_CODE_ENGINE: applyEvolution response was not valid JSON. " + (e.message || ""));
+    }
+  }
+
+  function ensureHtmlAssets(html) {
+    if (!html || typeof html !== "string") return html;
+    let finalIndex = html;
+    if (!finalIndex.includes("styles.css")) {
+      finalIndex = finalIndex.replace("</head>", '  <link rel="stylesheet" href="styles.css" />\n</head>');
+    }
+    if (!finalIndex.includes("app.js")) {
+      finalIndex = finalIndex.replace("</body>", '<script type="module" src="app.js"></script>\n</body>');
+    }
+    const scriptTag = finalIndex.match(/<script[^>]*src=["']app\.js["'][^>]*>/i);
+    if (scriptTag && !scriptTag[0].includes("type=\"module\"") && !scriptTag[0].includes("type='module'")) {
+      finalIndex = finalIndex.replace(/<script([^>]*)src=["']app\.js["']([^>]*)>/i, "<script type=\"module\"$1src=\"app.js\"$2>");
+    }
+    return finalIndex;
+  }
+
+  const systemPrompt = `You are a senior developer applying improvement suggestions to an existing web app.
+Rules:
+- PRESERVE all existing functionality. Do not remove or break working behavior.
+- Apply ONLY the requested improvements from the evolution plan.
+- Output a single JSON object with exactly these keys: indexHtml, appJs, logicJs, stylesCss. Each value is the full file content as a string (escape newlines as \\n and double quotes as \\" in JSON).
+- Keep the same tech stack: vanilla HTML, CSS, ES modules; indexHtml must load app.js as type="module"; app.js may import from logic.js.
+${scopeInstruction}
+Do not include any text outside the JSON.`;
+
+  const userPrompt = `Product: ${spec?.product_name || "App"}
+
+Evolution suggestions to apply:
+${suggestions.map((s) => `- ${s}`).join("\n")}
+
+Current code files:
+
+=== indexHtml ===
+${(currentFiles.indexHtml || "").slice(0, 12000)}
+
+=== appJs ===
+${(currentFiles.appJs || "").slice(0, 8000)}
+
+=== logicJs ===
+${(currentFiles.logicJs || "").slice(0, 8000)}
+
+=== stylesCss ===
+${(currentFiles.stylesCss || "").slice(0, 6000)}
+
+Return the updated files as a single JSON object: { "indexHtml": "...", "appJs": "...", "logicJs": "...", "stylesCss": "..." }. Only the JSON, no markdown.`;
+
+  const res = await openai.chat.completions.create({
+    model: AI_MODELS.generation,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ],
+    temperature: 0.2
+  });
+
+  const parsed = parseResponse(res.choices?.[0]?.message?.content);
+  const indexHtml = typeof parsed.indexHtml === "string" ? parsed.indexHtml : (currentFiles.indexHtml || "");
+  const appJs = typeof parsed.appJs === "string" ? parsed.appJs : (currentFiles.appJs || "");
+  const logicJs = typeof parsed.logicJs === "string" ? parsed.logicJs : (currentFiles.logicJs || "");
+  const stylesCss = typeof parsed.stylesCss === "string" ? parsed.stylesCss : (currentFiles.stylesCss || "");
+
+  const finalIndex = ensureHtmlAssets(indexHtml);
+
+  return {
+    indexHtml: finalIndex,
+    appJs: appJs || currentFiles.appJs || "",
+    logicJs: logicJs || currentFiles.logicJs || "",
+    stylesCss: stylesCss || currentFiles.stylesCss || ""
+  };
 }

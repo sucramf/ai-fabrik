@@ -1,0 +1,10 @@
+{
+  "targets": [
+    {
+      "app_id": "app_123",
+      "traffic_strategy": "seo + social",
+      "priority": "high"
+    }
+  ],
+  "updated": ""
+}
