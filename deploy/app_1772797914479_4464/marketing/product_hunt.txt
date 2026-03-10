@@ -1,3 +1,0 @@
-Tagline: Webbplats som jämför matpriser i realtid
-Description: "Webbplats som jämför matpriser i realtid" – [one sentence value prop].
-First comment: Thanks for checking us out! Link to try: [SET_URL].

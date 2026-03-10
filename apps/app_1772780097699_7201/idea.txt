@@ -1,1 +1,0 @@
-Customizable appointment reminder system for small service businesses with SMS and email notifications

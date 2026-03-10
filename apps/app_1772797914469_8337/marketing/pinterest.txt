@@ -1,3 +1,0 @@
-Pin title: App för virtuella husdjur med AI
-Description: "App för virtuella husdjur med AI" – simple, focused tool. Link to try.
-Board: SaaS & productivity tools

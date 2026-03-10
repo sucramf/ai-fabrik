@@ -1,3 +1,0 @@
-Pin title: SaaS för automatiserad social media content
-Description: "SaaS för automatiserad social media content" – simple, focused tool. Link to try.
-Board: SaaS & productivity tools

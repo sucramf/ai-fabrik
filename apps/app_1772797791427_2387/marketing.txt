@@ -1,7 +1,0 @@
-Unlock the power of "Webbplats som jämför matpriser i realtid".
-
-- Designed for busy people and small teams.
-- Simple, fast and focused on one clear job.
-- Ready to fit into your existing workflow.
-
-Start experimenting with a lightweight MVP today.

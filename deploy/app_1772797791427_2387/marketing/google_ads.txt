@@ -1,5 +1,0 @@
-Headline 1: Webbplats som jämför matpriser i realtid – Try free
-Headline 2: Simple tool for teams
-Headline 3: No credit card required
-Description: Get started with "Webbplats som jämför matpriser i realtid" in minutes. Built for small teams.
-Final URL: [SET_YOUR_LANDING_URL]

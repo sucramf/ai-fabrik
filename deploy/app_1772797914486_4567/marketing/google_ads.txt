@@ -1,5 +1,0 @@
-Headline 1: SaaS för automatiserad social media content – Try free
-Headline 2: Simple tool for teams
-Headline 3: No credit card required
-Description: Get started with "SaaS för automatiserad social media content" in minutes. Built for small teams.
-Final URL: [SET_YOUR_LANDING_URL]

@@ -1,3 +1,0 @@
-Title: Webbplats som jämför matpriser i realtid – Demo & walkthrough
-Description: Quick demo of "Webbplats som jämför matpriser i realtid". Try it at [SET_URL].
-CTA: Link in description for free trial.
