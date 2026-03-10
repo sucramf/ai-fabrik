@@ -1,10 +1,14 @@
-/**
+﻿/**
  * WORKERS – Build apps from ideas via product spec and capability filter.
  *
  * Pipeline: idea → product_architect (createProductSpec) → capability_filter (evaluateBuildability) → build.
  * BUILD_MODE: "ai_generated" (default) → ai_code_engine.generate(spec) → real app code.
  *             "template" → spec-driven template (index.html, app.js, styles.css from local builders).
- * If capability_filter rejects, log and skip. If allowed, build per BUILD_MODE.
+ *
+ * HK-UPGRADE: Visual Engine & Design System
+ * - Master Design System: Tailwind (CDN) + Inter font + Dark mode baseline.
+ * - Consistent layout tokens via styles.css (CSS variables + micro-interactions).
+ * - UI-Polisher: subtle output highlight and button feedback on actions.
  */
 
 import fs from "fs/promises";
@@ -56,10 +60,10 @@ function buildIndexHtml(spec) {
 
   const inputFields = buildInputFieldsByType(type, features);
   const outputSection = `
-    <div class="output-section">
-      <div class="output-header">
-        <label class="output-label">Output</label>
-        <button type="button" id="copyBtn" class="btn btn-secondary">Copy</button>
+    <div class="output-section mt-6">
+      <div class="output-header flex items-center justify-between mb-2">
+        <label class="output-label text-xs font-medium text-slate-400 tracking-wide">Output</label>
+        <button type="button" id="copyBtn" class="btn btn-secondary text-xs">Copy</button>
       </div>
       <div id="output" class="output-area" role="region" aria-live="polite"></div>
     </div>`;
@@ -70,32 +74,60 @@ function buildIndexHtml(spec) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${name}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              500: '#6366F1',
+              600: '#4F46E5',
+              950: '#020617'
+            }
+          },
+          boxShadow: {
+            'elevated': '0 18px 45px rgba(15,23,42,0.9)'
+          },
+        }
+      }
+    };
+  </script>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <header class="app-header">
-    <div class="header-inner">
-      <span class="logo">A</span>
-      <div>
-        <h1 class="app-title">${name}</h1>
-        <p class="app-tagline">AI_FABRIK</p>
-      </div>
-    </div>
-  </header>
-
-  <main class="app-main">
-    ${valueProp ? `<p class="value-prop">${valueProp}</p>` : ""}
-    <section class="tool-section">
-      <form id="toolForm" class="tool-form">
-        ${inputFields}
-        <div class="actions">
-          <button type="submit" id="runBtn" class="btn btn-primary">Run</button>
-          <button type="button" id="clearBtn" class="btn btn-secondary">Clear</button>
+<body class="bg-slate-950 text-slate-50">
+  <div class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-slate-50">
+    <header class="app-header">
+      <div class="header-inner">
+        <span class="logo">A</span>
+        <div>
+          <h1 class="app-title">${name}</h1>
+          <p class="app-tagline">AI_FABRIK</p>
         </div>
-      </form>
-      ${outputSection}
-    </section>
-  </main>
+      </div>
+    </header>
+
+    <main class="app-main">
+      ${valueProp ? `<p class="value-prop">${valueProp}</p>` : ""}
+      <section class="tool-section">
+        <form id="toolForm" class="tool-form" autocomplete="off">
+          ${inputFields}
+          <div class="actions">
+            <button type="submit" id="runBtn" class="btn btn-primary">Run</button>
+            <button type="button" id="clearBtn" class="btn btn-secondary">Clear</button>
+          </div>
+        </form>
+        ${outputSection}
+      </section>
+    </main>
+  </div>
 
   <script>window.__SPEC__ = ${specForScript};</script>
   <script src="app.js"></script>
@@ -156,8 +188,8 @@ function buildAppJs(spec) {
     generator: `
       const text = (document.getElementById("inputText")?.value || "").trim();
       if (!text) { setOutput("Enter some text first."); return; }
-      const words = text.split(/\\s+/).filter(Boolean);
-      const lines = text.split(/\\n/).filter(Boolean);
+      const words = text.split(/\s+/).filter(Boolean);
+      const lines = text.split(/\n/).filter(Boolean);
       const out = [
         "Words: " + words.length,
         "Characters: " + text.length,
@@ -186,8 +218,8 @@ function buildAppJs(spec) {
     analyzer: `
       const text = (document.getElementById("inputText")?.value || "").trim();
       if (!text) { setOutput("Enter text to analyze."); return; }
-      const words = text.split(/\\s+/).filter(Boolean);
-      const lines = text.split(/\\n/).filter(Boolean);
+      const words = text.split(/\s+/).filter(Boolean);
+      const lines = text.split(/\n/).filter(Boolean);
       setOutput([
         "Words: " + words.length,
         "Characters: " + text.length,
@@ -204,7 +236,7 @@ function buildAppJs(spec) {
     micro_saas: `
       const text = (document.getElementById("inputText")?.value || "").trim();
       if (!text) { setOutput("Enter input first."); return; }
-      const words = text.split(/\\s+/).filter(Boolean);
+      const words = text.split(/\s+/).filter(Boolean);
       setOutput("Processed: " + words.length + " word(s).\\n\\n" + text.slice(0, 500));
     `
   };
@@ -218,7 +250,12 @@ function buildAppJs(spec) {
   function getOutputEl() { return document.getElementById("output"); }
   function setOutput(text) {
     const el = getOutputEl();
-    if (el) el.textContent = text || "";
+    if (!el) return;
+    el.textContent = text || "";
+    // UI-Polisher: subtle flash on update
+    el.classList.remove("output--flash");
+    void el.offsetWidth; // force reflow for consecutive updates
+    el.classList.add("output--flash");
   }
 
   function getTrackerList() {
@@ -244,10 +281,16 @@ function buildAppJs(spec) {
   document.getElementById("copyBtn")?.addEventListener("click", function() {
     const text = getOutputEl()?.textContent || "";
     if (!text) return;
+    const btn = this;
     navigator.clipboard.writeText(text).then(function() {
-      this.textContent = "Copied!";
-      setTimeout(function() { this.textContent = "Copy"; }.bind(this), 1500);
-    }.bind(this));
+      const original = btn.textContent;
+      btn.textContent = "Copied";
+      btn.classList.add("btn--pulse");
+      setTimeout(function() {
+        btn.textContent = original;
+        btn.classList.remove("btn--pulse");
+      }, 1200);
+    });
   });
 
   document.getElementById("clearBtn")?.addEventListener("click", function() {
@@ -263,7 +306,7 @@ function buildAppJs(spec) {
       const el = document.getElementById("trackerList");
       if (!el) return;
       el.innerHTML = list.map(function(item, i) {
-        return \"<div class=\\\"tracker-item\\\"><span>\" + item.replace(/</g, \"&lt;\") + \"</span><button type=\\\"button\\\" data-i=\\\"\" + i + \"\\\" class=\\\"btn btn-small\\\">Remove</button></div>\";
+        return "<div class=\\"tracker-item\\"><span>" + item.replace(/</g, "&lt;") + "</span><button type=\\"button\\" data-i=\\"" + i + "\\" class=\\"btn btn-small\\">Remove</button></div>";
       }).join("");
       el.querySelectorAll("[data-i]").forEach(function(btn) {
         btn.addEventListener("click", function() {
@@ -296,6 +339,7 @@ function buildAppJs(spec) {
     });
   }
 
+  // Main submit handler
   document.getElementById("toolForm")?.addEventListener("submit", function(e) {
     e.preventDefault();
     (function() { ${generators[type] || generators.micro_saas} })();
@@ -304,42 +348,279 @@ function buildAppJs(spec) {
 `.trim();
 }
 
-/** Build styles.css. */
+/** Build styles.css – Master Design System (Tailwind-friendly, Inter, Dark mode). */
 function buildStylesCss() {
   return `
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
-.app-header { border-bottom: 1px solid #334155; background: rgba(15,23,42,.9); }
-.header-inner { max-width: 56rem; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
-.logo { width: 2rem; height: 2rem; background: #6366f1; color: #fff; border-radius: 0.5rem; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; }
-.app-title { margin: 0; font-size: 1.25rem; font-weight: 600; }
-.app-tagline { margin: 0.25rem 0 0; font-size: 0.75rem; color: #94a3b8; }
-.app-main { max-width: 56rem; margin: 0 auto; padding: 1.5rem; }
-.value-prop { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; }
-.tool-section { background: rgba(30,41,59,.5); border: 1px solid #334155; border-radius: 0.75rem; padding: 1.5rem; }
-.tool-form { display: flex; flex-direction: column; gap: 0.75rem; }
-.tool-form label { font-size: 0.8rem; font-weight: 500; color: #94a3b8; }
-.tool-form input[type="text"], .tool-form input[type="number"], .tool-form textarea, .tool-form select {
-  padding: 0.5rem 0.75rem; border: 1px solid #475569; border-radius: 0.5rem; background: #1e293b; color: #e2e8f0; font-size: 1rem;
+:root {
+  --hk-bg: #020617;
+  --hk-bg-elevated: #020617;
+  --hk-surface: #020617;
+  --hk-surface-soft: #020617;
+  --hk-border-subtle: rgba(148, 163, 184, 0.18);
+  --hk-border-strong: rgba(148, 163, 184, 0.32);
+  --hk-text-primary: #e5e7eb;
+  --hk-text-muted: #9ca3af;
+  --hk-accent: #6366f1;
+  --hk-accent-soft: rgba(99, 102, 241, 0.15);
+  --hk-accent-strong: #4f46e5;
+  --hk-radius-lg: 0.9rem;
+  --hk-radius-md: 0.7rem;
+  --hk-radius-pill: 999px;
+  --hk-shadow-elevated: 0 18px 45px rgba(15,23,42,0.9);
 }
-.tool-form textarea { min-height: 100px; resize: vertical; }
-.input-row { display: flex; gap: 0.5rem; }
-.input-row input { flex: 1; }
-.actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-.btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.9rem; cursor: pointer; border: none; }
-.btn-primary { background: #6366f1; color: #fff; }
-.btn-primary:hover { background: #4f46e5; }
-.btn-secondary { background: #334155; color: #e2e8f0; }
-.btn-secondary:hover { background: #475569; }
-.btn-small { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
-.output-section { margin-top: 1.5rem; }
-.output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-.output-label { font-size: 0.8rem; color: #94a3b8; }
-.output-area { min-height: 4rem; padding: 1rem; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; white-space: pre-wrap; word-break: break-word; }
-.tracker-list, .directory-list { margin-top: 0.5rem; }
-.tracker-item { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; border-bottom: 1px solid #334155; }
-.tracker-item span { flex: 1; }
-@media (max-width: 640px) { .header-inner, .app-main { padding-left: 1rem; padding-right: 1rem; } }
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #0b1120, #020617 55%, #000 100%);
+  color: var(--hk-text-primary);
+}
+
+.app-header {
+  border-bottom: 1px solid var(--hk-border-subtle);
+  background: radial-gradient(circle at top left, rgba(99,102,241,0.2), rgba(15,23,42,0.95));
+  backdrop-filter: blur(18px);
+}
+
+.header-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1rem 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.logo {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.8rem;
+  background: linear-gradient(135deg, #818cf8, #4f46e5);
+  color: #f9fafb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(79,70,229,0.55);
+}
+
+.app-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.app-tagline {
+  margin: 0.18rem 0 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--hk-text-muted);
+}
+
+.app-main {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.75rem 2.25rem;
+}
+
+.value-prop {
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  color: var(--hk-text-muted);
+}
+
+.tool-section {
+  position: relative;
+  background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.96));
+  border-radius: 1.1rem;
+  padding: 1.5rem 1.5rem 1.8rem;
+  border: 1px solid var(--hk-border-subtle);
+  box-shadow: var(--hk-shadow-elevated);
+}
+
+.tool-section::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  background: radial-gradient(circle at top left, rgba(148,163,184,0.45), transparent 55%);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.tool-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.tool-form label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--hk-text-muted);
+}
+
+.tool-form input[type="text"],
+.tool-form input[type="number"],
+.tool-form textarea,
+.tool-form select {
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--hk-radius-md);
+  border: 1px solid var(--hk-border-subtle);
+  background: rgba(15,23,42,0.96);
+  color: var(--hk-text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out, background-color 140ms ease-out, transform 80ms ease-out;
+}
+
+.tool-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.tool-form input:focus-visible,
+.tool-form textarea:focus-visible,
+.tool-form select:focus-visible {
+  border-color: var(--hk-accent);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.7);
+}
+
+.input-row {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.input-row input {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+}
+
+.btn {
+  position: relative;
+  padding: 0.52rem 1.05rem;
+  border-radius: var(--hk-radius-pill);
+  font-weight: 500;
+  font-size: 0.87rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: background-color 140ms ease-out, transform 80ms ease-out, box-shadow 140ms ease-out, filter 140ms ease-out;
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #6366f1, #4f46e5);
+  color: #f9fafb;
+  box-shadow: 0 18px 30px rgba(79,70,229,0.4);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(30,64,175,0.08);
+  color: var(--hk-text-primary);
+  border: 1px solid rgba(148,163,184,0.35);
+}
+
+.btn-secondary:hover {
+  background: rgba(30,64,175,0.16);
+}
+
+.btn-small {
+  padding: 0.28rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+.btn:focus-visible {
+  box-shadow: 0 0 0 1px rgba(191,219,254,0.7), 0 0 0 4px rgba(59,130,246,0.45);
+}
+
+.btn--pulse {
+  animation: hk-btn-pulse 0.9s ease-out;
+}
+
+@keyframes hk-btn-pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99,102,241,0.5); }
+  60% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(99,102,241,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}
+
+.output-section {
+  margin-top: 1.6rem;
+}
+
+.output-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hk-text-muted);
+}
+
+.output-area {
+  min-height: 4.2rem;
+  padding: 0.9rem 1rem;
+  background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
+  border-radius: var(--hk-radius-md);
+  border: 1px solid var(--hk-border-strong);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out, background-color 140ms ease-out;
+}
+
+.output--flash {
+  border-color: rgba(129,140,248,0.9);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.7);
+}
+
+.tracker-list,
+.directory-list {
+  margin-top: 0.6rem;
+}
+
+.tracker-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed rgba(51,65,85,0.8);
+}
+
+.tracker-item span {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .header-inner,
+  .app-main {
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+  }
+
+  .tool-section {
+    padding: 1.3rem 1.2rem 1.4rem;
+  }
+}
 `.trim();
 }
 

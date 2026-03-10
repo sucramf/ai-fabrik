@@ -1,15 +1,4 @@
-/**
- * SUPERCHIEF DAEMON – Kontinuerlig körning.
- *
- * Varje cykel:
- * 1. Läser kandidatidéer från ideas/ideas.json
- * 2. Trend Analyst (live_sources) → skriver ideas/approved_trend_ideas.json
- * 3. Full Product Pipeline: build + marknadsföring + betalning + QA → deploy
- *
- * Intervall: 7 minuter (5–10 min enligt spec).
- */
-
-import fs from "fs/promises";
+﻿import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import { spawn } from "child_process";
@@ -40,17 +29,18 @@ import { runTrafficOrchestrator } from "./traffic_system/traffic_orchestrator.js
 import { runRevenueOptimizer } from "./revenue_system/revenue_optimizer.js";
 import { runCleanupOptimizer } from "./maintenance_system/cleanup_optimizer.js";
 import { runReleaseManager } from "./factory_release/release_manager.js";
+import { runWithVerification } from "./agents/verifier_wrapper.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const root = process.cwd();
 const IDEAS_SOURCE = path.join(root, "ideas", "ideas.json");
 const REPORT_LOG = path.join(root, "superchief_report.log");
 const DAEMON_LOG = path.join(root, "logs", "daemon.log");
+const VERIFIER_PIPELINE_LOG = path.join(root, "logs", "verifier_pipeline.log");
 const CYCLE_INTERVAL_MS = 7 * 60 * 1000;
 const APPS_DIR = path.join(root, "apps");
 let cycleCount = 0;
 
-/** Structured log: writes to logs/daemon.log and console. Level: info | warn | error */
 async function daemonLog(level, message, data = null) {
   const ts = new Date().toISOString();
   const payload = data !== null && data !== undefined ? { level, message, ...(typeof data === "object" ? data : { value: data }) } : { level, message };
@@ -59,9 +49,16 @@ async function daemonLog(level, message, data = null) {
   try {
     await fs.mkdir(path.dirname(DAEMON_LOG), { recursive: true });
     await fs.appendFile(DAEMON_LOG, line + "\n", "utf-8");
-  } catch {
-    // ignore
-  }
+  } catch {}
+}
+
+async function verifierPipelineLog(stage, result) {
+  const ts = new Date().toISOString();
+  const line = ts + " [PIPELINE] " + stage + " " + JSON.stringify({ approved: result.verification?.approved ?? result.verification?.ok ?? result.approved ?? false });
+  try {
+    await fs.mkdir(path.dirname(VERIFIER_PIPELINE_LOG), { recursive: true });
+    await fs.appendFile(VERIFIER_PIPELINE_LOG, line + "\n", "utf-8");
+  } catch {}
 }
 
 async function loadEnv() {
@@ -72,9 +69,7 @@ async function loadEnv() {
       const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
       if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "").trim();
     }
-  } catch {
-    // ignore
-  }
+  } catch {}
 }
 
 async function readCandidates() {
@@ -82,11 +77,13 @@ async function readCandidates() {
     const raw = await fs.readFile(IDEAS_SOURCE, "utf-8");
     const list = JSON.parse(raw);
     if (!Array.isArray(list)) return [];
-    return list.map((i) => {
-      if (typeof i === "string") return i.trim();
-      if (i && typeof i === "object") return String(i.name || i.idea_title || i.idé || i.title || "").trim();
-      return "";
-    }).filter(Boolean);
+    return list
+      .map((i) => {
+        if (typeof i === "string") return i.trim();
+        if (i && typeof i === "object") return String(i.name || i.idea_title || i.idé || i.title || "").trim();
+        return "";
+      })
+      .filter(Boolean);
   } catch {
     return [];
   }
@@ -109,7 +106,7 @@ async function runCycle() {
       console.log("[DAEMON] Codebase cleaner done (every 10 cycles). Unused moved:", cleanerResult.unusedMoved ?? 0, "| Duplicates:", cleanerResult.duplicatesDetected ?? 0);
     }
 
-      if (cycleCount % 20 === 0) {
+    if (cycleCount % 20 === 0) {
       const cleanupResult = await runCleanupOptimizer().catch((e) => ({ ok: false, report: { timestamp: null, actions: [] } }));
       const actionCount = cleanupResult.report?.actions?.length ?? 0;
       console.log("[DAEMON] Cleanup optimizer done (every 20 cycles). Actions:", actionCount);
@@ -127,10 +124,15 @@ async function runCycle() {
       return;
     }
 
-    const inspectorResult = await runInspectorPipeline(candidates).catch((e) => {
-      daemonLog("error", "Inspector pipeline failed", { error: e.message }).catch(() => {});
-      return { approved: [], rejected: [], checked: candidates.length, approvedCount: 0, rejectedCount: candidates.length };
-    });
+    const inspectorWrapped = await runWithVerification(
+      () => runInspectorPipeline(candidates),
+      "idea_generation",
+      { candidatesCount: candidates.length }
+    );
+    await verifierPipelineLog("idea_generation", inspectorWrapped);
+
+    const inspectorResult = inspectorWrapped.agentResult || { approved: [], rejected: [], checked: candidates.length, approvedCount: 0, rejectedCount: candidates.length };
+
     await daemonLog("info", "[DAEMON] Inspector pipeline done. Checked: " + inspectorResult.checked + " | Approved: " + inspectorResult.approvedCount + " | Rejected: " + inspectorResult.rejectedCount);
     if (inspectorResult.approvedCount === 0) {
       await daemonLog("warn", "[DAEMON] All ideas rejected by inspectors; build phase skipped this cycle.");
@@ -138,17 +140,35 @@ async function runCycle() {
 
     let result;
     try {
-      result = await runFullProductPipeline();
+      const wrappedBuild = await runWithVerification(
+        () => runFullProductPipeline(),
+        "build_steps",
+        {}
+      );
+      await verifierPipelineLog("build_steps", wrappedBuild);
+      result = wrappedBuild.agentResult;
     } catch (e) {
       await daemonLog("error", "runFullProductPipeline failed", { error: e.message, stack: e.stack });
       result = { ok: false, createdIds: [], passedIds: [], failedReports: [], filesCreated: [], allFilePaths: [] };
     }
     await daemonLog("info", "[DAEMON] Full product pipeline done. PASS: " + (result.passedIds?.length ?? 0));
 
-      const testResult = await runAllTests().catch((e) => ({ ok: false, tests_run: 0, passed: 0, failed: 0 }));
+    const testResult = await runAllTests().catch((e) => ({ ok: false, tests_run: 0, passed: 0, failed: 0 }));
+    const wrappedTests = await runWithVerification(
+      () => Promise.resolve(testResult),
+      "build_steps",
+      { phase: "tests" }
+    );
+    await verifierPipelineLog("build_steps_tests", wrappedTests);
     console.log("[DAEMON] Test runner done. Tests:", testResult.tests_run ?? 0, "| Passed:", testResult.passed ?? 0, "| Failed:", testResult.failed ?? 0);
 
-      const publisherResult = await runAutoPublisher().catch((e) => ({ ok: false, queued: 0, apps: 0 }));
+    const publisherResult = await runAutoPublisher().catch((e) => ({ ok: false, queued: 0, apps: 0 }));
+    const wrappedPublisher = await runWithVerification(
+      () => Promise.resolve(publisherResult),
+      "deployment_reports",
+      { phase: "publisher" }
+    );
+    await verifierPipelineLog("deployment_reports", wrappedPublisher);
     console.log("[DAEMON] Auto publisher done. Queued:", publisherResult.queued ?? 0, "| Apps:", publisherResult.apps ?? 0);
 
     let evolutionResult;
@@ -160,29 +180,35 @@ async function runCycle() {
     }
     await daemonLog("info", "[DAEMON] Evolution engine done. Processed: " + (evolutionResult.processed ?? 0));
 
-      const codeModifierResult = await runCodeModifierAgent().catch((e) => ({ ok: false, processed: 0, applied: 0, errors: 1 }));
+    const codeModifierResult = await runCodeModifierAgent().catch((e) => ({ ok: false, processed: 0, applied: 0, errors: 1 }));
     console.log("[DAEMON] Code modifier agent done. Processed:", codeModifierResult.processed ?? 0, "| Applied:", codeModifierResult.applied ?? 0);
 
-      const expanderResult = await runFactoryExpander().catch((e) => ({ ok: false, winners: 0, factoriesCreated: 0 }));
+    const expanderResult = await runFactoryExpander().catch((e) => ({ ok: false, winners: 0, factoriesCreated: 0 }));
     console.log("[DAEMON] Factory expander done. Winners:", expanderResult.winners ?? 0, "| New factories:", expanderResult.factoriesCreated ?? 0);
 
-      const metricsUpdateResult = await runUpdateAllMetrics().catch((e) => ({ ok: false, updated: 0 }));
+    const metricsUpdateResult = await runUpdateAllMetrics().catch((e) => ({ ok: false, updated: 0 }));
     console.log("[DAEMON] Metrics collector done. Updated:", metricsUpdateResult.updated ?? 0);
 
-      const portfolioResult = await runPortfolioAnalysis().catch((e) => ({ ok: false, products: 0 }));
+    const portfolioResult = await runPortfolioAnalysis().catch((e) => ({ ok: false, products: 0 }));
     console.log("[DAEMON] Portfolio brain done. Products analyzed:", portfolioResult.products ?? 0);
 
     const strategyResult = await runStrategicBrain().catch((e) => ({ ok: false, products: 0 }));
-  console.log("[DAEMON] Strategic brain done. Products in strategy:", strategyResult.products ?? 0);
+    console.log("[DAEMON] Strategic brain done. Products in strategy:", strategyResult.products ?? 0);
 
     const allocatorResult = await runResourceAllocator().catch((e) => ({ ok: false, products: 0 }));
     console.log("[DAEMON] Resource allocator done. Products allocated:", allocatorResult.products ?? 0);
 
-      const growthResult = await runGrowthExperiments().catch((e) => ({ ok: false, added: 0, total: 0 }));
+    const growthResult = await runGrowthExperiments().catch((e) => ({ ok: false, added: 0, total: 0 }));
     console.log("[DAEMON] Growth experiments done. Added:", growthResult.added ?? 0, "| Total:", growthResult.total ?? 0);
 
     const executionResult = await runGrowthExecution().catch((e) => ({ ok: false, executed: 0 }));
-  console.log("[DAEMON] Growth execution done. Assets prepared:", executionResult.executed ?? 0);
+    const wrappedMarketing = await runWithVerification(
+      () => Promise.resolve(executionResult),
+      "marketing_outputs",
+      { phase: "growth_execution" }
+    );
+    await verifierPipelineLog("marketing_outputs", wrappedMarketing);
+    console.log("[DAEMON] Growth execution done. Assets prepared:", executionResult.executed ?? 0);
 
     const trafficResult = await runTrafficOrchestrator().catch((e) => ({ ok: false, targets: 0, actionsRun: 0 }));
     console.log("[DAEMON] Traffic orchestrator done. Targets:", trafficResult.targets ?? 0, "| Actions run:", trafficResult.actionsRun ?? 0);
@@ -197,8 +223,19 @@ async function runCycle() {
         const full = path.join(APPS_DIR, name);
         const stat = await fs.stat(full).catch(() => null);
         if (stat && stat.isDirectory()) {
-          await collectUserFeedback(name);
-          await runDistribution(name);
+          const feedbackWrapped = await runWithVerification(
+            () => collectUserFeedback(name),
+            "metrics_reports",
+            { phase: "user_feedback", app: name }
+          );
+          await verifierPipelineLog("metrics_reports_feedback", feedbackWrapped);
+
+          const distWrapped = await runWithVerification(
+            () => runDistribution(name),
+            "marketing_outputs",
+            { phase: "distribution", app: name }
+          );
+          await verifierPipelineLog("marketing_outputs_distribution", distWrapped);
         }
       }
     } catch (e) {
@@ -219,7 +256,6 @@ async function runCycle() {
       const releaseResult = await runReleaseManager().catch((e) => ({ ok: false, stable: false, version: null, released: false }));
       await daemonLog("info", "Release manager done (every 50 cycles)", { stable: releaseResult.stable ?? false, version: releaseResult.version ?? "—", released: releaseResult.released ?? false });
     }
-
   } catch (cycleError) {
     await daemonLog("error", "Daemon cycle failed", { cycle: cycleCount, error: cycleError.message, stack: cycleError.stack });
   }

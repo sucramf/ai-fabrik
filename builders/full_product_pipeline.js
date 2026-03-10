@@ -1,15 +1,11 @@
-/**
- * FULL PRODUCT PIPELINE – Bygger produkter på hög nivå + marknadsföring + betalning.
+﻿/**
+ * FULL PRODUCT PIPELINE – Builds high-quality products + marketing + payments.
  *
- * 1. Läser godkända idéer från ideas/approved_trend_ideas.json
- * 2. Bygger webbsida/app (kvalitet Duolingo/Hemnet/Monkey Island – fullständig produkt, inga halvfärdiga MVPs) via Workers
- * 3. Skapar marknadsföringsmaterial och growth hooks per produkt (Google Ads, TikTok, YouTube, LinkedIn, Pinterest, Product Hunt)
- * 4. Förbereder betalning: Stripe/PayPal/Apple/Google – en rad API/credential per produkt senare
- * 5. QA-stickprov → endast PASS deployas
- * 6. Loggar allt till konsol och superchief_report.log
- *
- * Kör: node builders/full_product_pipeline.js
- * Eller anropas från superchief_daemon.js / superchief_from_trend_json.js
+ * HK-UPGRADE:
+ * - Legal & Compliance per product (GDPR/ToS templates) via core/verifier/legal_compliance.
+ * - Hardening Phase: extra QA pass before deploy.
+ * - Final .env/API key sanity check against .env.example.
+ * - Vercel bridge: prepares .vercel/output/static from deploy/ for static hosting.
  */
 
 import fs from "fs/promises";
@@ -35,6 +31,8 @@ import { launchProduct } from "../launch/launch_engine.js";
 import { generateTrafficPlan } from "../growth/traffic_engine.js";
 import { publishTraffic } from "../growth/traffic_publisher.js";
 import { collectRevenueMetrics } from "../revenue/revenue_collector.js";
+import { ensureLegalCompliance } from "../core/verifier/legal_compliance.js";
+import { prepareVercelStaticDeploy } from "../core/deployer/vercel_bridge.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,16 +41,22 @@ const reportLogPath = path.join(root, "superchief_report.log");
 const pipelineLogPath = path.join(root, "logs", "pipeline.log");
 const approvedJsonPath = path.join(root, "ideas", "approved_ideas.json");
 
-/** Structured pipeline log: writes to logs/pipeline.log. Level: info | warn | error */
 async function pipelineLog(level, message, data = null) {
   const ts = new Date().toISOString();
-  const payload = data !== null && data !== undefined ? { level, message, ...(typeof data === "object" ? data : { value: data }) } : { level, message };
-  const line = ts + " [" + level.toUpperCase() + "] " + (typeof payload === "object" && payload.message ? payload.message + (Object.keys(payload).length > 2 ? " " + JSON.stringify(Object.fromEntries(Object.entries(payload).filter(([k]) => k !== "message"))) : "") : JSON.stringify(payload));
+  const payload =
+    data !== null && data !== undefined
+      ? { level, message, ...(typeof data === "object" ? data : { value: data }) }
+      : { level, message };
+  const line =
+    ts +
+    " [" + level.toUpperCase() + "] " +
+    (typeof payload === "object" && payload.message
+      ? payload.message + (Object.keys(payload).length > 2 ? " " + JSON.stringify(Object.fromEntries(Object.entries(payload).filter(([k]) => k !== "message"))) : "")
+      : JSON.stringify(payload));
   try {
     await fs.mkdir(path.dirname(pipelineLogPath), { recursive: true });
     await fs.appendFile(pipelineLogPath, line + "\n", "utf-8");
   } catch {
-    // ignore
   }
 }
 
@@ -69,7 +73,6 @@ async function loadEnv() {
       }
     }
   } catch {
-    // ignore
   }
 }
 
@@ -78,13 +81,12 @@ async function report(section, lines) {
   const block = [
     `\n--- FULL PRODUCT PIPELINE: ${section} ---`,
     ...lines,
-    "--- End ---\n"
+    "--- End ---\n",
   ].join("\n");
   console.log(block);
   try {
     await fs.appendFile(reportLogPath, block + "\n", "utf-8");
   } catch {
-    // ignore
   }
 }
 
@@ -96,33 +98,33 @@ function createMarketingCopy(idea, channel) {
       `Headline 2: Simple tool for teams`,
       `Headline 3: No credit card required`,
       `Description: Get started with "${title}" in minutes. Built for small teams.`,
-      `Final URL: [SET_YOUR_LANDING_URL]`
+      `Final URL: [SET_YOUR_LANDING_URL]`,
     ].join("\n"),
     tiktok: [
       `Hook: "${title}" – the tool you didn't know you needed.`,
       `CTA: Link in bio to try free.`,
-      `Hashtags: #saas #productivity #tool #mvp`
+      `Hashtags: #saas #productivity #tool #mvp`,
     ].join("\n"),
     youtube: [
       `Title: ${title} – Demo & walkthrough`,
       `Description: Quick demo of "${title}". Try it at [SET_URL].`,
-      `CTA: Link in description for free trial.`
+      `CTA: Link in description for free trial.`,
     ].join("\n"),
     linkedin: [
       `Post: We built "${title}" to solve one thing really well.`,
       `CTA: Try it free – link in comments.`,
-      `Audience: SMB, freelancers, startups.`
+      `Audience: SMB, freelancers, startups.`,
     ].join("\n"),
     pinterest: [
       `Pin title: ${title}`,
       `Description: "${title}" – simple, focused tool. Link to try.`,
-      `Board: SaaS & productivity tools`
+      `Board: SaaS & productivity tools`,
     ].join("\n"),
     product_hunt: [
       `Tagline: ${title}`,
       `Description: "${title}" – [one sentence value prop].`,
-      `First comment: Thanks for checking us out! Link to try: [SET_URL].`
-    ].join("\n")
+      `First comment: Thanks for checking us out! Link to try: [SET_URL].`,
+    ].join("\n"),
   };
   return templates[channel] || `${title} – ${channel}`;
 }
@@ -150,37 +152,82 @@ async function writePaymentConfig(appId) {
     _comment: "Set ONE credential per provider to enable payments for this product. No live transactions until keys are set.",
     stripe: {
       secret_key: "SET_STRIPE_SECRET_KEY",
-      publishable_key: "SET_STRIPE_PUBLISHABLE_KEY"
+      publishable_key: "SET_STRIPE_PUBLISHABLE_KEY",
     },
     paypal: {
       client_id: "SET_PAYPAL_CLIENT_ID",
-      client_secret: "SET_PAYPAL_CLIENT_SECRET"
+      client_secret: "SET_PAYPAL_CLIENT_SECRET",
     },
     apple_pay: {
-      merchant_id: "SET_APPLE_MERCHANT_ID"
+      merchant_id: "SET_APPLE_MERCHANT_ID",
     },
     google_pay: {
-      merchant_id: "SET_GOOGLE_MERCHANT_ID"
-    }
+      merchant_id: "SET_GOOGLE_MERCHANT_ID",
+    },
   };
   const appDir = path.join(root, "apps", appId);
   const configPath = path.join(appDir, "payment_config.json");
   await fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
 
   const readme = [
-    "PAYMENT – Varje produkt kan aktiveras individuellt.",
+    "PAYMENT – Each product can be activated individually.",
     "",
-    "Sätt API/credentials i payment_config.json:",
+    "Set API/credentials in payment_config.json:",
     "  - Stripe: secret_key + publishable_key",
     "  - PayPal: client_id + client_secret",
     "  - Apple Pay: merchant_id",
     "  - Google Pay: merchant_id",
     "",
-    "En rad per provider räcker; ingen live-transaktion förrän nycklar är satta."
+    "One line per provider; no live transactions until keys are set.",
   ].join("\n");
   await fs.writeFile(path.join(appDir, "PAYMENT_README.txt"), readme, "utf-8");
 
   return [`apps/${appId}/payment_config.json`, `apps/${appId}/PAYMENT_README.txt`];
+}
+
+async function validateEnvAgainstExample() {
+  const envPath = path.join(root, ".env");
+  const examplePath = path.join(root, ".env.example");
+
+  try {
+    const [envRaw, exampleRaw] = await Promise.all([
+      fs.readFile(envPath, "utf-8").catch(() => ""),
+      fs.readFile(examplePath, "utf-8").catch(() => ""),
+    ]);
+    if (!exampleRaw) return;
+
+    const parse = (raw) => {
+      const out = new Map();
+      for (const line of raw.split("\n")) {
+        const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+        if (!m) continue;
+        out.set(m[1], m[2].trim());
+      }
+      return out;
+    };
+
+    const envVars = parse(envRaw);
+    const exampleVars = parse(exampleRaw);
+
+    const missing = [];
+    const empty = [];
+
+    for (const key of exampleVars.keys()) {
+      if (!envVars.has(key)) {
+        missing.push(key);
+      } else if (!envVars.get(key)) {
+        empty.push(key);
+      }
+    }
+
+    if (missing.length || empty.length) {
+      await pipelineLog("warn", "Env verification: missing or empty keys", { missing, empty });
+    } else {
+      await pipelineLog("info", "Env verification: all example keys present", {});
+    }
+  } catch (e) {
+    await pipelineLog("warn", "Env verification failed (non-fatal)", { error: e.message });
+  }
 }
 
 export async function runFullProductPipeline() {
@@ -195,7 +242,7 @@ export async function runFullProductPipeline() {
   try {
     const raw = await fs.readFile(approvedJsonPath, "utf-8");
     const parsed = JSON.parse(raw);
-    approvedIdeas = Array.isArray(parsed) ? parsed : (parsed.approvedIdeas || parsed.approved || []);
+    approvedIdeas = Array.isArray(parsed) ? parsed : parsed.approvedIdeas || parsed.approved || [];
   } catch (err) {
     await pipelineLog("error", "Could not read approved_ideas.json", { error: err.message });
     await report("Error", ["Could not read ideas/approved_ideas.json: " + err.message]);
@@ -225,13 +272,13 @@ export async function runFullProductPipeline() {
     const idea = ideaByAppId[appId] || "";
     const marketingFiles = await writeMarketingMaterials(appId, idea);
     const paymentFiles = await writePaymentConfig(appId);
-    const monetResult = await runMonetization(appId).catch((e) => ({ ok: false, files: [] }));
+    const monetResult = await runMonetization(appId).catch(() => ({ ok: false, files: [] }));
     if (monetResult.ok) allFilesCreated.push(...(monetResult.files || []));
-    const metricsResult = await injectMetrics(appId).catch((e) => ({ ok: false, files: [] }));
+    const metricsResult = await injectMetrics(appId).catch(() => ({ ok: false, files: [] }));
     if (metricsResult.ok) allFilesCreated.push(...(metricsResult.files || []));
-    const trafficResult = await runTrafficEngine(appId).catch((e) => ({ ok: false, files: [] }));
+    const trafficResult = await runTrafficEngine(appId).catch(() => ({ ok: false, files: [] }));
     if (trafficResult.ok) allFilesCreated.push(...(trafficResult.files || []));
-    const distResult = await runDistributionEngine(appId).catch((e) => ({ ok: false, files: [] }));
+    const distResult = await runDistributionEngine(appId).catch(() => ({ ok: false, files: [] }));
     if (distResult.ok) allFilesCreated.push(...(distResult.files || []));
     allFilesCreated.push(...marketingFiles, ...paymentFiles);
     console.log("Marketing + payment + monetization + metrics + traffic_engine + distribution_engine:", appId);
@@ -240,7 +287,7 @@ export async function runFullProductPipeline() {
   console.log("[PIPELINE] PRODUCT_SPEC_CREATED (by workers, per app – see apps/<id>/spec.json)");
   await report("Build", [
     "Created apps: " + createdIds.join(", "),
-    "Marketing + payment + traffic (SEO) + distribution files written per product."
+    "Marketing + payment + traffic (SEO) + distribution files written per product.",
   ]);
 
   const passedIds = [];
@@ -272,13 +319,17 @@ export async function runFullProductPipeline() {
     const qual = await testQuality(deployPath);
     if (!qual.passed) return { pass: false, reason: "quality_tester: " + qual.message };
     const testResult = await runAppTests(path.join("deploy", appId), spec);
-    if (!testResult.passed) return { pass: false, reason: "tester_agent: " + (testResult.issues || []).join("; "), issues: testResult.issues };
+    if (!testResult.passed)
+      return {
+        pass: false,
+        reason: "tester_agent: " + (testResult.issues || []).join("; "),
+        issues: testResult.issues,
+      };
     return { pass: true };
   }
 
   for (const appId of createdIds) {
     const spec = await loadSpecForApp(appId);
-    const deployPath = path.join(root, "deploy", appId);
 
     console.log("\n[PIPELINE] TESTING –", appId);
     let result = await runQaAndTester(appId, spec);
@@ -286,9 +337,10 @@ export async function runFullProductPipeline() {
     if (!result.pass) {
       console.log("[PIPELINE] TEST_FAILED –", appId, "–", result.reason);
       const evalResult = await evaluateBuildability(spec);
-      const revisedIdea = (evalResult.adjusted_scope && evalResult.adjusted_scope[0])
-        ? (spec.product_name || ideaByAppId[appId] || appId) + ". " + evalResult.adjusted_scope[0]
-        : (spec.product_name || ideaByAppId[appId] || appId) + " (simplified)";
+      const revisedIdea =
+        evalResult.adjusted_scope && evalResult.adjusted_scope[0]
+          ? (spec.product_name || ideaByAppId[appId] || appId) + ". " + evalResult.adjusted_scope[0]
+          : (spec.product_name || ideaByAppId[appId] || appId) + " (simplified)";
       console.log("[PIPELINE] Rebuild (one attempt) with adjusted_scope:", revisedIdea.slice(0, 80) + "...");
       const retryIds = await createApps([revisedIdea]);
       if (retryIds.length === 0) {
@@ -313,7 +365,36 @@ export async function runFullProductPipeline() {
         continue;
       }
       console.log("[PIPELINE] TEST_PASSED –", newAppId, "(after rebuild)");
+
+      const legal = await ensureLegalCompliance(newAppId, specRetry);
+      if (!legal.compliant) {
+        console.log("[PIPELINE] LEGAL_INCOMPLETE –", newAppId, "missing:", legal.missing.join(", "));
+        failedReports.push({ appId: newAppId, reason: "Legal docs missing: " + legal.missing.join(", ") });
+        continue;
+      }
+
+      const hardening = await runQaAndTester(newAppId, specRetry);
+      if (!hardening.pass) {
+        console.log("[PIPELINE] HARDENING_FAILED –", newAppId, "–", hardening.reason);
+        failedReports.push({ appId: newAppId, reason: "Hardening failed: " + hardening.reason });
+        continue;
+      }
+
       passedIds.push(newAppId);
+      continue;
+    }
+
+    const legal = await ensureLegalCompliance(appId, spec);
+    if (!legal.compliant) {
+      console.log("[PIPELINE] LEGAL_INCOMPLETE –", appId, "missing:", legal.missing.join(", "));
+      failedReports.push({ appId, reason: "Legal docs missing: " + legal.missing.join(", ") });
+      continue;
+    }
+
+    const hardening = await runQaAndTester(appId, spec);
+    if (!hardening.pass) {
+      console.log("[PIPELINE] HARDENING_FAILED –", appId, "–", hardening.reason);
+      failedReports.push({ appId, reason: "Hardening failed: " + hardening.reason });
       continue;
     }
 
@@ -342,7 +423,7 @@ export async function runFullProductPipeline() {
       visitors: 0,
       signups: 0,
       revenue: 0,
-      conversion_rate: 0
+      conversion_rate: 0,
     });
     console.log("[PIPELINE] METRICS_INITIALIZED –", productName);
 
@@ -353,7 +434,7 @@ export async function runFullProductPipeline() {
         url: "https://yoursite.com/" + appId,
         category: spec.product_type || "web app",
         features: spec.features || [],
-        target_users: spec.target_user || ""
+        target_users: spec.target_user || "",
       };
       const launchResult = await launchProduct(product);
       if (launchResult.ok) {
@@ -362,26 +443,27 @@ export async function runFullProductPipeline() {
         await pipelineLog("warn", "Launch engine failed for product", { appId, error: launchResult.error });
       }
 
-      // Traffic plan (SEO, content, community, growth loops) – must never crash pipeline
       try {
         const trafficProduct = {
           ...product,
-          slug: launchResult?.slug || productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || appId,
-          primary_keyword: spec.primary_keyword || productName
+          slug:
+            launchResult?.slug ||
+            productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ||
+            appId,
+          primary_keyword: spec.primary_keyword || productName,
         };
         const trafficPlan = await generateTrafficPlan(trafficProduct);
         if (trafficPlan.seo_strategy) {
           console.log("[PIPELINE] TRAFFIC_PLAN –", launchResult?.slug || appId);
         }
 
-        // Traffic publishing (Reddit, Indie Hackers, Product Hunt, blog, sitemap) – must never crash pipeline
         try {
           const publishProduct = {
             name: productName,
             slug: trafficProduct.slug,
             description: product.description,
             url: product.url,
-            primary_keyword: trafficProduct.primary_keyword
+            primary_keyword: trafficProduct.primary_keyword,
           };
           const publishResult = await publishTraffic(publishProduct);
           if (publishResult.reddit || publishResult.blog_articles > 0) {
@@ -394,13 +476,15 @@ export async function runFullProductPipeline() {
         await pipelineLog("warn", "Traffic engine failed (non-fatal)", { appId, error: trafficErr.message });
       }
 
-      // Revenue tracking – must never crash pipeline
       try {
         const revenueProduct = {
           name: productName,
-          slug: launchResult?.slug || productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || appId,
+          slug:
+            launchResult?.slug ||
+            productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ||
+            appId,
           pricing_model: spec.pricing_model || undefined,
-          payment_provider: spec.payment_provider || undefined
+          payment_provider: spec.payment_provider || undefined,
         };
         await collectRevenueMetrics(revenueProduct);
         console.log("[PIPELINE] REVENUE_METRICS –", revenueProduct.slug);
@@ -422,49 +506,77 @@ export async function runFullProductPipeline() {
     for (const ch of marketingChannels) {
       allFilePaths.push(`apps/${appId}/marketing/${ch}.txt`);
     }
-    allFilePaths.push(`apps/${appId}/payment_config.json`, `apps/${appId}/PAYMENT_README.txt`);
+    allFilePaths.push(
+      `apps/${appId}/payment_config.json`,
+      `apps/${appId}/PAYMENT_README.txt`,
+      `apps/${appId}/legal/terms-of-service.md`,
+      `apps/${appId}/legal/privacy-policy-gdpr.md`,
+    );
     allFilePaths.push(`apps/${appId}/seo/keywords.json`, `apps/${appId}/seo/meta.json`, `apps/${appId}/seo/landing_page.html`, `apps/${appId}/seo/blog_post.md`);
-    allFilePaths.push(`apps/${appId}/distribution/reddit_post.md`, `apps/${appId}/distribution/twitter_thread.md`, `apps/${appId}/distribution/indiehackers_post.md`, `apps/${appId}/distribution/producthunt_launch.md`);
+    allFilePaths.push(
+      `apps/${appId}/distribution/reddit_post.md`,
+      `apps/${appId}/distribution/twitter_thread.md`,
+      `apps/${appId}/distribution/indiehackers_post.md`,
+      `apps/${appId}/distribution/producthunt_launch.md`,
+    );
     allFilePaths.push(`deploy/${appId}/index.html`, `deploy/${appId}/app.html`);
     for (const ch of marketingChannels) {
       allFilePaths.push(`deploy/${appId}/marketing/${ch}.txt`);
     }
     allFilePaths.push(`deploy/${appId}/seo/keywords.json`, `deploy/${appId}/seo/meta.json`, `deploy/${appId}/seo/landing_page.html`, `deploy/${appId}/seo/blog_post.md`);
-    allFilePaths.push(`deploy/${appId}/distribution/reddit_post.md`, `deploy/${appId}/distribution/twitter_thread.md`, `deploy/${appId}/distribution/indiehackers_post.md`, `deploy/${appId}/distribution/producthunt_launch.md`);
+    allFilePaths.push(
+      `deploy/${appId}/distribution/reddit_post.md`,
+      `deploy/${appId}/distribution/twitter_thread.md`,
+      `deploy/${appId}/distribution/indiehackers_post.md`,
+      `deploy/${appId}/producthunt_launch.md`,
+    );
   }
   allFilePaths.push("deploy/index.html");
 
   const confirmation = [
     "",
-    "EXEMPLAR PRODUKTER KLARA",
+    "EXEMPLAR PRODUCTS READY",
     "",
-    "========== FULL PRODUCT PIPELINE – KLAR ==========",
-    "Deploy-logg: Produkt byggd, betalvägar (scaffold) aktiverade, marknadsföring klar.",
-    "Tid: " + new Date().toISOString(),
-    "Byggda appar: " + createdIds.length,
-    "PASS (deployade): " + passedIds.length,
-    "FAIL/rapporterade: " + failedReports.length,
+    "========== FULL PRODUCT PIPELINE – DONE ==========",
+    "Deploy log: Product built, payment scaffolding created, marketing prepared, legal baseline (GDPR/ToS) in place.",
+    "Time: " + new Date().toISOString(),
+    "Apps built: " + createdIds.length,
+    "PASS (deployed): " + passedIds.length,
+    "FAIL/reported: " + failedReports.length,
     "",
-    "Var API-nycklar sätts (senare, per produkt):",
+    "Where to set API keys (per product):",
     "  - apps/<appId>/payment_config.json: Stripe (secret_key, publishable_key), PayPal (client_id, client_secret), Apple Pay (merchant_id), Google Pay (merchant_id).",
-    "  - En rad per provider; aktivera betalning per produkt individuellt.",
+    "  - apps/<appId>/legal/: customize Terms of Service and Privacy Policy before going live.",
     "",
-    "--- Alla filer och vägar ---"
+    "--- All files and paths ---",
   ].join("\n");
 
   const fileListBlock = allFilePaths.map((p) => "  " + p).join("\n");
   const confirmationEnd = [
     "",
-    "--- Slut filista ---",
-    "Modulen är redo för superchief_daemon.js och live produktion.",
-    "========== SLUT ==========",
-    ""
+    "--- End of file list ---",
+    "Module is ready for superchief_daemon.js and live production.",
+    "========== END ==========",
+    "",
   ].join("\n");
 
   const fullConfirmation = confirmation + "\n" + fileListBlock + "\n" + confirmationEnd;
   console.log(fullConfirmation);
-  await report("Confirmation", ["EXEMPLAR PRODUKTER KLARA", ...allFilePaths, "Var API-nycklar: apps/<appId>/payment_config.json"]);
-  await pipelineLog("info", "Pipeline completed", { createdIds: createdIds.length, passedIds: passedIds.length, failed: failedReports.length });
+  await report("Confirmation", ["EXEMPLAR PRODUCTS READY", ...allFilePaths, "API keys: apps/<appId>/payment_config.json"]);
+  await pipelineLog("info", "Pipeline completed", {
+    createdIds: createdIds.length,
+    passedIds: passedIds.length,
+    failed: failedReports.length,
+  });
+
+  await validateEnvAgainstExample();
+
+  const vercelResult = await prepareVercelStaticDeploy().catch(() => ({ ok: false, filesCopied: 0 }));
+  if (vercelResult.ok) {
+    console.log("[PIPELINE] VERCEL_STATIC_PREPARED – files:", vercelResult.filesCopied);
+  } else {
+    console.log("[PIPELINE] VERCEL_STATIC_SKIPPED – see logs/vercel_bridge.log for details");
+  }
 
   return {
     ok: true,
@@ -472,7 +584,7 @@ export async function runFullProductPipeline() {
     passedIds,
     failedReports,
     filesCreated: allFilesCreated,
-    allFilePaths
+    allFilePaths,
   };
 }
 

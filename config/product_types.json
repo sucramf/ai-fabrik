@@ -1,0 +1,29 @@
+﻿{
+  "fast_pipeline": {
+    "description": "Small experiments and micro tools for quick validation.",
+    "examples": ["small experiments", "micro tools"],
+    "criteria": {
+      "max_scope": "single feature",
+      "max_build_time_hours": 8,
+      "requires_platform_potential": false
+    }
+  },
+  "slow_pipeline": {
+    "description": "Platform products, games, marketplaces and education apps.",
+    "examples": [
+      "platform products",
+      "games",
+      "marketplaces",
+      "education apps"
+    ],
+    "criteria": {
+      "min_platform_score": 70,
+      "multi_release_roadmap": true,
+      "requires_long_term_support": true
+    }
+  },
+  "routing_rules": {
+    "high_platform_potential_threshold": 70,
+    "default_pipeline": "fast_pipeline"
+  }
+}

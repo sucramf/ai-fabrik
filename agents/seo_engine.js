@@ -1,0 +1,212 @@
+﻿import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+
+/**
+ * SEO ENGINE – Generates SEO assets and prepares Google Indexing API calls.
+ *
+ * Environment:
+ *   - SITE_BASE_URL (optional, e.g. https://example.com)
+ *   - GOOGLE_INDEXING_KEY (optional, for Indexing API)
+ *
+ * Export:
+ *   - generateSeoForApps(apps): Promise<SeoResult>
+ */
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = process.cwd();
+const CONTENT_DIR = path.join(root, "content");
+const BLOG_DIR = path.join(CONTENT_DIR, "blog");
+const SEO_DIR = path.join(CONTENT_DIR, "seo");
+const LOG_PATH = path.join(root, "logs", "seo_engine.log");
+const INDEXING_QUEUE_PATH = path.join(SEO_DIR, "google_indexing_queue.jsonl");
+
+async function log(level, message, data = null) {
+  const ts = new Date().toISOString();
+  const payload =
+    data != null && data !== undefined
+      ? { level, message, ...(typeof data === "object" ? data : { value: data }) }
+      : { level, message };
+  const extra =
+    typeof payload === "object" && payload.message
+      ? Object.fromEntries(Object.entries(payload).filter(([k]) => k !== "message"))
+      : {};
+  const line =
+    ts +
+    " [" + (level || "info").toUpperCase() + "] " +
+    (payload.message || message) +
+    (Object.keys(extra).length ? " " + JSON.stringify(extra) : "");
+
+  try {
+    await fs.mkdir(path.dirname(LOG_PATH), { recursive: true });
+    await fs.appendFile(LOG_PATH, line + "\n", "utf-8");
+  } catch {
+  }
+}
+
+async function ensureDirs() {
+  await fs.mkdir(BLOG_DIR, { recursive: true });
+  await fs.mkdir(SEO_DIR, { recursive: true });
+}
+
+function slugify(name) {
+  return (
+    (name || "app")
+      .toString()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .substring(0, 60) || "app"
+  );
+}
+
+async function appendIndexingQueue(entries) {
+  if (!entries.length) return;
+  await fs.mkdir(SEO_DIR, { recursive: true });
+  const lines = entries.map((e) => JSON.stringify(e));
+  await fs.appendFile(INDEXING_QUEUE_PATH, lines.join("\n") + "\n", "utf-8");
+}
+
+async function notifyGoogleIndexing(urls) {
+  const key = process.env.GOOGLE_INDEXING_KEY;
+  if (!key) {
+    await log("warn", "GOOGLE_INDEXING_KEY not set; skipping live Indexing API calls", {});
+    return { attempted: false, success: 0 };
+  }
+
+  if (typeof fetch !== "function") {
+    await log("error", "Global fetch is not available; cannot call Indexing API", {});
+    return { attempted: false, success: 0 };
+  }
+
+  const endpoint = `https://indexing.googleapis.com/v3/urlNotifications:publish?key=${encodeURIComponent(key)}`;
+  let success = 0;
+
+  for (const url of urls) {
+    if (typeof url !== "string" || !url.startsWith("http")) continue;
+
+    const body = JSON.stringify({ url, type: "URL_UPDATED" });
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body,
+      });
+      if (res.status >= 200 && res.status < 300) {
+        success += 1;
+      } else {
+        const text = await res.text().catch(() => "");
+        await log("warn", "Indexing API non-2xx response", { url, status: res.status, body: text.slice(0, 400) });
+      }
+    } catch (e) {
+      await log("error", "Indexing API request failed", { url, error: e.message });
+    }
+  }
+
+  await log("info", "Google Indexing API calls completed", { success, total: urls.length });
+  return { attempted: true, success };
+}
+
+export async function generateSeoForApps(apps) {
+  const list = Array.isArray(apps) ? apps.filter((a) => a && typeof a.name === "string") : [];
+
+  if (list.length === 0) {
+    await log("warn", "SEO Engine received no apps", {});
+    return { apps: [], generated: [] };
+  }
+
+  await ensureDirs();
+
+  const baseUrlEnv = process.env.SITE_BASE_URL || "";
+  const baseUrl = baseUrlEnv.replace(/\/$/, "");
+
+  const generated = [];
+  const indexingEntries = [];
+  const indexingUrls = [];
+
+  for (const app of list) {
+    const name = app.name;
+    const slug = slugify(name);
+
+    const blogArticles = Array.from({ length: 5 }).map((_, i) => ({
+      title: `${name} – Use case ${i + 1}`,
+      filename: `${slug}-use-case-${i + 1}.md`,
+    }));
+
+    const seoMeta = {
+      keyword_strategy: [`${name} tutorial`, `${name} alternatives`, `${name} pricing`],
+      meta_description: `${name} helps users solve real problems with a focused value proposition.",
+      title: `${name} – Product overview and use cases`,
+      sitemap_entry: `/apps/${slug}`,
+    };
+
+    for (const article of blogArticles) {
+      const blogPath = path.join(BLOG_DIR, article.filename);
+      const content = [
+        `# ${article.title}`,
+        "",
+        `This article explains a concrete way to use ${name} in practice.`,
+        "",
+        "> NOTE: Generated by AI_FABRIK. Edit and expand before publishing.",
+        "",
+        "## Overview",
+        "",
+        "Describe the problem, the setup and the outcome.",
+        "",
+        "## Steps",
+        "",
+        "1. ",
+        "2. ",
+        "3. ",
+        "",
+        `Try ${name} in your browser once you have read the guide.`,
+      ].join("\n");
+      try {
+        await fs.writeFile(blogPath, content, "utf-8");
+      } catch (e) {
+        await log("error", "Failed to write blog article", { file: blogPath, error: e.message });
+      }
+    }
+
+    const seoPath = path.join(SEO_DIR, `${slug}.json`);
+    try {
+      await fs.writeFile(seoPath, JSON.stringify(seoMeta, null, 2), "utf-8");
+    } catch (e) {
+      await log("error", "Failed to write SEO meta file", { file: seoPath, error: e.message });
+    }
+
+    const articleUrls = blogArticles.map((a) => (baseUrl ? `${baseUrl}/blog/${a.filename.replace(/\.md$/, "")}` : `/blog/${a.filename.replace(/\.md$/, "")}`));
+    const pageUrl = baseUrl ? `${baseUrl}${seoMeta.sitemap_entry}` : seoMeta.sitemap_entry;
+
+    for (const url of [pageUrl, ...articleUrls]) {
+      indexingEntries.push({ url, type: "URL_UPDATED", generated_at: new Date().toISOString() });
+      indexingUrls.push(url);
+    }
+
+    generated.push({
+      app: name,
+      blog_files: blogArticles.map((a) => path.join("content", "blog", a.filename)),
+      seo_file: path.join("content", "seo", `${slug}.json`),
+    });
+  }
+
+  await appendIndexingQueue(indexingEntries);
+  await notifyGoogleIndexing(indexingUrls);
+
+  await log("info", "SEO Engine generated assets", { count: generated.length });
+
+  return { apps: list.map((a) => a.name), generated };
+}
+
+async function selfTest() {
+  const apps = [{ name: "Demo Analytics" }];
+  const result = await generateSeoForApps(apps);
+  await log("info", "SEO Engine self-test", result);
+}
+
+if (process.argv.includes("--self-test")) {
+  selfTest().catch(() => {});
+}

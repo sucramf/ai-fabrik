@@ -1,0 +1,15 @@
+﻿{
+  "generated_at": null,
+  "products": [],
+  "counts": {
+    "Experiments": 0,
+    "Growth": 0,
+    "Core": 0,
+    "Sunset": 0
+  },
+  "allocation": {
+    "core_and_growth": 70,
+    "experiments": 20,
+    "opportunities": 10
+  }
+}
